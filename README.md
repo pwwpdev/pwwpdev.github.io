@@ -1,4 +1,4 @@
-# PowerWorkPlace
+# Power Workplace
 
 Power Workplace was founded in 2017 with the ambition to accelerate the world’s transition to future-of-work by empowering organizations with technologies needed to transform their workplace experiences in smart offices, smart buildings, and smart campuses.
 
