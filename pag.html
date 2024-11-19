@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+    <!--
+
+    <style>
+
+      <script src="https://app.smplrspace.com/lib/smplr.js" async></script>
+      #wrapper {
+        height: 1500px;
+        width: 1500px;
+      }
+    </style>
+
+    -->
+    <!-- Create a container for the viewer -->
+    <div id="wrapper">
+      <div id="smplrspace-container"></div>
+    </div>
+    <!-- Load the viewer script -->
+
+    <script>
+      const API_ENDPOINT =
+        "https://api.powerworkplace.com/api:LzHxbqio/occupancy_live";
+
+      const UPDATE_FREQUENCY = 10;
+
+      const CLIENT_ID = "pub_af2ddc76ef334a64ab52324ecffc47df";
+      const SPACE_ID = "7c0251e3-b2d5-4685-8442-9f8b084468b1";
+
+      const gym_filter = {
+        "Gym Room - Smith Machine": "Gym",
+        "Gym Room - Upright Bike": "Gym",
+        "Gym Room - Station Combo": "Gym",
+        "Gym Room - Spin Bike 1": "Gym",
+        "Gym Room - Olympic Flat Bench": "Gym",
+        "Gym Room - Power Rack": "Gym",
+        "Gym Room - Treadmill 1": "Gym",
+        "Gym Room - Elliptical Trainer": "Gym",
+        "Gym Room - Heat Performance Row": "Gym",
+        "Gym Room - Flat Bench": "Gym",
+        "Gym Room - Spin Bike 2": "Gym",
+        "Gym Room - Skill Mill": "Gym",
+        "Gym Room - Lat Pull Down": "Gym",
+        "Gym Room - Treadmill 2": "Gym",
+        "Gym Room - Adjustable Bench 1": "Gym",
+        "Gym Room - Adjustable Bench 2": "Gym",
+        "Gym Room - Dual Cable Cross": "Gym",
+      };
+      
+      const gym_furniture_filter = {
+        "Gym Room - Smith Machine": "SmithMachine",
+        "Gym Room - Upright Bike": "UprightBike",
+        "Gym Room - Station Combo": "StationCombo",
+        "Gym Room - Spin Bike 1": "SpinBike_1",
+        "Gym Room - Olympic Flat Bench": "OlympicFlatBench",
+        "Gym Room - Power Rack": "PowerRack",
+        "Gym Room - Treadmill 1": "Treadmill_1",
+        "Gym Room - Elliptical Trainer": "EllipticalTrainer",
+        "Gym Room - Heat Performance Row": "HeatPerformanceRow",
+        "Gym Room - Flat Bench": "Flat Bench",
+        "Gym Room - Spin Bike 2": "SpinBike_2",
+        "Gym Room - Skill Mill": "Skillmill",
+        "Gym Room - Lat Pull Down": "LatPullDown",
+        "Gym Room - Treadmill 2": "Treadmill_2",
+        "Gym Room - Adjustable Bench 1": "AdjustableBench_1",
+        "Gym Room - Adjustable Bench 2": "AdjustableBench_2",
+        "Gym Room - Dual Cable Cross": "DualCableCross",
+      };
+      
+      const cafe_filter = {
+        "PAG-33F-CAFE-04": "Cafe",
+        "PAG-33F-CAFE-01": "Cafe",
+        "PAG-33F-CAFE-03": "Cafe",
+        "PAG-33F-CAFE-05": "Cafe",
+        "PAG-33F-CAFE-02": "Cafe",
+      };
+
+      const room_index = {
+        Tokyo: 3,
+        PB8: 16,
+        Auckland: 23,
+        PB3: 8,
+        Shenzhen: 20,
+        PB1: 6,
+        "Nursery Room": 28,
+        PB10: 18,
+        Delhi: 14,
+        "Hong Kong": 27,
+        Taipei: 15,
+        PB5: 10,
+        PB11: 22,
+        PB7: 17,
+        Singapore: 2,
+        PB4: 9,
+        PB6: 31,
+        Sydney: 24,
+        Beijing: 21,
+        Shanghai: 1,
+        PB9: 19,
+        Mumbai: 26,
+        "Los Angeles": 4,
+        Seoul: 25,
+        "Nap Room L": 29,
+        Brisbane: 5,
+        London: 13,
+        Melbourne: 0,
+        PB2: 7,
+        "Nap Room R": 30,
+        "New York": 11,
+        "WAR Room": 12,
+        Gym: 33,
+        Cafe: 32,
+      };
+
+      gym_furniture_index = {
+        "SmithMachine": 11,
+        "UprightBike": 5,
+        "StationCombo": 0,
+        "SpinBike_1": 6,
+        "OlympicFlatBench": 14,
+        "PowerRack": 13,
+        "Treadmill_1": 1,
+        "EllipticalTrainer": 4,
+        "HeatPerformanceRow": 8,
+        "Flat Bench": 12,
+        "SpinBike_2": 7,
+        "Skillmill": 3,
+        "LatPullDown": 9,
+        "Treadmill_2": 2,
+        "AdjustableBench_1": 15,
+        "AdjustableBench_2": 16,
+        "DualCableCross": 10,
+      }
+
+      const room_filter = {
+        "PAG-33F-TOKYO": "Tokyo",
+        PB8: "PB8",
+        "PAG-33F-AUCKLAND": "Auckland",
+        PB3: "PB3",
+        "PAG-33F-SHENZHEN": "Shenzhen",
+        PB1: "PB1",
+        "Nursery Room": "Nursery Room",
+        PB10: "PB10",
+        "PAG-33F-DELHI": "Delhi",
+        "PAG-33F-HONGKONG": "Hong Kong",
+        "PAG-33F-TAIPEI": "Taipei",
+        PB5: "PB5",
+        PB11: "PB11",
+        PB7: "PB7",
+        "PAG-33F-SINGAPORE": "Singapore",
+        PB4: "PB4",
+        PB6: "PB6",
+        "PAG-33F-SYDNEY": "Sydney",
+        "PAG-33F-BEIJING": "Beijing",
+        "PAG-33F-SHANGHAI": "Shanghai",
+        PB9: "PB9",
+        "PAG-33F-MUMBAI": "Mumbai",
+        "PAG-33F-LOSANGELES": "Los Angeles",
+        "PAG-33F-SEOUL": "Seoul",
+        "Nap Pod L": "Nap Room L",
+        "PAG-33F-BRISBANE": "Brisbane",
+        "PAG-33F-LONDON": "London",
+        "PAG-33F-MELBOURNE": "Melbourne",
+        PB2: "PB2",
+        "Nap Pod R": "Nap Room R",
+        "PAG-33F-NEWYORK": "New York",
+        "PAG-33F-WARROOM": "WAR Room",
+      };
+
+
+      const dict = [
+        {
+          id: "e8abfa94-da3e-497f-9342-1b80f54ab5f4",
+          name: "Desk",
+          type: "furniture",
+          assets: [
+            {
+              id: "c2aba84e-51a6-4a78-9ca6-b26d08818043",
+              name: "Desk1",
+              layerType: "furniture",
+            },
+          ],
+        },
+        {
+          id: "410863e3-95c8-4694-bc57-b43328c0b992",
+          name: "Meeting Rooms",
+          type: "polygon",
+          assets: [
+            {
+              id: "144d221b-ca4d-42bf-90a0-cde03b5c1e82",
+              name: "Melbourne",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 17.902039998355328,
+                  z: -52.21398800841547,
+                  levelIndex: 0,
+                },
+                {
+                  x: 17.759271716438633,
+                  z: -48.754227635522355,
+                  levelIndex: 0,
+                },
+                {
+                  x: 21.875242876573946,
+                  z: -48.798482713106445,
+                  levelIndex: 0,
+                },
+                {
+                  x: 22.015544983622817,
+                  z: -52.21811517865225,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "8f5c6a33-a7e0-4a84-8b82-bd86239a47fa",
+              name: "Shanghai",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 50.83066096231635,
+                  z: -17.570423024564413,
+                  levelIndex: 0,
+                },
+                {
+                  x: 46.66632431510684,
+                  z: -17.43525217884098,
+                  levelIndex: 0,
+                },
+                {
+                  x: 46.594651399618726,
+                  z: -22.32768038830862,
+                  levelIndex: 0,
+                },
+                {
+                  x: 50.83620751566587,
+                  z: -22.38037489777356,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "0b421661-8913-4c39-9039-4bc8ea2514e5",
+              name: "Singapore",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 50.86799047799353,
+                  z: -17.130349735334878,
+                  levelIndex: 0,
+                },
+                {
+                  x: 50.57624565145524,
+                  z: -10.60559393776268,
+                  levelIndex: 0,
+                },
+                {
+                  x: 49.00116241402186,
+                  z: -10.43631024648172,
+                  levelIndex: 0,
+                },
+                {
+                  x: 46.570276059935814,
+                  z: -10.244919356695313,
+                  levelIndex: 0,
+                },
+                {
+                  x: 46.44465139961873,
+                  z: -15.337142905187132,
+                  levelIndex: 0,
+                },
+                {
+                  x: 46.66108707429424,
+                  z: -17.072181273145155,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "a9b96a2a-760b-4dc3-a479-7ba249442a08",
+              name: "Tokyo",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 58.86886299051289,
+                  z: -4.282664237233486,
+                  levelIndex: 0,
+                },
+                {
+                  x: 58.826222114336545,
+                  z: -9.942536482601607,
+                  levelIndex: 0,
+                },
+                {
+                  x: 48.674272471554666,
+                  z: -9.88730580202894,
+                  levelIndex: 0,
+                },
+                {
+                  x: 48.71859456920208,
+                  z: -4.294623550197037,
+                  levelIndex: 0,
+                },
+                {
+                  x: 54.594845867392415,
+                  z: -4.270218465251516,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "d58ec9a8-8b24-4906-9f2d-c263b483c390",
+              name: "Los Angeles",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 9.328821680047371,
+                  z: -46.505133025771336,
+                  levelIndex: 0,
+                },
+                {
+                  x: 14.134305092644642,
+                  z: -46.59166684734195,
+                  levelIndex: 0,
+                },
+                {
+                  x: 14.16284557550956,
+                  z: -43.23592255912738,
+                  levelIndex: 0,
+                },
+                {
+                  x: 8.154107250453256,
+                  z: -43.14600823913311,
+                  levelIndex: 0,
+                },
+                {
+                  x: 7.458288895573554,
+                  z: -45.99961099877782,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "27830271-b9eb-4996-9e23-c946301ec739",
+              name: "Brisbane",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 36.292806609573475,
+                  z: -48.79674032166382,
+                  levelIndex: 0,
+                },
+                {
+                  x: 36.137381254704046,
+                  z: -52.33230007092097,
+                  levelIndex: 0,
+                },
+                {
+                  x: 36.15571520964289,
+                  z: -52.215564035951395,
+                  levelIndex: 0,
+                },
+                {
+                  x: 39.769487234744325,
+                  z: -52.29783713154257,
+                  levelIndex: 0,
+                },
+                {
+                  x: 39.784185292427296,
+                  z: -48.732187897020474,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "470b5d9d-e3b3-48a6-ac24-6b431b2351e8",
+              name: "PB1",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 20.037992278137338,
+                  z: -48.519479567362616,
+                  levelIndex: 0,
+                },
+                {
+                  x: 20.047689278578815,
+                  z: -46.813729647682734,
+                  levelIndex: 0,
+                },
+                {
+                  x: 17.533824962301143,
+                  z: -46.75558618806997,
+                  levelIndex: 0,
+                },
+                {
+                  x: 17.610932692055528,
+                  z: -48.49462154799628,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "48ca7d98-e2d6-4187-a90c-f028dc8b68ed",
+              name: "PB2",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 27.743268388974816,
+                  z: -53.96242713888328,
+                  levelIndex: 0,
+                },
+                {
+                  x: 25.830920192449454,
+                  z: -54.001913584934336,
+                  levelIndex: 0,
+                },
+                {
+                  x: 25.830920192449454,
+                  z: -55.65701817920898,
+                  levelIndex: 0,
+                },
+                {
+                  x: 27.73208841218222,
+                  z: -55.65226228319626,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "0fc4585d-884a-475c-9349-44d089e96927",
+              name: "PB3",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 25.830920192449454,
+                  z: -55.8786519285622,
+                  levelIndex: 0,
+                },
+                {
+                  x: 27.721827177828214,
+                  z: -55.88864660177154,
+                  levelIndex: 0,
+                },
+                {
+                  x: 27.72702293914593,
+                  z: -57.47870424588247,
+                  levelIndex: 0,
+                },
+                {
+                  x: 25.831896554700474,
+                  z: -57.482894756624766,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "78a671a0-bf5b-4740-a8c1-9c1d8f3cf443",
+              name: "PB4",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 47.574142360801396,
+                  z: -53.98790159928201,
+                  levelIndex: 0,
+                },
+                {
+                  x: 49.355197145059904,
+                  z: -53.96242702912841,
+                  levelIndex: 0,
+                },
+                {
+                  x: 49.388712575667874,
+                  z: -55.57711819730769,
+                  levelIndex: 0,
+                },
+                {
+                  x: 47.572432174976505,
+                  z: -55.71376537945738,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "e5d01df7-f815-4483-b987-066832bcc5f4",
+              name: "PB5",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 49.612646471818735,
+                  z: -53.96381954851178,
+                  levelIndex: 0,
+                },
+                {
+                  x: 51.53519597257849,
+                  z: -53.931257387901674,
+                  levelIndex: 0,
+                },
+                {
+                  x: 51.53942316001253,
+                  z: -55.64218700221475,
+                  levelIndex: 0,
+                },
+                {
+                  x: 49.62223472864945,
+                  z: -55.65566791806431,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "00d9d5cc-a41e-4081-af22-44d1ac7be64d",
+              name: "New York",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 47.574142360801396,
+                  z: -55.89482365032278,
+                  levelIndex: 0,
+                },
+                {
+                  x: 51.37864838137137,
+                  z: -55.83963988969815,
+                  levelIndex: 0,
+                },
+                {
+                  x: 51.423775081930685,
+                  z: -61.83908135010198,
+                  levelIndex: 0,
+                },
+                {
+                  x: 47.574142360801396,
+                  z: -61.8339262352836,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "8fe10c64-742d-432c-838a-21bec13c385e",
+              name: "WAR Room",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 47.52783660364293,
+                  z: -62.025474213458644,
+                  levelIndex: 0,
+                },
+                {
+                  x: 53.1434221839289,
+                  z: -62.03655026420045,
+                  levelIndex: 0,
+                },
+                {
+                  x: 53.12977767139731,
+                  z: -66.86308733700581,
+                  levelIndex: 0,
+                },
+                {
+                  x: 48.65926394153562,
+                  z: -66.8667502025185,
+                  levelIndex: 0,
+                },
+                {
+                  x: 48.6979827359759,
+                  z: -64.44618302172067,
+                  levelIndex: 0,
+                },
+                {
+                  x: 47.58320056365819,
+                  z: -64.4244827732448,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "dfe39ead-e10a-4efc-bd0e-a155d05a8ca1",
+              name: "London",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 55.16716418922547,
+                  z: -48.70378978890059,
+                  levelIndex: 0,
+                },
+                {
+                  x: 64.41316538010282,
+                  z: -48.78635632230773,
+                  levelIndex: 0,
+                },
+                {
+                  x: 64.39383816682567,
+                  z: -52.18039611811273,
+                  levelIndex: 0,
+                },
+                {
+                  x: 55.2561046895719,
+                  z: -52.33833138340492,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "048eafed-044d-479d-b958-72084f950d6a",
+              name: "Delhi",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 73.10664609162384,
+                  z: -51.18515661160768,
+                  levelIndex: 0,
+                },
+                {
+                  x: 78.04839751052464,
+                  z: -51.15756043110548,
+                  levelIndex: 0,
+                },
+                {
+                  x: 78.0475744770559,
+                  z: -54.440676253411844,
+                  levelIndex: 0,
+                },
+                {
+                  x: 73.09569964979164,
+                  z: -54.44085407708708,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "9197828e-0d43-4fda-b2cf-a44530e15824",
+              name: "Taipei",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 71.55000081503731,
+                  z: -40.68108889144637,
+                  levelIndex: 0,
+                },
+                {
+                  x: 75.00013885833641,
+                  z: -40.5060453588465,
+                  levelIndex: 0,
+                },
+                {
+                  x: 75.03818652175083,
+                  z: -37.531732231503135,
+                  levelIndex: 0,
+                },
+                {
+                  x: 71.51039730637008,
+                  z: -37.58701444501673,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "a92eee16-b410-481b-aa60-b4d11856d177",
+              name: "PB8",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 83.92005169981883,
+                  z: -53.996261456835,
+                  levelIndex: 0,
+                },
+                {
+                  x: 83.92381381330932,
+                  z: -56.24156457283465,
+                  levelIndex: 0,
+                },
+                {
+                  x: 82.19649809882698,
+                  z: -56.22101670328871,
+                  levelIndex: 0,
+                },
+                {
+                  x: 82.19619259585312,
+                  z: -54.03449336168532,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "cdb93e92-1e71-4d6e-ab6c-89c327d0fa59",
+              name: "PB7",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 81.94645641624928,
+                  z: -53.951599724853615,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.95040701627143,
+                  z: -56.22101670328871,
+                  levelIndex: 0,
+                },
+                {
+                  x: 80.18198649173898,
+                  z: -56.22101670328871,
+                  levelIndex: 0,
+                },
+                {
+                  x: 80.09191064550807,
+                  z: -53.97435667533619,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "cd65bc0f-a6ff-494d-a8e0-2446559942f2",
+              name: "PB10",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 78.43850945291533,
+                  z: -41.316857121031006,
+                  levelIndex: 0,
+                },
+                {
+                  x: 78.45294094101067,
+                  z: -39.48339530567755,
+                  levelIndex: 0,
+                },
+                {
+                  x: 80.06903191843735,
+                  z: -39.57323518983804,
+                  levelIndex: 0,
+                },
+                {
+                  x: 80.18206112357791,
+                  z: -41.342135601962234,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "7da084fd-e339-4a7f-b39e-55a22b99ee71",
+              name: "PB9",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 79.9318169747415,
+                  z: -37.43699497613127,
+                  levelIndex: 0,
+                },
+                {
+                  x: 80.1167221069413,
+                  z: -39.38658590940067,
+                  levelIndex: 0,
+                },
+                {
+                  x: 78.39961330570824,
+                  z: -39.35949082916942,
+                  levelIndex: 0,
+                },
+                {
+                  x: 78.42232762799627,
+                  z: -37.47752447744449,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "92bfbe45-daaa-4eb7-bd24-44c718ae1a70",
+              name: "Shenzhen",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 80.33713309034552,
+                  z: -37.387477538502395,
+                  levelIndex: 0,
+                },
+                {
+                  x: 80.38525304315507,
+                  z: -41.36048601036666,
+                  levelIndex: 0,
+                },
+                {
+                  x: 83.42268236187886,
+                  z: -41.36048601036666,
+                  levelIndex: 0,
+                },
+                {
+                  x: 83.42006413432092,
+                  z: -41.01579570829643,
+                  levelIndex: 0,
+                },
+                {
+                  x: 84.59050394225078,
+                  z: -40.850331276077206,
+                  levelIndex: 0,
+                },
+                {
+                  x: 83.87625335674855,
+                  z: -37.50869025454943,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "a85ef755-9254-46ce-886b-b2ff301b3a58",
+              name: "Beijing",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 73.22669871595566,
+                  z: -22.464113062699994,
+                  levelIndex: 0,
+                },
+                {
+                  x: 73.24166806097877,
+                  z: -19.892637615589134,
+                  levelIndex: 0,
+                },
+                {
+                  x: 76.62079051574283,
+                  z: -19.87805674935618,
+                  levelIndex: 0,
+                },
+                {
+                  x: 76.61430517062594,
+                  z: -22.464113062699994,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "38d1aa64-ee6a-4d09-94d9-a6eeca5c353d",
+              name: "PB11",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 71.49449934089151,
+                  z: -22.464113062699994,
+                  levelIndex: 0,
+                },
+                {
+                  x: 71.44720732799098,
+                  z: -19.74235445898239,
+                  levelIndex: 0,
+                },
+                {
+                  x: 72.97711480924829,
+                  z: -19.772241532975503,
+                  levelIndex: 0,
+                },
+                {
+                  x: 73.00283786120521,
+                  z: -22.464113062699994,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "38b8a120-c5b5-414a-a9b4-4450abd86bc5",
+              name: "Auckland",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 65.01832112720139,
+                  z: -16.32758708072461,
+                  levelIndex: 0,
+                },
+                {
+                  x: 64.99304614350073,
+                  z: -20.20984969004127,
+                  levelIndex: 0,
+                },
+                {
+                  x: 69.29401407007853,
+                  z: -20.20852175048839,
+                  levelIndex: 0,
+                },
+                {
+                  x: 69.31028934466016,
+                  z: -16.264303231255177,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "ebd635cc-9482-4e2b-a42a-a1d4bb97f8d3",
+              name: "Sydney",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 60.61892950631633,
+                  z: -20.23510263455185,
+                  levelIndex: 0,
+                },
+                {
+                  x: 60.61892950631633,
+                  z: -16.294403476685844,
+                  levelIndex: 0,
+                },
+                {
+                  x: 64.85947109624675,
+                  z: -16.253930469524747,
+                  levelIndex: 0,
+                },
+                {
+                  x: 64.80575494821308,
+                  z: -20.25243521091553,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "684f7f14-808a-43c2-b657-6140088f4a1e",
+              name: "Seoul",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 60.56197836449008,
+                  z: -16.16687378316009,
+                  levelIndex: 0,
+                },
+                {
+                  x: 60.59110508170652,
+                  z: -12.070505961557195,
+                  levelIndex: 0,
+                },
+                {
+                  x: 67.45233008661909,
+                  z: -12.122689757289201,
+                  levelIndex: 0,
+                },
+                {
+                  x: 67.45195554505648,
+                  z: -16.076696338934084,
+                  levelIndex: 0,
+                },
+                {
+                  x: 62.13088058399394,
+                  z: -16.107157054378597,
+                  levelIndex: 0,
+                },
+                {
+                  x: 60.81653808178368,
+                  z: -16.076348286547756,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "2556463a-7f3a-4b9b-b28e-8c1d573a08f8",
+              name: "Mumbai",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 70.01658971594429,
+                  z: -4.072700693142917,
+                  levelIndex: 0,
+                },
+                {
+                  x: 71.59276552303567,
+                  z: -4.237293343078135,
+                  levelIndex: 0,
+                },
+                {
+                  x: 71.59681381443396,
+                  z: -5.124742900362252,
+                  levelIndex: 0,
+                },
+                {
+                  x: 72.44412550468537,
+                  z: -5.124742900362243,
+                  levelIndex: 0,
+                },
+                {
+                  x: 72.50605803375755,
+                  z: -8.314097973100681,
+                  levelIndex: 0,
+                },
+                {
+                  x: 69.9064848514913,
+                  z: -8.267587319524205,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "d0d1e6c2-2c02-4158-bb3b-63a11b8daf61",
+              name: "Hong Kong",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 59.13064247130517,
+                  z: -9.963075830226655,
+                  levelIndex: 0,
+                },
+                {
+                  x: 59.14585868011651,
+                  z: -4.169393250957665,
+                  levelIndex: 0,
+                },
+                {
+                  x: 67.4490556032245,
+                  z: -4.082453929646238,
+                  levelIndex: 0,
+                },
+                {
+                  x: 67.47524807679561,
+                  z: -4.61872708131427,
+                  levelIndex: 0,
+                },
+                {
+                  x: 67.51092927335291,
+                  z: -9.959221350503277,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "2a575145-de94-4101-99ca-456d006218e2",
+              name: "Nursery Room",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 44.76772139263159,
+                  z: -48.71269556360148,
+                  levelIndex: 0,
+                },
+                {
+                  x: 44.76772139263159,
+                  z: -52.28407871192114,
+                  levelIndex: 0,
+                },
+                {
+                  x: 42.37660366742213,
+                  z: -52.32810083688315,
+                  levelIndex: 0,
+                },
+                {
+                  x: 42.26362163293227,
+                  z: -48.670688675502504,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "bd2e9f04-56c3-4933-988b-41d99381cbac",
+              name: "Nap Room L",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 30.873704794153696,
+                  z: -48.65771218348633,
+                  levelIndex: 0,
+                },
+                {
+                  x: 33.35811298827565,
+                  z: -48.67872336056899,
+                  levelIndex: 0,
+                },
+                {
+                  x: 33.34012602601884,
+                  z: -52.32810066724853,
+                  levelIndex: 0,
+                },
+                {
+                  x: 30.950129194240226,
+                  z: -52.29954744318574,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "05266d0c-6490-4d55-b699-3180930a8a0c",
+              name: "Nap Room R",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 35.95254315432222,
+                  z: -48.71623095231301,
+                  levelIndex: 0,
+                },
+                {
+                  x: 35.89179657173113,
+                  z: -52.32810057275283,
+                  levelIndex: 0,
+                },
+                {
+                  x: 33.44805325813856,
+                  z: -52.357481025621304,
+                  levelIndex: 0,
+                },
+                {
+                  x: 33.48719603771157,
+                  z: -48.683973901848965,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "809c482b-4394-4e4d-ad81-063fa41ea49f",
+              name: "PB6",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 73.60967414034621,
+                  z: -54.87927214816741,
+                  levelIndex: 0,
+                },
+                {
+                  x: 75.34766753009433,
+                  z: -54.82975072415689,
+                  levelIndex: 0,
+                },
+                {
+                  x: 75.31717418552495,
+                  z: -57.54403463532241,
+                  levelIndex: 0,
+                },
+                {
+                  x: 73.62179896451391,
+                  z: -57.48162227434758,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "641bac4f-95e4-4822-be18-742d7e478eab",
+              name: "Cafe",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 71.38950578180871,
+                  z: -37.33601538452726,
+                  levelIndex: 0,
+                },
+                {
+                  x: 71.3823714007723,
+                  z: -28.31129672292743,
+                  levelIndex: 0,
+                },
+                {
+                  x: 77.92686433226964,
+                  z: -28.379728993354863,
+                  levelIndex: 0,
+                },
+                {
+                  x: 78.09524626024412,
+                  z: -24.152858320036202,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.01238240305108,
+                  z: -24.122800750512205,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.02958233865525,
+                  z: -24.425617907500452,
+                  levelIndex: 0,
+                },
+                {
+                  x: 83.85134986158546,
+                  z: -37.27603201795403,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+                        /*
+            {
+              id: "bea3ae9c-a84d-4a2a-99f4-9301ac36849d",
+              name: "Gym",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 12.038279128707508,
+                  z: -25.157060108276852,
+                  levelIndex: 0,
+                },
+                {
+                  x: 22.158728132587584,
+                  z: -24.918726341465952,
+                  levelIndex: 0,
+                },
+                {
+                  x: 22.158728471955648,
+                  z: -27.134193592395544,
+                  levelIndex: 0,
+                },
+                {
+                  x: 18.366667954022752,
+                  z: -27.287457199176252,
+                  levelIndex: 0,
+                },
+                {
+                  x: 18.366667664350803,
+                  z: -37.76469988270068,
+                  levelIndex: 0,
+                },
+                {
+                  x: 20.070900435778178,
+                  z: -37.79636344876232,
+                  levelIndex: 0,
+                },
+                {
+                  x: 19.843029813249377,
+                  z: -42.94733815194296,
+                  levelIndex: 0,
+                },
+                {
+                  x: 8.002717087375284,
+                  z: -42.661689120522645,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            */
+          ],
+        },
+        {
+          id: "ea2b14ac-2a68-4fc0-8a46-ef89304d7836",
+          name: "Gym",
+          type: "furniture",
+          assets: [
+            {
+              id: "3f39ff75-fe46-4826-8f82-819e1e872e0b",
+              name: "StationCombo",
+              furnitureId: "7ae58b0f-8b67-4047-ad1f-1ae7b3788913",
+              layerType: "furniture",
+            },
+            {
+              id: "69aa887f-d28d-406c-9cbc-ecd19db44e7c",
+              name: "Treadmill_1",
+              furnitureId: "cb763c93-d983-4279-b404-6ed0b5f77669",
+              layerType: "furniture",
+            },
+            {
+              id: "e1fc38fd-099d-42ad-92b4-0189d057ebac",
+              name: "Treadmill_2",
+              furnitureId: "c5b54b72-29f5-4ed1-9851-b463fcaf6723",
+              layerType: "furniture",
+            },
+            {
+              id: "2016dc33-3342-47ba-a501-192c740adbb9",
+              name: "Skillmill",
+              furnitureId: "bf7bf2f6-d0d9-4fc2-b729-d229154f2445",
+              layerType: "furniture",
+            },
+            {
+              id: "a4261a7e-2c64-47f6-ac0f-b04b584d2cb8",
+              name: "EllipticalTrainer",
+              furnitureId: "ea84f29d-423e-484c-84b2-d375524a9b11",
+              layerType: "furniture",
+            },
+            {
+              id: "af589f07-a0e5-4af1-b507-6d7a29afca8e",
+              name: "UprightBike",
+              furnitureId: "256b1e72-7601-4fc4-a28d-7f4ef7ff8780",
+              layerType: "furniture",
+            },
+            {
+              id: "3f3165dc-65cc-4725-8250-9bf3872e66ce",
+              name: "SpinBike_1",
+              furnitureId: "16f674e2-2f8a-4d2a-aef1-cbd185282c53",
+              layerType: "furniture",
+            },
+            {
+              id: "2ce9ad54-e185-499a-b4e9-a486928af1e0",
+              name: "SpinBike_2",
+              furnitureId: "e4fe5944-2437-44be-aa93-7351e76a0d0d",
+              layerType: "furniture",
+            },
+            {
+              id: "c6d606fc-3d26-4e14-8fb3-e8535995d19b",
+              name: "HeatPerformanceRow",
+              furnitureId: "604a0e14-662a-440e-845d-071029f47d56",
+              layerType: "furniture",
+            },
+            {
+              id: "8277101a-3b0a-4241-a21c-d08586ab4120",
+              name: "LatPullDown",
+              furnitureId: "b00804bb-ea0e-4daf-92a7-b17231bc276f",
+              layerType: "furniture",
+            },
+            {
+              id: "5155c639-bfbc-4eb0-b9d7-8b2bb4e08057",
+              name: "DualCableCross",
+              furnitureId: "e9f0909a-654c-401e-835f-374939acd532",
+              layerType: "furniture",
+            },
+            {
+              id: "5fe8f9c1-0a42-4ebc-87e4-572d1b7dfbe7",
+              name: "SmithMachine",
+              furnitureId: "b5d67994-d61b-4870-8eef-cb143f1ad026",
+              layerType: "furniture",
+            },
+            {
+              id: "186d885a-0fc8-4c12-bd69-cffdda9039f5",
+              name: "Flat Bench",
+              furnitureId: "6d9fe8e8-31ba-45bd-a51d-2d160abfda51",
+              layerType: "furniture",
+            },
+            {
+              id: "a29f7563-6410-4ee1-b2ce-f0ebdb24aa84",
+              name: "PowerRack",
+              furnitureId: "6ca48cb8-a4d6-41ea-8142-3943d8ac1871",
+              layerType: "furniture",
+            },
+            {
+              id: "88ac72a0-831b-4084-836d-d0349768a5a1",
+              name: "OlympicFlatBench",
+              furnitureId: "80202ab6-1d69-4f53-918d-11fdfa538156",
+              layerType: "furniture",
+            },
+            {
+              id: "7d73afc6-624a-45ff-98f6-28e9fde71d16",
+              name: "AdjustableBench_1",
+              furnitureId: "78525f37-b2b1-44af-92bf-e47a2cdf6354",
+              layerType: "furniture",
+            },
+            {
+              id: "2f416cdd-2160-4544-8759-4363e5c6aa1c",
+              name: "AdjustableBench_2",
+              furnitureId: "0d6e683f-ea16-46d9-8210-53ad0ff5eba6",
+              layerType: "furniture",
+            },
+          ],
+        },
+      ];
+
+      const color_dict = {
+        available: "#50b268",
+        partially_available: "#ffbf00",
+        not_available: "#ff3f34",
+      };
+      // smplrspace-script.js
+      class Space {
+        constructor(spaceId, clientToken, desks, rooms) {
+          this.spaceId = spaceId;
+          this.clientToken = clientToken;
+          this.space = null;
+
+          this.rooms = rooms;
+          this.desks = desks;
+
+          /*
+          for (let _index = 0; _index < this.dict[1]["assets"].length; _index++) {
+            for (
+              let i = 0;
+              i < this.dict[1]["assets"][_index]["coordinates"].length;
+              i++
+            ) {
+              this.dict[1]["assets"][_index]["coordinates"][i].elevation = 0.1;
+            }
+          }
+          */
+        }
+
+        initSpace(smplr) {
+          this.space = new smplr.Space({
+            spaceId: this.spaceId,
+            clientToken: this.clientToken,
+            containerId: "smplrspace-container",
+          });
+          this.space.startViewer({
+            preview: false,
+            onReady: () => this.fetchData(),
+            onError: (error) => console.error("Could not start viewer", error),
+          });
+        }
+
+        updateDataLayers() {
+          // remove previous layers if any
+          this.space.removeDataLayer("rooms");
+          this.space.removeDataLayer("desks");
+
+          const isRoomsEmpty = Object.keys(this.rooms).length === 0;
+          const isDesksEmpty = Object.keys(this.desks).length === 0;
+
+          if (!isRoomsEmpty) {
+            // add new layers
+            this.space.addDataLayer({
+              id: "rooms",
+              type: "polygon",
+              data: this.rooms,
+              tooltip: (d) =>
+                `${d.name} - ${
+                  d.available ? "free" : "occupied"
+                } - # of people: ${d.numberOfPeople}`,
+              color: (d) => (d.available ? "#3aa655" : "#ff3f34"),
+              alpha: 0.7,
+              height: 2.9,
+            });
+          }
+
+          /* FFBF00 "#ff3f34"*/
+
+          if (!isDesksEmpty) {
+            this.space.addDataLayer({
+              id: "desks",
+              type: "furniture",
+              data: this.desks,
+              tooltip: (d) =>
+                `${d.name} - ${
+                  d.available ? "free" : "occupied"
+                } - # of people: ${d.numberOfPeople}`,
+              color: (d) => (d.available ? "#50b268" : "#f75e56"),
+            });
+          }
+        }
+
+        async fetchData() {
+          fetch(API_ENDPOINT)
+            .then((res) => res.json())
+            .then((data) => {
+              let occupancy = {};
+              for (let i = 0; i < data.length; i++) {
+                let value = data[i];
+                let loc = value.areaId;
+                let timestamp = value.timestamp;
+                let available = value.occupancy === 0;
+                let numberOfPeople = value.occupancy;
+
+                if (!occupancy.hasOwnProperty(loc)) {
+                  occupancy[loc] = {
+                    timestamp: timestamp,
+                    available: available,
+                    numberOfPeople: numberOfPeople,
+                    occupany: value.occupancy,
+                  };
+                } else if (occupancy[loc].timestamp < timestamp) {
+                  occupancy[loc] = {
+                    timestamp: timestamp,
+                    available: available,
+                    numberOfPeople: numberOfPeople,
+                    occupany: value.occupancy,
+                  };
+                }
+              }
+/*
+              let gymOccupancy = 0;
+              for (let i = 0; i < data.length; i++) {
+                let value = data[i];
+                let loc = value.areaId;
+                if (gym_filter[loc] === "Gym") {
+                  gymOccupancy += value.occupancy;
+                }
+              }
+
+              let gymAvailable = gymOccupancy === 0;
+              let gymNumberOfPeople = gymOccupancy;
+
+              this.rooms[room_index["Gym"]]["available"] = gymAvailable;
+              this.rooms[room_index["Gym"]]["numberOfPeople"] =
+                gymNumberOfPeople;
+*/
+              let cafeOccupancy = 0;
+              for (let i = 0; i < data.length; i++) {
+                let value = data[i];
+                let loc = value.areaId;
+                if (cafe_filter[loc] === "Cafe") {
+                  cafeOccupancy += value.occupancy;
+                }
+              }
+
+              let cafeAvailable = cafeOccupancy === 0;
+              let cafeNumberOfPeople = cafeOccupancy;
+
+              this.rooms[room_index["Cafe"]]["available"] = cafeAvailable;
+              this.rooms[room_index["Cafe"]]["numberOfPeople"] =
+                cafeNumberOfPeople;
+
+              for (let key in occupancy) {
+                if (
+                  occupancy.hasOwnProperty(key) &&
+                  room_filter.hasOwnProperty(key)
+                ) {
+                  //
+                  const jsonKey = room_filter[key];
+                  const _index = room_index[jsonKey];
+
+                  this.rooms[_index]["available"] = occupancy[key]["available"];
+                  this.rooms[_index]["numberOfPeople"] =
+                    occupancy[key]["numberOfPeople"];
+                }
+                else if (                  occupancy.hasOwnProperty(key) &&
+                  gym_furniture_filter.hasOwnProperty(key))
+                  {
+                    const jsonKey = gym_furniture_filter[key];
+                    const _index = gym_furniture_index[jsonKey];
+
+                  this.desks[_index]["available"] = occupancy[key]["available"];
+                  this.desks[_index]["numberOfPeople"] =
+                    occupancy[key]["numberOfPeople"];
+                  }
+              }
+              this.updateDataLayers();
+            });
+        }
+      }
+
+      spc = new Space(SPACE_ID, CLIENT_ID, dict[2]["assets"], dict[1]["assets"]); //
+
+      delete dict;
+
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      async function start() {
+        while (typeof smplr === "undefined") {
+          await wait();
+        }
+        spc.initSpace(smplr);
+        setInterval(() => {
+          spc.fetchData();
+        }, UPDATE_FREQUENCY * 1000);
+      }
+
+      start();
+    </script>
+  </body>
+ </html>
