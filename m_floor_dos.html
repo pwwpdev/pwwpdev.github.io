@@ -27,7 +27,7 @@
 
     <script>
       const API_ENDPOINT =
-        "https://optimus-sg.powerworkplace.com/api:TH2aX53s/lingnan_live";
+        "https://optimus-sg.powerworkplace.com/api:TH2aX53s/lingnan_live_poc";
 
 
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
@@ -252,6 +252,7 @@
         vacant: "#3aa655",
         free: "#3aa655",
         passive_occupied: "#ffbf00",
+        away: "#ffbf00",
       };
 
       class Space {
@@ -333,14 +334,8 @@
                 let value = data[i];
                 let loc = value.area;
                 let timestamp = value.timestamp;
-                let available = "";
-                if (value.occupancy == 1) {
-                  available = "occupied"; //"passive_occupied";
-                } else if (value.occupancy > 1) {
-                  available = "occupied";
-                } else {
-                  available = "free";
-                }
+                let available = value.occupancy
+                
 
                 let color = color_dict.hasOwnProperty(available)
                   ? color_dict[available]
