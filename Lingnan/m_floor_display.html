@@ -26,7 +26,7 @@
 
     <script>
       const API_ENDPOINT =
-        "https://optimus-sg.powerworkplace.com/api:TH2aX53s/lingnan_live";
+        "https://optimusc.flowfuse.cloud/lingnan-library-dos";
 
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
       const SPACE_ID = "90660c93-a72f-4412-ba81-07605f95d720";
@@ -245,7 +245,7 @@
         },
       ];
 
-      const points = [
+      let points = [
         {
           id: "cec1bf81-0fe4-4753-8a72-c22d7dd235f7",
           name: "MFC-S01",
@@ -602,13 +602,10 @@
               id: "desks",
               type: "furniture",
               data: this.desks,
-              tooltip: (d) => `${d.name} - ${d.available}`,
+              tooltip: (d) => `${d.name} - ${d.available} - ${d.occupancy}`,
               color: (d) => d.color,
             });
           }
-
-          
-
           
           for (let i = 0; i < points.length; i++) {
             this.space.addDataLayer({
@@ -640,20 +637,25 @@
           fetch(API_ENDPOINT)
             .then((res) => res.json())
             .then((data) => {
+              console.log("data length")
+              console.log(data.length)
               let occupancy = {};
               for (let i = 0; i < data.length; i++) {
                 let value = data[i];
                 let loc = value.area;
                 let timestamp = value.timestamp;
-                let available = "";
+                let available = value.occupancy;
+                
+                /*
                 if (value.occupancy == 1) {
                   available = "occupied"; //"passive_occupied";
                 } else if (value.occupancy > 1) {
                   available = "occupied";
                 } else {
                   available = "free";
-                }
+                }*/
 
+                console.log(value)
                 let color = color_dict.hasOwnProperty(available)
                   ? color_dict[available]
                   : "#ffffff";
@@ -662,14 +664,14 @@
                   occupancy[loc] = {
                     timestamp: timestamp,
                     available: available,
-                    occupancy: value.occupancy,
+                    occupancy: value.people_count,
                     color: color,
                   };
                 } else if (occupancy[loc].timestamp < timestamp) {
                   occupancy[loc] = {
                     timestamp: timestamp,
                     available: available,
-                    occupancy: value.occupancy,
+                    occupancy: value.people_count,
                     color: color,
                   };
                 }
@@ -688,6 +690,8 @@
                   console.log(occupancy[key]);
                   this.desks[_index]["available"] = occupancy[key]["available"];
                   this.desks[_index]["color"] = occupancy[key]["color"];
+                  this.desks[_index]["occupancy"] = occupancy[key]["occupancy"];
+
                   if (
                     occupancy[key]["occupancy"] < 100 &&
                     occupancy[key]["occupancy"] >= 0
@@ -695,6 +699,7 @@
                     points[_index][
                       "image"
                     ] = `./numbers/number_${occupancy[key]["occupancy"]}.jpg`;
+                    points[_index]["occupancy"] =  occupancy[key]["occupancy"];
                   }
                   console.log(this.desks[0][_index]);
                 } else if (
