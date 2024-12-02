@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Smplrspace Viewer</title>
+    <!-- Load smplr.js and its styles -->
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+
+    <div id="wrapper">
+      <div id="smplrspace-container"></div>
+    </div>
+
+    <script>
+      const API_ENDPOINT =
+        "https://optimus-sg.powerworkplace.com/api:TH2aX53s/lingnan_live";
+
+      const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
+      const SPACE_ID = "90660c93-a72f-4412-ba81-07605f95d720";
+
+      const UPDATE_FREQUENCY = 10;
+
+      const desk_index = {
+        "MFC-S01": 0,
+        "MFC-S02": 1,
+        "MFC-S03": 2,
+        "MFC-S04": 3,
+        "MFC-S05": 4,
+        "MFC-S06": 5,
+        "MFC-S07": 6,
+        "MFC-S08": 7,
+        "MFC-S09": 8,
+        "MFC-S10": 9,
+        "MFC-S11": 10,
+        "MFC-S12": 11,
+        "MFC-S13": 12,
+        "MFC-S14": 13,
+        "MFC-S15": 14,
+        "MFC-S16": 15,
+        "MFC-S17": 16,
+        "MFC-S18": 17,
+        "MFC-S19": 18,
+        "MFC-S20": 19,
+        "MFC-S21": 20,
+        "MFC-S22": 21,
+        "MFC-S23": 22,
+        "MFC-S24": 23,
+      };
+
+      const desk_filter = {
+        "MFC-S01": "MFC-S01",
+        "MFC-S02": "MFC-S02",
+        "MFC-S03": "MFC-S03",
+        "MFC-S04": "MFC-S04",
+        "MFC-S05": "MFC-S05",
+        "MFC-S06": "MFC-S06",
+        "MFC-S07": "MFC-S07",
+        "MFC-S08": "MFC-S08",
+        "MFC-S09": "MFC-S09",
+        "MFC-S10": "MFC-S10",
+        "MFC-S11": "MFC-S11",
+        "MFC-S12": "MFC-S12",
+        "MFC-S13": "MFC-S13",
+        "MFC-S14": "MFC-S14",
+        "MFC-S15": "MFC-S15",
+        "MFC-S16": "MFC-S16",
+        "MFC-S17": "MFC-S17",
+        "MFC-S18": "MFC-S18",
+        "MFC-S19": "MFC-S19",
+        "MFC-S20": "MFC-S20",
+        "MFC-S21": "MFC-S21",
+        "MFC-S22": "MFC-S22",
+        "MFC-S23": "MFC-S23",
+        "MFC-S24": "MFC-S24",
+      };
+
+      const room_index = {};
+
+      const room_filter = {};
+
+      const dict = [
+        {
+          id: "5e8cb421-84e1-4fb7-94c9-129a006df20d",
+          name: "MFC Desk",
+          type: "furniture",
+          assets: [
+            {
+              id: "1bd8a743-f4d8-4079-acb0-e7339ae418fb",
+              name: "MFC-S01",
+              furnitureId: "9e94d03e-0574-4f88-b87b-0e0a76d41596",
+              layerType: "furniture",
+            },
+            {
+              id: "759c480e-508d-4d12-a6ca-ad0f0c1d3380",
+              name: "MFC-S02",
+              furnitureId: "9cd7cac9-d2f4-4ca4-827e-897013e1cb82",
+              layerType: "furniture",
+            },
+            {
+              id: "054b08b7-4b07-4ddb-8231-d061fa2e457a",
+              name: "MFC-S03",
+              furnitureId: "f3abd963-33bb-4c63-8bbc-b77b3a3ddc6f",
+              layerType: "furniture",
+            },
+            {
+              id: "5d686c58-7f25-4e29-a74f-ab5ade38e037",
+              name: "MFC-S04",
+              furnitureId: "7025d4af-76ac-4380-a231-c6c43cb28d58",
+              layerType: "furniture",
+            },
+            {
+              id: "79066529-fc71-42ab-9cac-778365a57e16",
+              name: "MFC-S05",
+              furnitureId: "3ca2cbf3-b658-49b1-aef3-2bd73814ac48",
+              layerType: "furniture",
+            },
+            {
+              id: "f6012e82-5852-4ad0-b2d9-e21ae1efc332",
+              name: "MFC-S06",
+              furnitureId: "9325601f-da54-4059-a3c6-1751e2c44cf7",
+              layerType: "furniture",
+            },
+            {
+              id: "37df3b0e-faa5-4cae-acf9-6a7a4b5dbab1",
+              name: "MFC-S07",
+              furnitureId: "22260b0b-caf4-4426-972f-ffad804b4a8e",
+              layerType: "furniture",
+            },
+            {
+              id: "711b3da0-d9dd-4b37-ba59-f392b42f4d44",
+              name: "MFC-S08",
+              furnitureId: "89b84e6f-18b5-4970-aed6-0b63cb28e341",
+              layerType: "furniture",
+            },
+            {
+              id: "09719f5f-b239-4244-8d29-1089e2639cb0",
+              name: "MFC-S09",
+              furnitureId: "6ccb1aff-bfee-4f4f-bc27-9ab0a4855189",
+              layerType: "furniture",
+            },
+            {
+              id: "857c8c7f-6f02-406b-b141-121a75ab3431",
+              name: "MFC-S10",
+              furnitureId: "575c7d03-2991-4516-b6a7-8b208727d13c",
+              layerType: "furniture",
+            },
+            {
+              id: "fccaeca3-d046-4474-832f-ec6c5921296b",
+              name: "MFC-S11",
+              furnitureId: "843b69fe-c8ff-466f-b836-eddd2b3cdfab",
+              layerType: "furniture",
+            },
+            {
+              id: "e87ac7ef-5c25-4941-8a2d-01e18095b7ae",
+              name: "MFC-S12",
+              furnitureId: "19dcce8f-1906-4c63-9f53-5d99a91bdcce",
+              layerType: "furniture",
+            },
+            {
+              id: "a22bbdc0-20a6-4d85-82c9-608a4a3f905e",
+              name: "MFC-S13",
+              furnitureId: "37ef1b64-c38e-44f4-ade4-5ec091d2c832",
+              layerType: "furniture",
+            },
+            {
+              id: "d5cf7f9d-c9f4-4d0c-afcb-c3f48fe32e1b",
+              name: "MFC-S14",
+              furnitureId: "828cec73-8fc2-4b75-8559-b04b3261b71c",
+              layerType: "furniture",
+            },
+            {
+              id: "dc274444-fe93-4f2e-86c1-1b3d25d38c6f",
+              name: "MFC-S15",
+              furnitureId: "ba006da6-4073-4765-8a88-911b8526218f",
+              layerType: "furniture",
+            },
+            {
+              id: "20c7ace3-b73e-4d4a-9450-232b5e49a013",
+              name: "MFC-S16",
+              furnitureId: "bae70c05-5bfc-4bda-a3bb-fd24cdd2dd22",
+              layerType: "furniture",
+            },
+            {
+              id: "e2e96048-7a99-4b0e-a8af-e5e6b1e0fdac",
+              name: "MFC-S17",
+              furnitureId: "2516bb31-7cc7-4ebc-8819-410a7b7e4f20",
+              layerType: "furniture",
+            },
+            {
+              id: "f8a45ad1-e4f2-4a0a-b224-ba29a84b1ea4",
+              name: "MFC-S18",
+              furnitureId: "c6d0bc09-d94a-436b-a2cf-98f52ccdacd9",
+              layerType: "furniture",
+            },
+            {
+              id: "fd5425ad-fb8d-4ae5-9c53-1412fa3ccbb7",
+              name: "MFC-S19",
+              furnitureId: "3cd17fe0-fb96-4ddb-aa45-36a209e546b5",
+              layerType: "furniture",
+            },
+            {
+              id: "26e05b1d-9ed1-4046-be83-84958cab7edd",
+              name: "MFC-S20",
+              furnitureId: "35379626-ffa6-48f6-adbd-9d2dd74773dd",
+              layerType: "furniture",
+            },
+            {
+              id: "a05b2a11-2bea-45a1-964d-805b391eae13",
+              name: "MFC-S21",
+              furnitureId: "a1608bd7-18a8-4cf6-864d-c0ab4bde0a75",
+              layerType: "furniture",
+            },
+            {
+              id: "9ee687cf-c83f-4c93-9b5a-b8185e0f6ce2",
+              name: "MFC-S22",
+              furnitureId: "ed592b0c-453f-4d24-9fdc-8cc5a8a01126",
+              layerType: "furniture",
+            },
+            {
+              id: "872cf542-e0d8-4581-8c0f-94166081fb81",
+              name: "MFC-S23",
+              furnitureId: "7b716bfe-b405-437f-83fa-89e5934dca98",
+              layerType: "furniture",
+            },
+            {
+              id: "7a7299b7-59e7-406d-8ad7-bce16348c467",
+              name: "MFC-S24",
+              furnitureId: "c33e4eb6-4cef-4582-a0fb-c7bcfdacff6d",
+              layerType: "furniture",
+            },
+          ],
+        },
+      ];
+
+      const points = [
+        {
+          id: "cec1bf81-0fe4-4753-8a72-c22d7dd235f7",
+          name: "MFC-S01",
+          levelIndex: 0,
+          position: {
+            x: 49.85604696858218,
+            z: -47.37571093635511,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "e959f6c1-68fd-4dca-974b-3f788bf9296e",
+          name: "MFC-S02",
+          levelIndex: 0,
+          position: {
+            x: 50.013815736582906,
+            z: -48.59069957195884,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "b8a51557-ec0c-4bbb-888f-c5405d751534",
+          name: "MFC-S03",
+          levelIndex: 0,
+          position: {
+            x: 49.22687525317478,
+            z: -49.274793896609964,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "b1caca49-229f-4d41-8f40-801c278913f4",
+          name: "MFC-S04",
+          levelIndex: 0,
+          position: {
+            x: 48.47411143903234,
+            z: -49.36989847853206,
+            elevation: 0.710000002160676,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "6d7c6344-d8e1-4cfd-a44f-b3790e37c02e",
+          name: "MFC-S05",
+          levelIndex: 0,
+          position: {
+            x: 46.874224376304355,
+            z: -50.80890645104515,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "8bc89d20-2b8b-4283-8635-196bb7353fe2",
+          name: "MFC-S06",
+          levelIndex: 0,
+          position: {
+            x: 46.851423658660394,
+            z: -50.062637608821255,
+            elevation: 0.46000000216066184,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "d30bfa76-6bc4-4791-b94e-c55070c95a53",
+          name: "MFC-S07",
+          levelIndex: 0,
+          position: {
+            x: 46.79929134853238,
+            z: -49.25030398276268,
+            elevation: 0.6918947928157237,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "c381373f-3ba8-4d23-9d17-c6cad443aa39",
+          name: "MFC-S08",
+          levelIndex: 0,
+          position: {
+            x: 46.84068837352689,
+            z: -46.87313681850243,
+            elevation: 0.6012259616690354,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "13af48e8-cdfa-4f87-b038-147193abec70",
+          name: "MFC-S09",
+          levelIndex: 0,
+          position: {
+            x: 45.57242985713761,
+            z: -46.83451553416066,
+            elevation: 0.7686618422600491,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "d389e797-5ef3-485d-bb7a-79cae753e5d4",
+          name: "MFC-S10",
+          levelIndex: 0,
+          position: {
+            x: 45.334096053871306,
+            z: -49.35145236944137,
+            elevation: 0.7321605899158072,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "733aa078-2c88-42f6-ae19-e5b8b0742293",
+          name: "MFC-S11",
+          levelIndex: 0,
+          position: {
+            x: 45.689966862946854,
+            z: -49.987625065268844,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "cf4fc7ac-14a8-40a3-af34-cb251acbfce8",
+          name: "MFC-S12",
+          levelIndex: 0,
+          position: {
+            x: 45.603155708153054,
+            z: -50.9805299366806,
+            elevation: 0.4402622641604168,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "85457b77-3a79-452b-8f7b-55ac7801c285",
+          name: "MFC-S13",
+          levelIndex: 0,
+          position: {
+            x: 42.763092599393374,
+            z: -51.03664735285908,
+            elevation: 0.6249999938160258,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "1c2c635b-30ef-4f77-808e-98780e1d3212",
+          name: "MFC-S14",
+          levelIndex: 0,
+          position: {
+            x: 42.98339311390362,
+            z: -50.08913261875993,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "e6205a1f-3303-4ba9-8efb-b62cde2d2497",
+          name: "MFC-S15",
+          levelIndex: 0,
+          position: {
+            x: 42.93347316365778,
+            z: -49.28997029695567,
+            elevation: 0.46000000216066184,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "3fda2556-5800-4217-bdab-4382ea0a09db",
+          name: "MFC-S16",
+          levelIndex: 0,
+          position: {
+            x: 43.19254465457326,
+            z: -47.07121038648172,
+            elevation: 0.6249999938160116,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "47353a1e-eea2-46b1-8ebb-7bd084b49777",
+          name: "MFC-S17",
+          levelIndex: 0,
+          position: {
+            x: 41.58387487293716,
+            z: -46.79061236047583,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "832be895-cccf-410e-9af6-75e2de354b98",
+          name: "MFC-S18",
+          levelIndex: 0,
+          position: {
+            x: 41.53291548126298,
+            z: -49.242390941742954,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "10a5ad60-bb66-4dc1-ade9-56980f102922",
+          name: "MFC-S19",
+          levelIndex: 0,
+          position: {
+            x: 41.856580530114314,
+            z: -50.31765640491396,
+            elevation: 0.710000002160676,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "e7a7ed49-b784-42ba-9992-345569cf75d3",
+          name: "MFC-S20",
+          levelIndex: 0,
+          position: {
+            x: 41.87308746809694,
+            z: -51.11885453867599,
+            elevation: 0.48948622140455456,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "0c914f01-c9fb-4310-88f5-de1f1647254a",
+          name: "MFC-S21",
+          levelIndex: 0,
+          position: {
+            x: 39.04446937800415,
+            z: -50.94188954191623,
+            elevation: 0.701475453370378,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "3a101425-a6a8-4850-8ea3-65121dddf679",
+          name: "MFC-S22",
+          levelIndex: 0,
+          position: {
+            x: 38.93170296813125,
+            z: -49.68517956621449,
+            elevation: 0.46000000216066894,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "b58ac151-2e84-4cc3-81b5-550143a46471",
+          name: "MFC-S23",
+          levelIndex: 0,
+          position: {
+            x: 38.729440015094724,
+            z: -48.87757777464288,
+            elevation: 0.8204381816453115,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "c5de1db4-9b2b-4d75-9f8e-1897c44449cb",
+          name: "MFC-S24",
+          levelIndex: 0,
+          position: {
+            x: 38.62799357135019,
+            z: -47.950395092020976,
+            elevation: 0.46000000216065473,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+      ];
+
+      const color_dict = {
+        occupied: "#ff3f34",
+        vacant: "#3aa655",
+        free: "#3aa655",
+        passive_occupied: "#ffbf00",
+      };
+
+      class Space {
+        constructor(spaceId, clientToken, desks, rooms, sensors) {
+          this.spaceId = spaceId;
+          this.clientToken = clientToken;
+          this.space = null;
+          this.rooms = rooms;
+          this.desks = desks;
+          this.sensors = sensors;
+        }
+
+        initSpace(smplr) {
+          this.space = new smplr.Space({
+            spaceId: this.spaceId,
+            clientToken: this.clientToken,
+            containerId: "smplrspace-container",
+          });
+          this.space.startViewer({
+            preview: false,
+            cameraPlacement: {
+              alpha: -Math.PI / 2,
+              beta: 0.5,
+              radius: 14,
+              target: {
+                x: 44,
+                y: 1,
+                z: -50,
+              },
+            },
+            onReady: () => this.fetchAll(),
+            onError: (error) => console.error("Could not start viewer", error),
+          });
+        }
+
+        updateDataLayers() {
+          // remove previous layers if any
+          this.space.removeDataLayer("rooms");
+          this.space.removeDataLayer("desks");
+
+          const isRoomsEmpty = Object.keys(this.rooms).length === 0;
+          const isDesksEmpty = Object.keys(this.desks).length === 0;
+
+          if (!isRoomsEmpty) {
+            // add new layers
+            this.space.addDataLayer({
+              id: "rooms",
+              type: "polygon",
+              data: this.rooms,
+              tooltip: (d) => `${d.name} - ${d.available}`,
+              color: (d) => d.color,
+              alpha: 0.7,
+              height: 2.9,
+            });
+          }
+
+          if (!isDesksEmpty) {
+            this.space.addDataLayer({
+              id: "desks",
+              type: "furniture",
+              data: this.desks,
+              tooltip: (d) => `${d.name} - ${d.available}`,
+              color: (d) => d.color,
+            });
+          }
+
+          
+
+          
+          for (let i = 0; i < points.length; i++) {
+            this.space.addDataLayer({
+              id: `occupancy_${i}`,
+              type: "icon",
+              data: [points[i]],
+              icon: {
+                url: points[i]["image"],
+                width: 180,
+                height: 180,
+              },
+              width: 0.5,
+              tooltip: (d) => d.name,
+              onDrop: ({ data, position }) =>
+                dispatchIcon({
+                  type: "update",
+                  id: data.id,
+                  updates: { position },
+                }),
+            });
+          }
+        }
+
+        fetchAll() {
+          this.fetchData();
+        }
+
+        fetchData() {
+          fetch(API_ENDPOINT)
+            .then((res) => res.json())
+            .then((data) => {
+              let occupancy = {};
+              for (let i = 0; i < data.length; i++) {
+                let value = data[i];
+                let loc = value.area;
+                let timestamp = value.timestamp;
+                let available = "";
+                if (value.occupancy == 1) {
+                  available = "occupied"; //"passive_occupied";
+                } else if (value.occupancy > 1) {
+                  available = "occupied";
+                } else {
+                  available = "free";
+                }
+
+                let color = color_dict.hasOwnProperty(available)
+                  ? color_dict[available]
+                  : "#ffffff";
+
+                if (!occupancy.hasOwnProperty(loc)) {
+                  occupancy[loc] = {
+                    timestamp: timestamp,
+                    available: available,
+                    occupancy: value.occupancy,
+                    color: color,
+                  };
+                } else if (occupancy[loc].timestamp < timestamp) {
+                  occupancy[loc] = {
+                    timestamp: timestamp,
+                    available: available,
+                    occupancy: value.occupancy,
+                    color: color,
+                  };
+                }
+              }
+
+              for (let key in occupancy) {
+                if (
+                  occupancy.hasOwnProperty(key) &&
+                  desk_filter.hasOwnProperty(key)
+                ) {
+                  //
+                  const jsonKey = desk_filter[key];
+                  const _index = desk_index[jsonKey];
+
+                  console.log("updated " + jsonKey);
+                  console.log(occupancy[key]);
+                  this.desks[_index]["available"] = occupancy[key]["available"];
+                  this.desks[_index]["color"] = occupancy[key]["color"];
+                  if (
+                    occupancy[key]["occupancy"] < 100 &&
+                    occupancy[key]["occupancy"] >= 0
+                  ) { 
+                    points[_index][
+                      "image"
+                    ] = `./numbers/number_${occupancy[key]["occupancy"]}.jpg`;
+                  }
+                  console.log(this.desks[0][_index]);
+                } else if (
+                  occupancy.hasOwnProperty(key) &&
+                  room_filter.hasOwnProperty(key)
+                ) {
+                  //
+                  const jsonKey = room_filter[key];
+                  const _index = room_index[jsonKey];
+
+                  this.rooms[_index]["available"] = occupancy[key]["available"];
+                  this.rooms[_index]["numberOfPeople"] =
+                    occupancy[key]["numberOfPeople"];
+                  this.rooms[_index]["color"] = occupancy[key]["color"];
+                }
+              }
+              this.updateDataLayers();
+            });
+        }
+      }
+
+      for (let i = 0; i < points.length; i++) {
+        points[i]["position"]["elevation"] = 1;
+        points[i]["image"] = "./numbers/number_0.jpg";
+      }
+
+      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], [], []);
+
+      delete dict;
+
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      async function start() {
+        while (typeof smplr === "undefined") {
+          await wait();
+        }
+        spc.initSpace(smplr);
+        setInterval(() => {
+          spc.fetchAll();
+        }, UPDATE_FREQUENCY * 1000);
+      }
+
+      start();
+    </script>
+  </body>
+</html>
