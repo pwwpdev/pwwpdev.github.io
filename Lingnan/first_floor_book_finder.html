@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lingnan</title>
+    <title>Input Alert Example</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -657,6 +657,47 @@
                   display.push(book_shelves[data[i]]);
                 }
               }
+              for (let i = 0; i < 2; i++) {
+              if (data.length > 0) {
+                if (data[0].startsWith("1FN")) {
+                  space.setCameraPlacement({
+                    alpha: -4.7267296580715765,
+                    beta: 0.6382428340579139,
+                    radius: 32.421042896849265,
+                    target: { x: 31.3579622603224, y: 3, z: -38.0152734222641 },
+                    animated: true,
+                  });
+                } else if (data[0].startsWith("1FC")) {
+                  space.setCameraPlacement({
+                    alpha: -4.703992296083447,
+                    beta: 0.5084628431956129,
+                    radius: 17.490514084085667,
+                    target: { x: 71.3579622603224, y: 3, z: -52.0152734222641 },
+                    animated: true,
+                  });
+                } else if (data[0].startsWith("1FS")) {
+                  space.setCameraPlacement({
+                    alpha: -1.566476489307028,
+                    beta: 0.569109451364136,
+                    radius: 44.66302138247244,
+                    target: {
+                      x: 110.3579622603224,
+                      y: 3,
+                      z: -42.0152734222641,
+                    },
+                    animated: false,
+                  });
+                }
+              } else {
+                space.setCameraPlacement({
+                  alpha: -1.5707963267948966,
+                  beta: 0.7853981633974483,
+                  radius: 76.60970531509193,
+                  target: { x: 71.3579622603224, y: 3, z: -48.0152734222641 },
+                  animated: true,
+                });
+              }
+            }
 
               space.removeDataLayer("bookshelves");
 
