@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe with Overlay</title>
+    <style>
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+        #iframe {
+            width: 400px;
+            height: 400px;
+            border: none;
+        }
+        #overlay {
+            position: absolute;
+            top: 0px; /* Adjust as needed */
+            left: 300px; /* Adjust as needed */
+            width: 100px;
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 2px solid black; /* Optional border */
+            /* display: flex; */
+            align-items: center;
+            justify-content: center;
+            color: black;
+            z-index: 10; /* Ensures the overlay is on top */
+        }
+        p {
+            font-size: 10px;
+        }
+        h1 {
+            font-size: medium;
+        }
+    </style>
+</head>
+<body>
+
+<iframe id="iframe" src="https://pwwpdev.github.io/Lingnan/m_floor_display"></iframe>
+<div id="overlay">
+    <p>humidity: 59</p>
+    <p>co2: 1182</p>
+    <p>o3: 0.02</p>
+    <p>tvoc: 127</p>
+    <p>pm2.5: 9</p>
+    <p>pm10: 9</p>
+    <p>light: 3</p>
+    <p>pressure: 1010</p>
+    <p>score: 100</p>
+
+</div>
+
+</body>
+</html>
