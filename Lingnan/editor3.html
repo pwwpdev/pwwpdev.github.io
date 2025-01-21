@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+    <!-- <h1>M Floor Book</h1>
+    <input type="text" id="userInput" placeholder="Enter some text" />
+    <button id="alertButton" onclick="alert_input()">Locate</button>
+    <br />
+    <br /> -->
+    <div class="smplr-wrapper">
+      <div id="test" class="smplr-embed"></div>
+    </div>
+
+    <script>
+      const editor = new smplr.Editor({
+        spaceId: "36191e2d-8a12-4a48-bd5e-a290ae7a53e2",
+        user: {
+          id: "22e34786-72be-470b-b5e2-8b2bf29801eb",
+          name: "Rickie Au",
+          picture:
+            "https://www.thefamouspeople.com/profiles/images/walter-gropius-1.jpg",
+        },
+        clientToken: "pub_45cf413215bd43f79621e0b28f8a815b",
+        containerId: "test",
+      });
+      editor.startSession();
+    </script>
+  </body>
+</html>
