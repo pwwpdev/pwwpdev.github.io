@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iframe with Stacked Boxes</title>
+    <title>Iframe with Overlay</title>
     <style>
         html, body {
             margin: 0;
@@ -16,7 +16,7 @@
             height: 100%;
             border: none;
         }
-        #stacked-boxes {
+        #container {
             position: absolute;
             bottom: 100px;
             right: 20px;
@@ -24,6 +24,8 @@
             flex-direction: column;
             gap: 10px;
             z-index: 10;
+        }
+        #stacked-boxes {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             border-left: 0.5px solid #d4d4d4;
@@ -47,15 +49,17 @@
 <body>
 
 <iframe id="iframe" src="https://pwwpdev.github.io/Lingnan/first_floor_dss.html"></iframe>
-<div id="stacked-boxes">
-    <div class="box" id="box1">
-        <p><strong>Computer Room 1:</strong> <span id="random1">0</span></p>
-    </div>
-    <div class="box" id="box2">
-        <p><strong>Computer Room 2:</strong> <span id="random2">0</span></p>
-    </div>
-    <div class="box" id="box3">
-        <p><strong>IAAQ:</strong> <span id="iaq">0</span></p>
+<div id="container">
+    <div id="stacked-boxes">
+        <div class="box" id="box1">
+            <p><strong>Computer Room 1:</strong> <span id="random1">0</span></p>
+        </div>
+        <div class="box" id="box2">
+            <p><strong>Computer Room 2:</strong> <span id="random2">0</span></p>
+        </div>
+        <div class="box" id="box3">
+            <p><strong>IAQ:</strong> <span id="iaq">0</span></p>
+        </div>
     </div>
 </div>
 
