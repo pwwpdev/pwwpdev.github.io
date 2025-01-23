@@ -18,42 +18,46 @@
         }
         #overlay {
             position: absolute;
-            top: 0; /* Adjust as needed */
-            right:0;
-            width: 15%;
-            height: 40%;
-            background-color: rgba(255, 255, 255, 0.6);
-            border: 2px solid black; /* Optional border */
-            /* display: flex; */
-            align-items: center;
-            justify-content: center;
-            color: black;
-            z-index: 10; /* Ensures the overlay is on top */
+            top: 0px; 
+            right: 0px; 
+            width: 220px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(10px); 
+            border-left: 0.5px solid #d4d4d4;
+            border-bottom: 0.5px solid #d4d4d4;
+            border-bottom-left-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+            z-index: 10; 
+            color: #fff;
+            font-family: Arial, sans-serif; 
         }
-        p {
-            font-size: 12px;
-            padding: 4px 0 0 4px;
-            font-weight: 500;
+        #overlay p {
+            font-size: 14px;
+            margin: 8px 0;
+            line-height: 1.5; 
         }
-        h1 {
-            font-size: medium;
+        #overlay p:first-child {
+            margin-top: 0;
+        }
+        #overlay p strong {
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
-<iframe id="iframe" src="https://pwwpdev.github.io/Lingnan/m_floor_display"></iframe>
+<iframe id="iframe" src="https://pwwpdev.github.io/Lingnan/m_floor_dos.html"></iframe>
 <div id="overlay">
-    <p>humidity: 59</p>
-    <p>co2: 1182</p>
-    <p>o3: 0.02</p>
-    <p>tvoc: 127</p>
-    <p>pm2.5: 9</p>
-    <p>pm10: 9</p>
-    <p>light: 3</p>
-    <p>pressure: 1010</p>
-    <p>score: 100</p>
-
+    <p><strong>Humidity:</strong> 59</p>
+    <p><strong>CO2:</strong> 1182</p>
+    <p><strong>O3:</strong> 0.02</p>
+    <p><strong>TVOC:</strong> 127</p>
+    <p><strong>PM2.5:</strong> 9</p>
+    <p><strong>PM10:</strong> 9</p>
+    <p><strong>Light:</strong> 3</p>
+    <p><strong>Pressure:</strong> 1010</p>
+    <p><strong>Score:</strong> 100</p>
 </div>
 
 </body>
