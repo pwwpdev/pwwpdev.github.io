@@ -23,7 +23,7 @@
         }
         #stacked-boxes {
             position: absolute;
-            bottom: 20px;
+            bottom: 60px;
             right: 20px;
             display: flex;
             flex-direction: column;
@@ -78,7 +78,7 @@
         if (iaqValue <= 50) iaqText = "Good (" + iaqValue + " AQI)";
         else if (iaqValue <= 100) iaqText = "Moderate (" + iaqValue + " AQI)";
         else if (iaqValue <= 150) iaqText = "Unhealthy for Sensitive Groups (" + iaqValue + " AQI)";
-        else iaqText = "Unhealthy (" + iaqValue + " AQI)";
+        else iaqText = "(" + iaqValue + " AQI)";
         document.getElementById('iaq').textContent = iaqText;
     }
 
