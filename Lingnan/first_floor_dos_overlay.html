@@ -18,6 +18,62 @@
             border: none;
         }
 
+         #overlay {
+            position: absolute;
+            top: 0px; 
+            right: 0px; 
+            width: 220px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(10px); 
+            border-left: 0.5px solid #d4d4d4;
+            border-bottom: 0.5px solid #d4d4d4;
+            border-bottom-left-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+            z-index: 10; 
+            color: #878888;
+            font-family: Arial, sans-serif; 
+        }
+        #overlay p {
+            font-size: 14px;
+            margin: 8px 0;
+            line-height: 1.5; 
+        }
+        
+ @media (max-width: 768px) {
+             #overlay {
+                width: 160px;
+            }
+
+             #overlay p {
+                font-size: 10px;
+                margin: 6px 0;
+                line-height: 1; 
+            }
+
+        }
+
+        @media (max-width: 480px) {
+             #overlay {
+                width: 50px;
+                max-height:80px
+            }
+
+             #overlay p {
+                font-size: 6px;
+                margin: 1.4px 0;
+                line-height: 1.4; 
+            }        
+        }
+        
+        #overlay p:first-child {
+            margin-top: 0;
+        }
+        #overlay p strong {
+            color: #878888;
+        }
+
+
         .box {
             position: absolute;
             width: 200px;
@@ -102,6 +158,18 @@
 </head>
 <body>
     <iframe id="iframe" src="https://pwwpdev.github.io/Lingnan/first_floor_dos.html"></iframe>
+    <div id="overlay">
+        <p><strong>Humidity:</strong> 59</p>
+        <p><strong>Temperature:</strong> 20</p>
+        <p><strong>CO2:</strong> 1182</p>
+        <p><strong>O3:</strong> 0.02</p>
+        <p><strong>TVOC:</strong> 127</p>
+        <p><strong>PM2.5:</strong> 9</p>
+        <p><strong>PM10:</strong> 9</p>
+        <p><strong>Light:</strong> 3</p>
+        <p><strong>Pressure:</strong> 1010</p>
+        <p><strong>Score:</strong> 100</p>
+    </div>
 
 <!--     <div class="box" id="box1">
         <p><strong>Computer Room 1:</strong> <span id="random1">0</span></p>
