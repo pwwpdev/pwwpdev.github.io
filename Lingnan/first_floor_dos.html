@@ -557,33 +557,38 @@
         }
 
         initSpace(smplr) {
-          this.space = new smplr.Space({
-            spaceId: this.spaceId,
-            clientToken: this.clientToken,
-            containerId: "smplrspace-container",
-          });
-          this.space.startViewer({
-            preview: false,
-            cameraPlacement: {
-              alpha: Math.PI/2,
-              beta: 0.5,
-              radius: 24,
-              target: {
-                x: 70,
-                y: 1,
-                z: -51,
-              },
-            },
-            backgroundColor: "#EEE1D1",
-            onReady: () => this.fetchAll(),
-            onError: (error) => console.error("Could not start viewer", error),
-          });
-        }
+  this.space = new smplr.Space({
+    spaceId: this.spaceId,
+    clientToken: this.clientToken,
+    containerId: "smplrspace-container",
+  });
+  this.space.startViewer({
+    preview: false,
+    cameraPlacement: {
+      alpha: Math.PI/2,
+      beta: 0.5,
+      radius: 24,
+      target: {
+        x: 70,
+        y: 1,
+        z: -51,
+      },
+    },
+    backgroundColor: "#EEE1D1",
+    onReady: () => {
+      this.setMaterials();
+      this.fetchAll();
+    },
+    onError: (error) => console.error("Could not start viewer", error),
+  });
+}
 
-        this.space.setMaterial({
-            id: "floor",
-            color: "#F5F5DC" // Light Beige
-          });
+setMaterials() {
+  this.space.setMaterial({
+    id: "floor",
+    color: "#F5F5DC" // Light Beige
+  });
+}
 
             
 
