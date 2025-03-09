@@ -659,7 +659,12 @@
               }
               for (let i = 0; i < 2; i++) {
               if (data.length > 0) {
-                if (data[0].startsWith("1FN")) {
+
+                // Set camera placement
+
+                const first_bookshelf = data[0];
+
+                if (first_bookshelf.startsWith("1FN")) {
                   space.setCameraPlacement({
                     alpha: -4.7267296580715765,
                     beta: 0.6382428340579139,
@@ -667,7 +672,7 @@
                     target: { x: 31.3579622603224, y: 3, z: -38.0152734222641 },
                     animated: true,
                   });
-                } else if (data[0].startsWith("1FC")) {
+                } else if (first_bookshelf.startsWith("1FC")) {
                   space.setCameraPlacement({
                     alpha: -4.703992296083447,
                     beta: 0.5084628431956129,
@@ -675,7 +680,7 @@
                     target: { x: 71.3579622603224, y: 3, z: -52.0152734222641 },
                     animated: true,
                   });
-                } else if (data[0].startsWith("1FS")) {
+                } else if (first_bookshelf.startsWith("1FS")) {
                   space.setCameraPlacement({
                     alpha: -1.566476489307028,
                     beta: 0.569109451364136,
@@ -688,7 +693,11 @@
                     animated: false,
                   });
                 }
+
+                // Set camera placement end
+
               } else {
+
                 space.setCameraPlacement({
                   alpha: -1.5707963267948966,
                   beta: 0.7853981633974483,
