@@ -658,55 +658,143 @@
                 }
               }
               for (let i = 0; i < 2; i++) {
-              if (data.length > 0) {
 
-                // Set camera placement
+                
+                if (data.length > 0) {
+                  // Set camera placement
 
-                const first_bookshelf = data[0];
+                  const first_bookshelf = data[0];
 
-                if (first_bookshelf.startsWith("1FN")) {
+
+                  if (first_bookshelf === "1FS-BK01") {
+                    space.setCameraPlacement({
+                      alpha: -4.7267296580715765,
+                      beta: 0.6382428340579139,
+                      radius: 32.421042896849265,
+                      target: {
+                        x: 31.3579622603224,
+                        y: 3,
+                        z: -38.0152734222641,
+                      },
+
+                      animated: true,
+                    });
+                  } 
+                  else if (first_bookshelf === "1FS-BK02") {
+                    space.setCameraPlacement({
+                      alpha: -4.7267296580715765,
+                      beta: 0.6382428340579139,
+                      radius: 32.421042896849265,
+                      target: {
+                        x: 31.3579622603224,
+                        y: 3,
+                        z: -38.0152734222641,
+                      },
+
+                      animated: true,
+                    });
+                  } 
+
+                  else if (first_bookshelf === "1FS-BK03") {
+                    space.setCameraPlacement({
+                      alpha: -4.7267296580715765,
+                      beta: 0.6382428340579139,
+                      radius: 32.421042896849265,
+                      target: {
+                        x: 31.3579622603224,
+                        y: 3,
+                        z: -38.0152734222641,
+                      },
+
+                      animated: true,
+                    });
+                  } 
+
+                  else if (first_bookshelf === "1FS-BK04") {
+                    space.setCameraPlacement({
+                      alpha: -4.7267296580715765,
+                      beta: 0.6382428340579139,
+                      radius: 32.421042896849265,
+                      target: {
+                        x: 31.3579622603224,
+                        y: 3,
+                        z: -38.0152734222641,
+                      },
+
+                      animated: true,
+                    });
+                  } 
+                  
+                  else if (first_bookshelf === "1FS-BK05") {
+                    space.setCameraPlacement({
+                      alpha: -4.7267296580715765,
+                      beta: 0.6382428340579139,
+                      radius: 32.421042896849265,
+                      target: {
+                        x: 31.3579622603224,
+                        y: 3,
+                        z: -38.0152734222641,
+                      },
+                      animated: true,
+                    });
+                  } 
+
+                  
+                  else if (first_bookshelf.startsWith("1FN")) {
+                    space.setCameraPlacement({
+                      // alpha: -4.7267296580715765,
+                      // beta: 0.6382428340579139,
+                      // radius: 32.421042896849265,
+                      // target: { x: 31.3579622603224, y: 3, z: -38.0152734222641 },
+
+                      alpha: -1.4689558052770395,
+                      beta: 0.757684272934361,
+                      radius: 16.349636109165107,
+                      target: {
+                        x: 120.17522115686255,
+                        y: 2.9999999999999964,
+                        z: -33.04544710581443,
+                      },
+
+                      animated: true,
+                    });
+                  } else if (first_bookshelf.startsWith("1FC")) {
+                    space.setCameraPlacement({
+                      alpha: -4.703992296083447,
+                      beta: 0.5084628431956129,
+                      radius: 17.490514084085667,
+                      target: {
+                        x: 71.3579622603224,
+                        y: 3,
+                        z: -52.0152734222641,
+                      },
+                      animated: true,
+                    });
+                  } else if (first_bookshelf.startsWith("1FS")) {
+                    space.setCameraPlacement({
+                      alpha: -1.566476489307028,
+                      beta: 0.569109451364136,
+                      radius: 44.66302138247244,
+                      target: {
+                        x: 110.3579622603224,
+                        y: 3,
+                        z: -42.0152734222641,
+                      },
+                      animated: false,
+                    });
+                  }
+
+                  // Set camera placement end
+                } else {
                   space.setCameraPlacement({
-                    alpha: -4.7267296580715765,
-                    beta: 0.6382428340579139,
-                    radius: 32.421042896849265,
-                    target: { x: 31.3579622603224, y: 3, z: -38.0152734222641 },
+                    alpha: -1.5707963267948966,
+                    beta: 0.7853981633974483,
+                    radius: 76.60970531509193,
+                    target: { x: 71.3579622603224, y: 3, z: -48.0152734222641 },
                     animated: true,
-                  });
-                } else if (first_bookshelf.startsWith("1FC")) {
-                  space.setCameraPlacement({
-                    alpha: -4.703992296083447,
-                    beta: 0.5084628431956129,
-                    radius: 17.490514084085667,
-                    target: { x: 71.3579622603224, y: 3, z: -52.0152734222641 },
-                    animated: true,
-                  });
-                } else if (first_bookshelf.startsWith("1FS")) {
-                  space.setCameraPlacement({
-                    alpha: -1.566476489307028,
-                    beta: 0.569109451364136,
-                    radius: 44.66302138247244,
-                    target: {
-                      x: 110.3579622603224,
-                      y: 3,
-                      z: -42.0152734222641,
-                    },
-                    animated: false,
                   });
                 }
-
-                // Set camera placement end
-
-              } else {
-
-                space.setCameraPlacement({
-                  alpha: -1.5707963267948966,
-                  beta: 0.7853981633974483,
-                  radius: 76.60970531509193,
-                  target: { x: 71.3579622603224, y: 3, z: -48.0152734222641 },
-                  animated: true,
-                });
               }
-            }
 
               space.removeDataLayer("bookshelves");
 
