@@ -16,23 +16,18 @@
       crossorigin="anonymous"
     />
 
-
     <div id="wrapper">
       <div id="smplrspace-container"></div>
     </div>
-
 
     <script>
       const API_ENDPOINT =
         "https://optimusc.flowfuse.cloud/lingnan-library-dos";
 
-
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
       const SPACE_ID = "73242c82-a0e9-4c96-8d28-089829ecf3d0";
-      
 
       const UPDATE_FREQUENCY = 60;
-
 
       const desk_index = {
         "LRT01-S01": 0,
@@ -160,380 +155,588 @@
         "LRT06-S10": "LRT06-S10",
       };
 
-      const room_index = {};
+      const room_index = {
+        "Group Study Room 9": 0,
+        "Individual Study Room 1": 1,
+        "Individual Study Room 2": 2,
+        "Individual Study Room 3": 3,
+        "Group Study Room 8": 4,
+      };
 
-      const room_filter = {};
-
+      const room_filter = {
+        "1FC-GS9": "Group Study Room 9",
+        "1FC-IS1": "Individual Study Room 1",
+        "1FC-IS2": "Individual Study Room 2",
+        "1FC-IS3": "Individual Study Room 3",
+        "1FC-GS8": "Group Study Room 8",
+      };
 
       const dict = [
-    {
-        "id": "97bb9348-8841-42ea-91f2-f0589f05473c",
-        "name": "LRR Desk",
-        "type": "furniture",
-        "assets": [
+        {
+          id: "97bb9348-8841-42ea-91f2-f0589f05473c",
+          name: "LRR Desk",
+          type: "furniture",
+          assets: [
             {
-                "id": "2a4af663-0eee-42b1-a569-5ac13b4daae3",
-                "name": "LRT01-S01",
-                "furnitureId": "51d6eb0c-930c-4feb-8c8f-e39b2db2ffee",
-                "layerType": "furniture"
+              id: "2a4af663-0eee-42b1-a569-5ac13b4daae3",
+              name: "LRT01-S01",
+              furnitureId: "51d6eb0c-930c-4feb-8c8f-e39b2db2ffee",
+              layerType: "furniture",
             },
             {
-                "id": "c25407a9-69e2-4580-9baa-cd3037801a8d",
-                "name": "LRT01-S02",
-                "furnitureId": "507326d2-077a-4135-accb-40eb588c3ef9",
-                "layerType": "furniture"
+              id: "c25407a9-69e2-4580-9baa-cd3037801a8d",
+              name: "LRT01-S02",
+              furnitureId: "507326d2-077a-4135-accb-40eb588c3ef9",
+              layerType: "furniture",
             },
             {
-                "id": "4c59265f-81ba-4256-99b7-1d3e9c91db93",
-                "name": "LRT01-S03",
-                "furnitureId": "f526ce1c-570f-43b7-aae5-1207bb1f43ab",
-                "layerType": "furniture"
+              id: "4c59265f-81ba-4256-99b7-1d3e9c91db93",
+              name: "LRT01-S03",
+              furnitureId: "f526ce1c-570f-43b7-aae5-1207bb1f43ab",
+              layerType: "furniture",
             },
             {
-                "id": "a7051fac-2793-4047-b5ea-dc2335276b14",
-                "name": "LRT01-S04",
-                "furnitureId": "7d12c239-b79a-4ff7-bde2-252453c739ae",
-                "layerType": "furniture"
+              id: "a7051fac-2793-4047-b5ea-dc2335276b14",
+              name: "LRT01-S04",
+              furnitureId: "7d12c239-b79a-4ff7-bde2-252453c739ae",
+              layerType: "furniture",
             },
             {
-                "id": "e8b5f525-4447-40ba-9e03-f0513b96ed89",
-                "name": "LRT01-S05",
-                "furnitureId": "6920090d-50cc-4f2c-bcf7-416c1db91fce",
-                "layerType": "furniture"
+              id: "e8b5f525-4447-40ba-9e03-f0513b96ed89",
+              name: "LRT01-S05",
+              furnitureId: "6920090d-50cc-4f2c-bcf7-416c1db91fce",
+              layerType: "furniture",
             },
             {
-                "id": "5613a796-9986-4075-bfae-770e70736b80",
-                "name": "LRT01-S06",
-                "furnitureId": "f686ca38-d98b-4f06-b570-9ea4552bce68",
-                "layerType": "furniture"
+              id: "5613a796-9986-4075-bfae-770e70736b80",
+              name: "LRT01-S06",
+              furnitureId: "f686ca38-d98b-4f06-b570-9ea4552bce68",
+              layerType: "furniture",
             },
             {
-                "id": "34ca1218-0977-462a-9365-5bb409b63185",
-                "name": "LRT01-S07",
-                "furnitureId": "d3e1902e-ae77-41cf-9663-7a101f3e6399",
-                "layerType": "furniture"
+              id: "34ca1218-0977-462a-9365-5bb409b63185",
+              name: "LRT01-S07",
+              furnitureId: "d3e1902e-ae77-41cf-9663-7a101f3e6399",
+              layerType: "furniture",
             },
             {
-                "id": "0994c26f-6749-4909-896d-17bf227fca25",
-                "name": "LRT01-S08",
-                "furnitureId": "6178b0d1-99c4-4652-990e-12f8bac8658f",
-                "layerType": "furniture"
+              id: "0994c26f-6749-4909-896d-17bf227fca25",
+              name: "LRT01-S08",
+              furnitureId: "6178b0d1-99c4-4652-990e-12f8bac8658f",
+              layerType: "furniture",
             },
             {
-                "id": "61855b20-8359-486a-ab92-e51e2347e645",
-                "name": "LRT01-S09",
-                "furnitureId": "dc50398d-a6f8-4c43-8ca9-badb08cd1603",
-                "layerType": "furniture"
+              id: "61855b20-8359-486a-ab92-e51e2347e645",
+              name: "LRT01-S09",
+              furnitureId: "dc50398d-a6f8-4c43-8ca9-badb08cd1603",
+              layerType: "furniture",
             },
             {
-                "id": "4e4f525c-8540-45d1-a3ee-1f646353ffd3",
-                "name": "LRT01-S10",
-                "furnitureId": "a9962b6b-26ce-436a-9af5-0f73b1f88d98",
-                "layerType": "furniture"
+              id: "4e4f525c-8540-45d1-a3ee-1f646353ffd3",
+              name: "LRT01-S10",
+              furnitureId: "a9962b6b-26ce-436a-9af5-0f73b1f88d98",
+              layerType: "furniture",
             },
             {
-                "id": "ca314bfd-6190-4f03-8d58-e1ef1007ade6",
-                "name": "LRT02-S01",
-                "furnitureId": "e7860d0a-4d66-4f4d-9c6b-7d30ac8de382",
-                "layerType": "furniture"
+              id: "ca314bfd-6190-4f03-8d58-e1ef1007ade6",
+              name: "LRT02-S01",
+              furnitureId: "e7860d0a-4d66-4f4d-9c6b-7d30ac8de382",
+              layerType: "furniture",
             },
             {
-                "id": "a6e8f32c-ca3e-43fb-a937-60a84bf400ca",
-                "name": "LRT02-S02",
-                "furnitureId": "7909d6d8-221c-476f-921d-e910d8c1264b",
-                "layerType": "furniture"
+              id: "a6e8f32c-ca3e-43fb-a937-60a84bf400ca",
+              name: "LRT02-S02",
+              furnitureId: "7909d6d8-221c-476f-921d-e910d8c1264b",
+              layerType: "furniture",
             },
             {
-                "id": "7dbffb04-1264-405a-b61a-26ad9deff4b2",
-                "name": "LRT02-S03",
-                "furnitureId": "7c97bb4b-b99f-4d23-a796-f5f9eb84620b",
-                "layerType": "furniture"
+              id: "7dbffb04-1264-405a-b61a-26ad9deff4b2",
+              name: "LRT02-S03",
+              furnitureId: "7c97bb4b-b99f-4d23-a796-f5f9eb84620b",
+              layerType: "furniture",
             },
             {
-                "id": "4cef2109-693d-4ac8-b6de-108dcee4af37",
-                "name": "LRT02-S04",
-                "furnitureId": "aabc277b-7a91-4057-ae5f-013e6179974a",
-                "layerType": "furniture"
+              id: "4cef2109-693d-4ac8-b6de-108dcee4af37",
+              name: "LRT02-S04",
+              furnitureId: "aabc277b-7a91-4057-ae5f-013e6179974a",
+              layerType: "furniture",
             },
             {
-                "id": "67325ee2-a533-443f-a23e-721ee071de50",
-                "name": "LRT02-S05",
-                "furnitureId": "79b7e004-9575-43a1-8abf-2e99d6be655c",
-                "layerType": "furniture"
+              id: "67325ee2-a533-443f-a23e-721ee071de50",
+              name: "LRT02-S05",
+              furnitureId: "79b7e004-9575-43a1-8abf-2e99d6be655c",
+              layerType: "furniture",
             },
             {
-                "id": "c5f8d077-e848-4cdf-a4d3-0c9d0f2a3bc4",
-                "name": "LRT02-S06",
-                "furnitureId": "fb7e3f21-4141-4fba-bdb5-77ea9effe175",
-                "layerType": "furniture"
+              id: "c5f8d077-e848-4cdf-a4d3-0c9d0f2a3bc4",
+              name: "LRT02-S06",
+              furnitureId: "fb7e3f21-4141-4fba-bdb5-77ea9effe175",
+              layerType: "furniture",
             },
             {
-                "id": "d41dc8c6-a716-479d-bd29-5b3602794750",
-                "name": "LRT02-S07",
-                "furnitureId": "3c568152-7874-4439-9213-cbcb48aca31f",
-                "layerType": "furniture"
+              id: "d41dc8c6-a716-479d-bd29-5b3602794750",
+              name: "LRT02-S07",
+              furnitureId: "3c568152-7874-4439-9213-cbcb48aca31f",
+              layerType: "furniture",
             },
             {
-                "id": "3ae03ab5-5179-41c2-9060-9c05ef6ba3ff",
-                "name": "LRT02-S08",
-                "furnitureId": "7e71c43c-3674-45c5-9367-3d92b8ca90fb",
-                "layerType": "furniture"
+              id: "3ae03ab5-5179-41c2-9060-9c05ef6ba3ff",
+              name: "LRT02-S08",
+              furnitureId: "7e71c43c-3674-45c5-9367-3d92b8ca90fb",
+              layerType: "furniture",
             },
             {
-                "id": "cf2cc9a6-2f63-41d4-9f91-449455cf1f2b",
-                "name": "LRT02-S09",
-                "furnitureId": "8e6aeec2-19f4-4f98-bb4e-4d12bb2c79dd",
-                "layerType": "furniture"
+              id: "cf2cc9a6-2f63-41d4-9f91-449455cf1f2b",
+              name: "LRT02-S09",
+              furnitureId: "8e6aeec2-19f4-4f98-bb4e-4d12bb2c79dd",
+              layerType: "furniture",
             },
             {
-                "id": "a0b88db3-cf40-4390-8e21-4362a0070a56",
-                "name": "LRT02-S10",
-                "furnitureId": "ab10d1ff-210d-4318-934e-c7c42fbabad4",
-                "layerType": "furniture"
+              id: "a0b88db3-cf40-4390-8e21-4362a0070a56",
+              name: "LRT02-S10",
+              furnitureId: "ab10d1ff-210d-4318-934e-c7c42fbabad4",
+              layerType: "furniture",
             },
             {
-                "id": "1fff8614-28d8-471b-804d-7c729a87b79c",
-                "name": "LRT03-S01",
-                "furnitureId": "73e36729-5c27-4c04-aebf-a42d613d87fd",
-                "layerType": "furniture"
+              id: "1fff8614-28d8-471b-804d-7c729a87b79c",
+              name: "LRT03-S01",
+              furnitureId: "73e36729-5c27-4c04-aebf-a42d613d87fd",
+              layerType: "furniture",
             },
             {
-                "id": "dcd0d6e6-9376-4a2c-a8b0-ced2238fd870",
-                "name": "LRT03-S02",
-                "furnitureId": "43a6e8b2-9ba3-474e-aff2-7549605c9b6a",
-                "layerType": "furniture"
+              id: "dcd0d6e6-9376-4a2c-a8b0-ced2238fd870",
+              name: "LRT03-S02",
+              furnitureId: "43a6e8b2-9ba3-474e-aff2-7549605c9b6a",
+              layerType: "furniture",
             },
             {
-                "id": "e1b9ce38-d03e-41eb-80c6-ea3e808627e2",
-                "name": "LRT03-S03",
-                "furnitureId": "c6846a03-b76f-4387-ac11-ec8c06c90fcf",
-                "layerType": "furniture"
+              id: "e1b9ce38-d03e-41eb-80c6-ea3e808627e2",
+              name: "LRT03-S03",
+              furnitureId: "c6846a03-b76f-4387-ac11-ec8c06c90fcf",
+              layerType: "furniture",
             },
             {
-                "id": "69b1a8e5-cdb7-49e4-810e-dfb1e438c90e",
-                "name": "LRT03-S04",
-                "furnitureId": "b5621b3c-8efc-4455-ac19-e003a0ae1cee",
-                "layerType": "furniture"
+              id: "69b1a8e5-cdb7-49e4-810e-dfb1e438c90e",
+              name: "LRT03-S04",
+              furnitureId: "b5621b3c-8efc-4455-ac19-e003a0ae1cee",
+              layerType: "furniture",
             },
             {
-                "id": "40f35036-373f-4640-84a1-cebab2788bb2",
-                "name": "LRT03-S05",
-                "furnitureId": "6cff29c6-ec8f-4be0-811a-057de9dbc74a",
-                "layerType": "furniture"
+              id: "40f35036-373f-4640-84a1-cebab2788bb2",
+              name: "LRT03-S05",
+              furnitureId: "6cff29c6-ec8f-4be0-811a-057de9dbc74a",
+              layerType: "furniture",
             },
             {
-                "id": "95c7395a-1742-4153-9e77-db2b365bbfdc",
-                "name": "LRT03-S06",
-                "furnitureId": "191ee9ff-678c-4ba1-a39b-31bca6d5c36d",
-                "layerType": "furniture"
+              id: "95c7395a-1742-4153-9e77-db2b365bbfdc",
+              name: "LRT03-S06",
+              furnitureId: "191ee9ff-678c-4ba1-a39b-31bca6d5c36d",
+              layerType: "furniture",
             },
             {
-                "id": "0455a87f-e3bc-4679-860d-b8fee335af48",
-                "name": "LRT03-S07",
-                "furnitureId": "2543a1f7-412c-4ddf-93a5-ed07e5c9d898",
-                "layerType": "furniture"
+              id: "0455a87f-e3bc-4679-860d-b8fee335af48",
+              name: "LRT03-S07",
+              furnitureId: "2543a1f7-412c-4ddf-93a5-ed07e5c9d898",
+              layerType: "furniture",
             },
             {
-                "id": "3a4d5d94-5910-457c-b02f-794cfa2f1bf9",
-                "name": "LRT03-S08",
-                "furnitureId": "5d3f14e1-2f29-486a-9ece-247787869aa7",
-                "layerType": "furniture"
+              id: "3a4d5d94-5910-457c-b02f-794cfa2f1bf9",
+              name: "LRT03-S08",
+              furnitureId: "5d3f14e1-2f29-486a-9ece-247787869aa7",
+              layerType: "furniture",
             },
             {
-                "id": "5de0c526-bed0-407a-88e0-d335408284f9",
-                "name": "LRT03-S09",
-                "furnitureId": "b4735137-e041-416f-b123-bdc259eaa843",
-                "layerType": "furniture"
+              id: "5de0c526-bed0-407a-88e0-d335408284f9",
+              name: "LRT03-S09",
+              furnitureId: "b4735137-e041-416f-b123-bdc259eaa843",
+              layerType: "furniture",
             },
             {
-                "id": "f419d856-4d56-48ed-a44d-b296017af2cd",
-                "name": "LRT03-S10",
-                "furnitureId": "be402c15-4498-47d8-880a-b32e7def61f3",
-                "layerType": "furniture"
+              id: "f419d856-4d56-48ed-a44d-b296017af2cd",
+              name: "LRT03-S10",
+              furnitureId: "be402c15-4498-47d8-880a-b32e7def61f3",
+              layerType: "furniture",
             },
             {
-                "id": "9ab7041d-f45d-4736-b5ce-e669dfb6313b",
-                "name": "LRT04-S01",
-                "furnitureId": "70bd46dc-0e00-4188-a9ba-894c1497bbbe",
-                "layerType": "furniture"
+              id: "9ab7041d-f45d-4736-b5ce-e669dfb6313b",
+              name: "LRT04-S01",
+              furnitureId: "70bd46dc-0e00-4188-a9ba-894c1497bbbe",
+              layerType: "furniture",
             },
             {
-                "id": "c3432109-cf33-4a29-bff7-bbfd9632f148",
-                "name": "LRT04-S02",
-                "furnitureId": "d519eaf2-5f9a-4edd-a7fe-d80906efc40a",
-                "layerType": "furniture"
+              id: "c3432109-cf33-4a29-bff7-bbfd9632f148",
+              name: "LRT04-S02",
+              furnitureId: "d519eaf2-5f9a-4edd-a7fe-d80906efc40a",
+              layerType: "furniture",
             },
             {
-                "id": "e563b7bf-e688-4fe6-aff3-b60b2f98b2f2",
-                "name": "LRT04-S03",
-                "furnitureId": "974896da-5a83-40e9-982e-97ef85fe2456",
-                "layerType": "furniture"
+              id: "e563b7bf-e688-4fe6-aff3-b60b2f98b2f2",
+              name: "LRT04-S03",
+              furnitureId: "974896da-5a83-40e9-982e-97ef85fe2456",
+              layerType: "furniture",
             },
             {
-                "id": "a95be06c-fd42-46cd-924e-83136442b31b",
-                "name": "LRT04-S04",
-                "furnitureId": "08ca4067-6c2c-4c19-b5a1-5fc6b2ee5061",
-                "layerType": "furniture"
+              id: "a95be06c-fd42-46cd-924e-83136442b31b",
+              name: "LRT04-S04",
+              furnitureId: "08ca4067-6c2c-4c19-b5a1-5fc6b2ee5061",
+              layerType: "furniture",
             },
             {
-                "id": "100af926-5529-46b2-bb15-d94b72c6b4c7",
-                "name": "LRT04-S05",
-                "furnitureId": "19093d2c-b06a-41fe-9e2d-ef3e4a7fe43e",
-                "layerType": "furniture"
+              id: "100af926-5529-46b2-bb15-d94b72c6b4c7",
+              name: "LRT04-S05",
+              furnitureId: "19093d2c-b06a-41fe-9e2d-ef3e4a7fe43e",
+              layerType: "furniture",
             },
             {
-                "id": "de64f929-9530-49de-a37e-faa676f178dc",
-                "name": "LRT04-S06",
-                "furnitureId": "b06add29-dba6-41df-bcb3-e76061162d69",
-                "layerType": "furniture"
+              id: "de64f929-9530-49de-a37e-faa676f178dc",
+              name: "LRT04-S06",
+              furnitureId: "b06add29-dba6-41df-bcb3-e76061162d69",
+              layerType: "furniture",
             },
             {
-                "id": "e14e617f-0a1e-4411-8111-429ad2e8045f",
-                "name": "LRT04-S07",
-                "furnitureId": "148a5a19-e567-487a-a25c-9bf512183642",
-                "layerType": "furniture"
+              id: "e14e617f-0a1e-4411-8111-429ad2e8045f",
+              name: "LRT04-S07",
+              furnitureId: "148a5a19-e567-487a-a25c-9bf512183642",
+              layerType: "furniture",
             },
             {
-                "id": "dd3758d1-c6a8-4489-89fb-2814c784c5d5",
-                "name": "LRT04-S08",
-                "furnitureId": "2ddf9be5-8d15-4af6-9229-f5c858e07b69",
-                "layerType": "furniture"
+              id: "dd3758d1-c6a8-4489-89fb-2814c784c5d5",
+              name: "LRT04-S08",
+              furnitureId: "2ddf9be5-8d15-4af6-9229-f5c858e07b69",
+              layerType: "furniture",
             },
             {
-                "id": "5854e452-a9b7-4e36-97b9-a1320734656a",
-                "name": "LRT04-S09",
-                "furnitureId": "46c3ded6-53b4-4636-b617-b604b2d10a42",
-                "layerType": "furniture"
+              id: "5854e452-a9b7-4e36-97b9-a1320734656a",
+              name: "LRT04-S09",
+              furnitureId: "46c3ded6-53b4-4636-b617-b604b2d10a42",
+              layerType: "furniture",
             },
             {
-                "id": "d1b91ecc-eda2-4674-a263-c3a17dc4de24",
-                "name": "LRT04-S10",
-                "furnitureId": "418657a0-1922-476d-bb2c-e8ca14266958",
-                "layerType": "furniture"
+              id: "d1b91ecc-eda2-4674-a263-c3a17dc4de24",
+              name: "LRT04-S10",
+              furnitureId: "418657a0-1922-476d-bb2c-e8ca14266958",
+              layerType: "furniture",
             },
             {
-                "id": "39964306-eb35-4745-bdd0-3e2eb9603b5a",
-                "name": "LRT05-S01",
-                "furnitureId": "6eb1e034-169c-4f8c-952d-9576b92de369",
-                "layerType": "furniture"
+              id: "39964306-eb35-4745-bdd0-3e2eb9603b5a",
+              name: "LRT05-S01",
+              furnitureId: "6eb1e034-169c-4f8c-952d-9576b92de369",
+              layerType: "furniture",
             },
             {
-                "id": "49be04c0-6eb7-4663-bd86-aa3f882e6c0b",
-                "name": "LRT05-S02",
-                "furnitureId": "ec9782fa-db9e-4af0-8fcd-cbd9b29b40bf",
-                "layerType": "furniture"
+              id: "49be04c0-6eb7-4663-bd86-aa3f882e6c0b",
+              name: "LRT05-S02",
+              furnitureId: "ec9782fa-db9e-4af0-8fcd-cbd9b29b40bf",
+              layerType: "furniture",
             },
             {
-                "id": "b7771164-3ceb-479b-9659-8a48e0f38586",
-                "name": "LRT05-S03",
-                "furnitureId": "a3727d19-f033-49c6-ac5c-3c0c5de31c75",
-                "layerType": "furniture"
+              id: "b7771164-3ceb-479b-9659-8a48e0f38586",
+              name: "LRT05-S03",
+              furnitureId: "a3727d19-f033-49c6-ac5c-3c0c5de31c75",
+              layerType: "furniture",
             },
             {
-                "id": "c6d2d8d2-b760-49d0-bbac-564c2c48ea73",
-                "name": "LRT05-S04",
-                "furnitureId": "712ffe41-b9cb-413b-ad43-5398ba17e414",
-                "layerType": "furniture"
+              id: "c6d2d8d2-b760-49d0-bbac-564c2c48ea73",
+              name: "LRT05-S04",
+              furnitureId: "712ffe41-b9cb-413b-ad43-5398ba17e414",
+              layerType: "furniture",
             },
             {
-                "id": "091a782f-ffda-4649-b609-aadb0b64a5d8",
-                "name": "LRT05-S05",
-                "furnitureId": "1948ff48-0752-458d-aea4-7a9453b19a48",
-                "layerType": "furniture"
+              id: "091a782f-ffda-4649-b609-aadb0b64a5d8",
+              name: "LRT05-S05",
+              furnitureId: "1948ff48-0752-458d-aea4-7a9453b19a48",
+              layerType: "furniture",
             },
             {
-                "id": "07f7eff6-d6a0-43ad-b128-b619275f87ee",
-                "name": "LRT05-S06",
-                "furnitureId": "8a4bc8f3-0b98-4a0f-ac52-f88e4ba57ac8",
-                "layerType": "furniture"
+              id: "07f7eff6-d6a0-43ad-b128-b619275f87ee",
+              name: "LRT05-S06",
+              furnitureId: "8a4bc8f3-0b98-4a0f-ac52-f88e4ba57ac8",
+              layerType: "furniture",
             },
             {
-                "id": "a3ba8f96-8467-48d1-8021-763112125673",
-                "name": "LRT05-S07",
-                "furnitureId": "83382964-e41a-463f-b0e8-bf572b366a92",
-                "layerType": "furniture"
+              id: "a3ba8f96-8467-48d1-8021-763112125673",
+              name: "LRT05-S07",
+              furnitureId: "83382964-e41a-463f-b0e8-bf572b366a92",
+              layerType: "furniture",
             },
             {
-                "id": "902e54b9-d99f-49b7-85c6-9a4ce0892427",
-                "name": "LRT05-S08",
-                "furnitureId": "583159f9-35fa-445f-8160-d8f487ca905f",
-                "layerType": "furniture"
+              id: "902e54b9-d99f-49b7-85c6-9a4ce0892427",
+              name: "LRT05-S08",
+              furnitureId: "583159f9-35fa-445f-8160-d8f487ca905f",
+              layerType: "furniture",
             },
             {
-                "id": "ba3725df-9918-480e-bd36-92d73c55030f",
-                "name": "LRT05-S09",
-                "furnitureId": "6b90208e-015c-43f8-9681-62a282ae0560",
-                "layerType": "furniture"
+              id: "ba3725df-9918-480e-bd36-92d73c55030f",
+              name: "LRT05-S09",
+              furnitureId: "6b90208e-015c-43f8-9681-62a282ae0560",
+              layerType: "furniture",
             },
             {
-                "id": "40dc991a-bf01-411c-866e-ce428dd7fb23",
-                "name": "LRT05-S10",
-                "furnitureId": "19da1798-801a-4d1d-a539-d18286d32342",
-                "layerType": "furniture"
+              id: "40dc991a-bf01-411c-866e-ce428dd7fb23",
+              name: "LRT05-S10",
+              furnitureId: "19da1798-801a-4d1d-a539-d18286d32342",
+              layerType: "furniture",
             },
             {
-                "id": "e07b0433-6dd4-4ee4-890c-f041860b4617",
-                "name": "LRT06-S01",
-                "furnitureId": "de5295c8-3708-444b-8146-8c3a2a7aa497",
-                "layerType": "furniture"
+              id: "e07b0433-6dd4-4ee4-890c-f041860b4617",
+              name: "LRT06-S01",
+              furnitureId: "de5295c8-3708-444b-8146-8c3a2a7aa497",
+              layerType: "furniture",
             },
             {
-                "id": "8de75d56-73e0-41fb-a877-c83055e9793e",
-                "name": "LRT06-S02",
-                "furnitureId": "e4863045-0369-4ea7-a569-05e1e9563c2a",
-                "layerType": "furniture"
+              id: "8de75d56-73e0-41fb-a877-c83055e9793e",
+              name: "LRT06-S02",
+              furnitureId: "e4863045-0369-4ea7-a569-05e1e9563c2a",
+              layerType: "furniture",
             },
             {
-                "id": "9cd8ed21-5c7c-48e0-a60a-f2d8a9678b6d",
-                "name": "LRT06-S03",
-                "furnitureId": "d9a9baa3-8a6f-4ff1-a03d-3806ec50b1e1",
-                "layerType": "furniture"
+              id: "9cd8ed21-5c7c-48e0-a60a-f2d8a9678b6d",
+              name: "LRT06-S03",
+              furnitureId: "d9a9baa3-8a6f-4ff1-a03d-3806ec50b1e1",
+              layerType: "furniture",
             },
             {
-                "id": "f9247401-2ba2-4896-b31c-8d4e6927125f",
-                "name": "LRT06-S04",
-                "furnitureId": "7508be4a-aa73-418b-97ff-01fd2ea97ad6",
-                "layerType": "furniture"
+              id: "f9247401-2ba2-4896-b31c-8d4e6927125f",
+              name: "LRT06-S04",
+              furnitureId: "7508be4a-aa73-418b-97ff-01fd2ea97ad6",
+              layerType: "furniture",
             },
             {
-                "id": "9c53d86f-bfaa-4899-b7bd-d4aecff1d1aa",
-                "name": "LRT06-S05",
-                "furnitureId": "3b6402eb-7253-4ec7-9590-4c887ece8327",
-                "layerType": "furniture"
+              id: "9c53d86f-bfaa-4899-b7bd-d4aecff1d1aa",
+              name: "LRT06-S05",
+              furnitureId: "3b6402eb-7253-4ec7-9590-4c887ece8327",
+              layerType: "furniture",
             },
             {
-                "id": "e1680f72-a5e0-4e37-a0e6-8c851dd5bc1f",
-                "name": "LRT06-S06",
-                "furnitureId": "af2a06a5-fe89-4fc2-b10e-bd6201610f11",
-                "layerType": "furniture"
+              id: "e1680f72-a5e0-4e37-a0e6-8c851dd5bc1f",
+              name: "LRT06-S06",
+              furnitureId: "af2a06a5-fe89-4fc2-b10e-bd6201610f11",
+              layerType: "furniture",
             },
             {
-                "id": "05b730dc-30d1-465b-bce3-32aa509f8bc0",
-                "name": "LRT06-S07",
-                "furnitureId": "ed3f8463-b1c2-4bfd-a402-d7a2f5da302d",
-                "layerType": "furniture"
+              id: "05b730dc-30d1-465b-bce3-32aa509f8bc0",
+              name: "LRT06-S07",
+              furnitureId: "ed3f8463-b1c2-4bfd-a402-d7a2f5da302d",
+              layerType: "furniture",
             },
             {
-                "id": "fd020198-efb6-4599-8186-450bceaf8586",
-                "name": "LRT06-S08",
-                "furnitureId": "4414b411-c46d-4591-84de-c6425550e7f6",
-                "layerType": "furniture"
+              id: "fd020198-efb6-4599-8186-450bceaf8586",
+              name: "LRT06-S08",
+              furnitureId: "4414b411-c46d-4591-84de-c6425550e7f6",
+              layerType: "furniture",
             },
             {
-                "id": "eb0ca871-ad7c-4ca4-ae98-bd4deef602ab",
-                "name": "LRT06-S09",
-                "furnitureId": "cdcb4775-b712-4a16-a963-d1eccd922422",
-                "layerType": "furniture"
+              id: "eb0ca871-ad7c-4ca4-ae98-bd4deef602ab",
+              name: "LRT06-S09",
+              furnitureId: "cdcb4775-b712-4a16-a963-d1eccd922422",
+              layerType: "furniture",
             },
             {
-                "id": "02e16118-e7f0-4b62-bbec-3fef12a66f4b",
-                "name": "LRT06-S10",
-                "furnitureId": "42cdb803-a7eb-4c08-8788-868b386b8fca",
-                "layerType": "furniture"
-            }
-        ]
-    }
-]
+              id: "02e16118-e7f0-4b62-bbec-3fef12a66f4b",
+              name: "LRT06-S10",
+              furnitureId: "42cdb803-a7eb-4c08-8788-868b386b8fca",
+              layerType: "furniture",
+            },
+          ],
+        },
+        {
+          id: "a959fc67-e20d-4f63-b2d3-408145b9bc90",
+          name: "rooms",
+          type: "polygon",
+          assets: [
+            {
+              id: "def01b1a-6432-40cf-98cd-6b6522474a70",
+              name: "Group Study Room 9",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 122.768,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 126.004,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 126.463,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 126.463,
+                    z: -56.473,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 126.463,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 122.768,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 122.768,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "a6b9d19a-e7b8-4997-b671-0c477c73389f",
+              name: "Individual Study Room 1",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 121.083,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 122.768,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 122.768,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 121.083,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 121.083,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "b6845214-8c3e-477b-aa30-ad546b5e8e6a",
+              name: "Individual Study Room 2",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 119.377,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 121.083,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 121.083,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 119.377,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 119.377,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "2c742e1d-1ab7-4600-8376-76626e90c084",
+              name: "Individual Study Room 3",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 117.426,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 119.377,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 119.377,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 117.426,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 117.426,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "fd67807b-5a1c-491b-9fe4-eb6f8c810994",
+              name: "Group Study Room 8",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 113.698,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 117.426,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 117.426,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 113.698,
+                    z: -54.059,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 113.698,
+                    z: -56.963,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+          ],
+        },
+      ];
 
       const color_dict = {
         occupied: "#ff3f34",
@@ -556,7 +759,7 @@
           this.sensors = sensors;
         }
 
-          initSpace(smplr) {
+        initSpace(smplr) {
           this.space = new smplr.Space({
             spaceId: this.spaceId,
             clientToken: this.clientToken,
@@ -565,7 +768,7 @@
           this.space.startViewer({
             preview: false,
             cameraPlacement: {
-              alpha: Math.PI/2,
+              alpha: Math.PI / 2,
               beta: 0.5,
               radius: 24,
               target: {
@@ -578,8 +781,6 @@
             onError: (error) => console.error("Could not start viewer", error),
           });
         }
-
-            
 
         updateDataLayers() {
           // remove previous layers if any
@@ -616,7 +817,6 @@
         fetchAll() {
           this.fetchData();
         }
-
 
         fetchData() {
           fetch(API_ENDPOINT)
@@ -658,7 +858,6 @@
                   const jsonKey = desk_filter[key];
                   const _index = desk_index[jsonKey];
 
-
                   this.desks[_index]["available"] = occupancy[key]["available"];
 
                   this.desks[_index]["color"] = occupancy[key]["color"];
@@ -681,13 +880,7 @@
         }
       }
 
-      spc = new Space(
-        SPACE_ID,
-        CLIENT_ID,
-        dict[0]["assets"],
-        [],
-        []
-      );
+      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], dict[1]["assets"], []);
 
       delete dict;
 
