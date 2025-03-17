@@ -172,6 +172,18 @@
         "1FC-GS8": "Group Study Room 8",
       };
 
+      const grey_area_index = {
+        "1": 0,
+        "2": 1,
+        "3": 2
+      };
+      
+      const grey_area_filter = {
+        "1FC-UA1": "1",
+        "1FC-UA2": "2", 
+        "1FC-UA3": "3"
+      };
+
       const dict = [
         {
           id: "97bb9348-8841-42ea-91f2-f0589f05473c",
@@ -936,13 +948,14 @@
 
       // smplrspace-script.js
       class Space {
-        constructor(spaceId, clientToken, desks, rooms, sensors) {
+        constructor(spaceId, clientToken, desks, rooms, sensors, greyAreas) {
           this.spaceId = spaceId;
           this.clientToken = clientToken;
           this.space = null;
           this.rooms = rooms;
           this.desks = desks;
           this.sensors = sensors;
+          this.greyAreas = greyAreas;
         }
 
         initSpace(smplr) {
@@ -972,9 +985,11 @@
           // remove previous layers if any
           this.space.removeDataLayer("rooms");
           this.space.removeDataLayer("desks");
+          this.space.removeDataLayer("greyAreas");
 
           const isRoomsEmpty = Object.keys(this.rooms).length === 0;
           const isDesksEmpty = Object.keys(this.desks).length === 0;
+          const isGreyAreasEmpty = Object.keys(this.greyAreas).length === 0;
 
           if (!isRoomsEmpty) {
             // add new layers
@@ -998,7 +1013,19 @@
               color: (d) => d.color,
             });
           }
-        }
+
+           if (!isGreyAreasEmpty) {
+            this.space.addDataLayer({
+              id: "greyAreas",
+              type: "polygon",
+              data: this.greyAreas,
+              tooltip: (d) => `${d.name} - ${d.available}`,
+              color: (d) => d.color,
+              alpha: 0.7,
+              height: 2.9,
+            });
+          }
+                }
 
         fetchAll() {
           this.fetchData();
@@ -1066,7 +1093,15 @@
         }
       }
 
-      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], dict[1]["assets"], []);
+      const greyAreas = dict[3]["assets"].map(area => {
+        return {
+          ...area,
+          available: "unavailable",
+          color: color_dict["unavailable"]
+        };
+      });
+
+      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], dict[1]["assets"], [], greyAreas);
 
       delete dict;
 
