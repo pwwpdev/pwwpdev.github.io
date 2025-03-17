@@ -173,6 +173,10 @@
         "1FC-IS2": "Individual Study Room 2",
         "1FC-IS3": "Individual Study Room 3",
         "1FC-GS8": "Group Study Room 8",
+        "1FC-UA1": "location code",
+        "1FC-UA2": "Grey Out Area",
+        "1FC-UA3": "2",
+        "1FC-UA4": "3",
       };
 
       const dict = [
@@ -1069,7 +1073,7 @@
         }
       }
 
-      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], dict[1]["assets"], []);
+      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], dict[1]["assets"], dict[2]["assets"], []);
 
       delete dict;
 
