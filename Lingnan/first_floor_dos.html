@@ -172,17 +172,24 @@
         "1FC-GS8": "Group Study Room 8",
       };
 
-      const grey_area_index = {
+      // Updated for new color overlays
+        const color_overlay_index = {
         "1": 0,
         "2": 1,
-        "3": 2
-      };
-      
-      const grey_area_filter = {
+        "3": 2,
+        "Study1": 3,
+        "Study2": 4,
+        "Study3": 5
+        };
+
+        const color_overlay_filter = {
         "1FC-UA1": "1",
         "1FC-UA2": "2", 
-        "1FC-UA3": "3"
-      };
+        "1FC-UA3": "3",
+        "1FC-IS1": "Study1",
+        "1FC-IS2": "Study2",
+        "1FC-IS3": "Study3"
+        };
 
       const dict = [
         {
@@ -553,229 +560,8 @@
           ],
         },
         {
-          id: "a959fc67-e20d-4f63-b2d3-408145b9bc90",
-          name: "rooms",
-          type: "polygon",
-          assets: [
-            {
-              id: "def01b1a-6432-40cf-98cd-6b6522474a70",
-              name: "Group Study Room 9",
-              levelIndex: 0,
-              coordinates: [
-                [
-                  {
-                    x: 122.768,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 126.004,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 126.463,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 126.463,
-                    z: -56.473,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 126.463,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 122.768,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 122.768,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                ],
-              ],
-              layerType: "polygon",
-              mapped: true,
-            },
-            {
-              id: "a6b9d19a-e7b8-4997-b671-0c477c73389f",
-              name: "Individual Study Room 1",
-              levelIndex: 0,
-              coordinates: [
-                [
-                  {
-                    x: 121.083,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 122.768,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 122.768,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 121.083,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 121.083,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                ],
-              ],
-              layerType: "polygon",
-              mapped: true,
-            },
-            {
-              id: "b6845214-8c3e-477b-aa30-ad546b5e8e6a",
-              name: "Individual Study Room 2",
-              levelIndex: 0,
-              coordinates: [
-                [
-                  {
-                    x: 119.377,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 121.083,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 121.083,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 119.377,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 119.377,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                ],
-              ],
-              layerType: "polygon",
-              mapped: true,
-            },
-            {
-              id: "2c742e1d-1ab7-4600-8376-76626e90c084",
-              name: "Individual Study Room 3",
-              levelIndex: 0,
-              coordinates: [
-                [
-                  {
-                    x: 117.426,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 119.377,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 119.377,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 117.426,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 117.426,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                ],
-              ],
-              layerType: "polygon",
-              mapped: true,
-            },
-            {
-              id: "fd67807b-5a1c-491b-9fe4-eb6f8c810994",
-              name: "Group Study Room 8",
-              levelIndex: 0,
-              coordinates: [
-                [
-                  {
-                    x: 113.698,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 117.426,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 117.426,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 113.698,
-                    z: -54.059,
-                    levelIndex: 0,
-                  },
-                  {
-                    x: 113.698,
-                    z: -56.963,
-                    levelIndex: 0,
-                  },
-                ],
-              ],
-              layerType: "polygon",
-              mapped: true,
-            },
-          ],
-        },
-        {
-    "id": "dceb1c3e-7385-46b3-981f-97f32a7c4af2",
-    "name": "location code",
-    "type": "furniture",
-    "assets": [
-      {
-        "id": "53c88883-8018-4407-8b8b-5b08e4c84866",
-        "name": "ServiceCounter",
-        "furnitureId": "de7dd1fb-e868-46a6-a77f-fdfee928ad06",
-        "layerType": "furniture"
-      },
-      {
-        "id": "7cd29679-75e2-4eec-a992-941a98a40749",
-        "name": "Res",
-        "furnitureId": "e0f7e073-27de-4a44-9308-26501f342a06",
-        "layerType": "furniture"
-      },
-      {
-        "id": "eab36634-d97e-46ac-a56d-3541dd207ca8",
-        "name": "",
-        "layerType": "furniture"
-      }
-    ]
-  },
-  {
     "id": "1fd56b5e-c5cc-49b1-9782-5fab29af29e2",
-    "name": "Grey Out Area",
+    "name": "Color overlay",
     "type": "polygon",
     "assets": [
       {
@@ -877,55 +663,158 @@
         "levelIndex": 0,
         "coordinates": [
           {
-            "x": 43.21779833048842,
-            "z": -56.88553233299777,
+            "x": 45.199513935946406,
+            "z": -57.256918871028695,
             "levelIndex": 0
           },
           {
-            "x": 43.1407751293566,
-            "z": -54.03471286253459,
+            "x": 44.98010785035391,
+            "z": -52.644206770578286,
             "levelIndex": 0
           },
           {
-            "x": 43.77738535073303,
-            "z": -53.84042012353352,
+            "x": 38.31638315269695,
+            "z": -52.64292385094703,
             "levelIndex": 0
           },
           {
-            "x": 43.676978206648315,
-            "z": -52.58954498086535,
+            "x": 38.22113181294063,
+            "z": -54.11405876494442,
             "levelIndex": 0
           },
           {
-            "x": 38.331868839631504,
-            "z": -52.511771753807956,
+            "x": 30.86406140911948,
+            "z": -54.062638562874476,
             "levelIndex": 0
           },
           {
-            "x": 38.22757738040576,
-            "z": -54.00384888234434,
+            "x": 30.7739117720987,
+            "z": -56.41002352669672,
             "levelIndex": 0
           },
           {
-            "x": 30.815305866644287,
-            "z": -54.16029468706332,
-            "levelIndex": 0
-          },
-          {
-            "x": 30.69244786150516,
-            "z": -57.10336338817442,
-            "levelIndex": 0
-          },
-          {
-            "x": 39.632540655353026,
-            "z": -57.197020040563174,
-            "levelIndex": 0
-          },
-          {
-            "x": 40.05773864935662,
-            "z": -56.889258662665654,
+            "x": 31.094444180252353,
+            "z": -57.34088133509646,
             "levelIndex": 0
           }
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "f2981ef4-ffbb-4250-ac76-3bb99a7cf53b",
+        "name": "Study1",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 122.768,
+              "z": -56.963,
+              "levelIndex": 0
+            },
+            {
+              "x": 126.004,
+              "z": -56.963,
+              "levelIndex": 0
+            },
+            {
+              "x": 126.463,
+              "z": -56.963,
+              "levelIndex": 0
+            },
+            {
+              "x": 126.463,
+              "z": -56.473,
+              "levelIndex": 0
+            },
+            {
+              "x": 126.463,
+              "z": -54.059,
+              "levelIndex": 0
+            },
+            {
+              "x": 122.768,
+              "z": -54.059,
+              "levelIndex": 0
+            },
+            {
+              "x": 122.768,
+              "z": -56.963,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "317211eb-6658-4c4a-971b-705177d11e97",
+        "name": "Study2",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 121.083,
+              "z": -56.963,
+              "levelIndex": 0
+            },
+            {
+              "x": 122.768,
+              "z": -56.963,
+              "levelIndex": 0
+            },
+            {
+              "x": 122.768,
+              "z": -54.059,
+              "levelIndex": 0
+            },
+            {
+              "x": 121.083,
+              "z": -54.059,
+              "levelIndex": 0
+            },
+            {
+              "x": 121.083,
+              "z": -56.963,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "8807731f-b279-47de-a307-e09b23ee8a95",
+        "name": "Study3",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 119.377,
+              "z": -56.963,
+              "levelIndex": 0
+            },
+            {
+              "x": 121.083,
+              "z": -56.963,
+              "levelIndex": 0
+            },
+            {
+              "x": 121.083,
+              "z": -54.059,
+              "levelIndex": 0
+            },
+            {
+              "x": 119.377,
+              "z": -54.059,
+              "levelIndex": 0
+            },
+            {
+              "x": 119.377,
+              "z": -56.963,
+              "levelIndex": 0
+            }
+          ]
         ],
         "layerType": "polygon",
         "mapped": true
@@ -943,187 +832,209 @@
         passive_occupied: "#ffbf00",
         away: "#ffbf00",
         demo: "#6888be",
-        unavailable: "#3e3636",
-      };
+        unavailable: "#949494",
+        };
 
       // smplrspace-script.js
-      class Space {
-        constructor(spaceId, clientToken, desks, rooms, sensors, greyAreas) {
-          this.spaceId = spaceId;
-          this.clientToken = clientToken;
-          this.space = null;
-          this.rooms = rooms;
-          this.desks = desks;
-          this.sensors = sensors;
-          this.greyAreas = greyAreas;
-        }
+class Space {
+  constructor(spaceId, clientToken, desks, rooms, sensors, colorOverlays) {
+    this.spaceId = spaceId;
+    this.clientToken = clientToken;
+    this.space = null;
+    this.rooms = rooms;
+    this.desks = desks;
+    this.sensors = sensors;
+    this.colorOverlays = colorOverlays;
+  }
 
-        initSpace(smplr) {
-          this.space = new smplr.Space({
-            spaceId: this.spaceId,
-            clientToken: this.clientToken,
-            containerId: "smplrspace-container",
-          });
-          this.space.startViewer({
-            preview: false,
-            cameraPlacement: {
-              alpha: Math.PI / 2,
-              beta: 0.5,
-              radius: 24,
-              target: {
-                x: 70,
-                y: 1,
-                z: -51,
-              },
-            },
-            onReady: () => this.fetchAll(),
-            onError: (error) => console.error("Could not start viewer", error),
-          });
-        }
+  initSpace(smplr) {
+    this.space = new smplr.Space({
+      spaceId: this.spaceId,
+      clientToken: this.clientToken,
+      containerId: "smplrspace-container",
+    });
+    this.space.startViewer({
+      preview: false,
+      cameraPlacement: {
+        alpha: Math.PI / 2,
+        beta: 0.5,
+        radius: 24,
+        target: {
+          x: 70,
+          y: 1,
+          z: -51,
+        },
+      },
+      onReady: () => this.fetchAll(),
+      onError: (error) => console.error("Could not start viewer", error),
+    });
+  }
 
-        updateDataLayers() {
-          // remove previous layers if any
-          this.space.removeDataLayer("rooms");
-          this.space.removeDataLayer("desks");
-          this.space.removeDataLayer("greyAreas");
+  updateDataLayers() {
+    // remove previous layers if any
+    this.space.removeDataLayer("rooms");
+    this.space.removeDataLayer("desks");
+    this.space.removeDataLayer("colorOverlays");
 
-          const isRoomsEmpty = Object.keys(this.rooms).length === 0;
-          const isDesksEmpty = Object.keys(this.desks).length === 0;
-          const isGreyAreasEmpty = Object.keys(this.greyAreas).length === 0;
+    const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
+    const isDesksEmpty = !this.desks || this.desks.length === 0;
+    const isColorOverlaysEmpty = !this.colorOverlays || this.colorOverlays.length === 0;
 
-          if (!isRoomsEmpty) {
-            // add new layers
-            this.space.addDataLayer({
-              id: "rooms",
-              type: "polygon",
-              data: this.rooms,
-              tooltip: (d) => `${d.name} - ${d.available}`,
-              color: (d) => d.color,
-              alpha: 0.7,
-              height: 2.9,
-            });
-          }
-
-          if (!isDesksEmpty) {
-            this.space.addDataLayer({
-              id: "desks",
-              type: "furniture",
-              data: this.desks,
-              tooltip: (d) => `${d.name} - ${d.available}`,
-              color: (d) => d.color,
-            });
-          }
-
-           if (!isGreyAreasEmpty) {
-            this.space.addDataLayer({
-              id: "greyAreas",
-              type: "polygon",
-              data: this.greyAreas,
-              tooltip: (d) => `${d.name} - ${d.available}`,
-              color: (d) => d.color,
-              alpha: 0.8,
-              height: 2.9,
-            });
-          }
-                }
-
-        fetchAll() {
-          this.fetchData();
-        }
-
-        fetchData() {
-          fetch(API_ENDPOINT)
-            .then((res) => res.json())
-            .then((data) => {
-              let occupancy = {};
-              for (let i = 0; i < data.length; i++) {
-                let value = data[i];
-                let loc = value.area;
-                let timestamp = value.timestamp;
-                let available = value.occupancy;
-
-                let color = color_dict.hasOwnProperty(available)
-                  ? color_dict[available]
-                  : "#ffffff";
-
-                if (!occupancy.hasOwnProperty(loc)) {
-                  occupancy[loc] = {
-                    timestamp: timestamp,
-                    available: available,
-                    occupancy: value.occupancy,
-                    color: color,
-                  };
-                } else if (occupancy[loc].timestamp < timestamp) {
-                  occupancy[loc] = {
-                    timestamp: timestamp,
-                    available: available,
-                    occupancy: value.occupancy,
-                    color: color,
-                  };
-                }
-              }
-
-              for (let key in occupancy) {
-                if (
-                  occupancy.hasOwnProperty(key) &&
-                  desk_filter.hasOwnProperty(key)
-                ) {
-                  const jsonKey = desk_filter[key];
-                  const _index = desk_index[jsonKey];
-
-                  this.desks[_index]["available"] = occupancy[key]["available"];
-
-                  this.desks[_index]["color"] = occupancy[key]["color"];
-                } else if (
-                  occupancy.hasOwnProperty(key) &&
-                  room_filter.hasOwnProperty(key)
-                ) {
-                  //
-                  const jsonKey = room_filter[key];
-                  const _index = room_index[jsonKey];
-
-                  this.rooms[_index]["available"] = occupancy[key]["available"];
-                  this.rooms[_index]["numberOfPeople"] =
-                    occupancy[key]["numberOfPeople"];
-                  this.rooms[_index]["color"] = occupancy[key]["color"];
-                }
-              }
-              this.updateDataLayers();
-            });
-        }
-      }
-
-      const greyAreas = dict[3]["assets"].map(area => {
-        return {
-          ...area,
-          available: "unavailable",
-          color: color_dict["unavailable"]
-        };
+    if (!isRoomsEmpty) {
+      // add new layers
+      this.space.addDataLayer({
+        id: "rooms",
+        type: "polygon",
+        data: this.rooms,
+        tooltip: (d) => `${d.name} - ${d.available}`,
+        color: (d) => d.color,
+        alpha: 0.7,
+        height: 2.9,
       });
+    }
 
-      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], dict[1]["assets"], [], greyAreas);
+    if (!isDesksEmpty) {
+      this.space.addDataLayer({
+        id: "desks",
+        type: "furniture",
+        data: this.desks,
+        tooltip: (d) => `${d.name} - ${d.available}`,
+        color: (d) => d.color,
+      });
+    }
 
-      delete dict;
+    if (!isColorOverlaysEmpty) {
+      this.space.addDataLayer({
+        id: "colorOverlays",
+        type: "polygon",
+        data: this.colorOverlays,
+        tooltip: (d) => `${d.name} - ${d.available}`,
+        color: (d) => d.color,
+        alpha: 2.6,
+        height: 2.9,
+      });
+    }
+  }
 
-      async function wait() {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve();
-          }, 500);
-        });
-      }
+  fetchAll() {
+    this.fetchData();
+  }
 
-      async function start() {
-        while (typeof smplr === "undefined") {
-          await wait();
+  fetchData() {
+    fetch(API_ENDPOINT)
+      .then((res) => res.json())
+      .then((data) => {
+        let occupancy = {};
+        for (let i = 0; i < data.length; i++) {
+          let value = data[i];
+          let loc = value.area;
+          let timestamp = value.timestamp;
+          let available = value.occupancy;
+
+          let color = color_dict.hasOwnProperty(available)
+            ? color_dict[available]
+            : "#ffffff";
+
+          if (!occupancy.hasOwnProperty(loc)) {
+            occupancy[loc] = {
+              timestamp: timestamp,
+              available: available,
+              occupancy: value.occupancy,
+              color: color,
+            };
+          } else if (occupancy[loc].timestamp < timestamp) {
+            occupancy[loc] = {
+              timestamp: timestamp,
+              available: available,
+              occupancy: value.occupancy,
+              color: color,
+            };
+          }
         }
-        spc.initSpace(smplr);
-        setInterval(() => {
-          spc.fetchAll();
-        }, UPDATE_FREQUENCY * 1000);
-      }
 
-      start();
+        for (let key in occupancy) {
+          if (
+            occupancy.hasOwnProperty(key) &&
+            desk_filter.hasOwnProperty(key)
+          ) {
+            const jsonKey = desk_filter[key];
+            const _index = desk_index[jsonKey];
+
+            this.desks[_index]["available"] = occupancy[key]["available"];
+            this.desks[_index]["color"] = occupancy[key]["color"];
+          } else if (
+            occupancy.hasOwnProperty(key) &&
+            room_filter.hasOwnProperty(key)
+          ) {
+            const jsonKey = room_filter[key];
+            const _index = room_index[jsonKey];
+
+            if (this.rooms && this.rooms[_index]) {
+              this.rooms[_index]["available"] = occupancy[key]["available"];
+              this.rooms[_index]["numberOfPeople"] =
+                occupancy[key]["numberOfPeople"];
+              this.rooms[_index]["color"] = occupancy[key]["color"];
+            }
+          } else if (
+            occupancy.hasOwnProperty(key) &&
+            color_overlay_filter.hasOwnProperty(key)
+          ) {
+            const jsonKey = color_overlay_filter[key];
+            const _index = color_overlay_index[jsonKey];
+
+            if (this.colorOverlays && this.colorOverlays[_index]) {
+              this.colorOverlays[_index]["available"] = occupancy[key]["available"];
+              this.colorOverlays[_index]["color"] = occupancy[key]["color"];
+            }
+          }
+        }
+        this.updateDataLayers();
+      });
+  }
+}
+
+// Initialize with the new Color overlay assets
+const colorOverlays = dict[1]["assets"].map(area => {
+  // Check if this is the area with name "1"
+  if (area.name === "1") {
+    return {
+      ...area,
+      available: "unavailable", 
+      color: "#768590" 
+    };
+  } else {
+    return {
+      ...area,
+      available: "unavailable",
+      color: color_dict["unavailable"]
+    };
+  }
+});
+
+// Create the Space instance with the updated parameters
+spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], [], [], colorOverlays);
+
+delete dict;
+
+async function wait() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 500);
+  });
+}
+
+async function start() {
+  while (typeof smplr === "undefined") {
+    await wait();
+  }
+  spc.initSpace(smplr);
+  setInterval(() => {
+    spc.fetchAll();
+  }, UPDATE_FREQUENCY * 1000);
+}
+
+start();
     </script>
   </body>
 </html>
