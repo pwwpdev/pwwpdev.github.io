@@ -90,7 +90,17 @@
         "LRT06-S08": 57,
         "LRT06-S09": 58,
         "LRT06-S10": 59,
-      };
+        "1FN-S01": 60,
+        "1FN-S02": 61,
+        "1FN-S03": 62,
+        "1FN-S04": 63,
+        "1FN-S05": 64,
+        "1FS-S01": 65,
+        "1FS-S02": 66,
+        "1FS-S03": 67,
+        "1FS-S04": 68,
+        "1FS-S05": 69
+          };
 
       const desk_filter = {
         "LRT01-S01": "LRT01-S01",
@@ -153,6 +163,16 @@
         "LRT06-S08": "LRT06-S08",
         "LRT06-S09": "LRT06-S09",
         "LRT06-S10": "LRT06-S10",
+        "1FN-S01": "1FN-S01",
+        "1FN-S02": "1FN-S02",
+        "1FN-S03": "1FN-S03",
+        "1FN-S04": "1FN-S04",
+        "1FN-S05": "1FN-S05",
+        "1FS-S01": "1FS-S01",
+        "1FS-S02": "1FS-S02",
+        "1FS-S03": "1FS-S03",
+        "1FS-S04": "1FS-S04",
+        "1FS-S05": "1FS-S05"
       };
 
       const room_index = {
@@ -821,6 +841,73 @@
       }
     ]
   },
+  {
+    "id": "ccb6b67b-5390-4fee-86da-e9b6719a7abf",
+    "name": "Study Carrel",
+    "type": "furniture",
+    "assets": [
+      {
+        "id": "42bdca4d-fc80-4f55-a796-5bd031316ecf",
+        "name": "1FN-S01",
+        "furnitureId": "0462759d-67ad-4298-b03d-108aec5aa3df",
+        "layerType": "furniture"
+      },
+      {
+        "id": "8e4fbab5-9ba8-47dc-918a-af62fa1d947d",
+        "name": "1FN-S02",
+        "furnitureId": "825c9447-4ce0-43e9-9422-8640c2fe0889",
+        "layerType": "furniture"
+      },
+      {
+        "id": "0b4311cd-1db5-4f0f-b82e-dbacb09081dd",
+        "name": "1FN-S03",
+        "furnitureId": "0a8d7ecd-cbf4-4ab2-a79f-79ea51922e11",
+        "layerType": "furniture"
+      },
+      {
+        "id": "b5e712e1-d66a-403f-9cd8-27442d7f1ca0",
+        "name": "1FN-S04",
+        "furnitureId": "1fca3da0-2a42-4f4c-a24c-8accb0e02ade",
+        "layerType": "furniture"
+      },
+      {
+        "id": "1d656bd2-ef02-4dda-bb68-c2b7b6d7dda7",
+        "name": "1FN-S05",
+        "furnitureId": "7bea9b11-b08e-4181-8846-ad1963e992f5",
+        "layerType": "furniture"
+      },
+      {
+        "id": "6da6a986-cd38-4f29-9388-ccf290629c0e",
+        "name": "1FS-S01",
+        "furnitureId": "8dc6f5ee-7b9e-4b6a-8e2e-9ce9b72978f3",
+        "layerType": "furniture"
+      },
+      {
+        "id": "09b0f796-65a6-414e-8e6f-67f20f3c8f82",
+        "name": "1FS-S02",
+        "furnitureId": "eb1b8273-acb5-4c98-860f-df11379a460c",
+        "layerType": "furniture"
+      },
+      {
+        "id": "30ac0798-2e69-4f28-b03f-070086801fe0",
+        "name": "1FS-S03",
+        "furnitureId": "7f3a0e20-d8be-4c8a-9020-22a4bd1775b0",
+        "layerType": "furniture"
+      },
+      {
+        "id": "49f1be74-7048-4bd8-b79d-36dff73974fe",
+        "name": "1FS-S04",
+        "furnitureId": "26259612-d093-4f6d-bafd-f577161bf300",
+        "layerType": "furniture"
+      },
+      {
+        "id": "1d56a21a-d29f-44da-aed5-62070e1c0a10",
+        "name": "1FS-S05",
+        "furnitureId": "54fa9a6d-0602-404b-b0db-bd66cc58f082",
+        "layerType": "furniture"
+      }
+    ]
+  }
       ];
 
       const color_dict = {
@@ -1012,7 +1099,7 @@ const colorOverlays = dict[1]["assets"].map(area => {
 });
 
 // Create the Space instance with the updated parameters
-spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], [], [], colorOverlays);
+spc = new Space(SPACE_ID, CLIENT_ID,  [...dict[0]["assets"], ...dict[2]["assets"]], [], [], colorOverlays);
 
 delete dict;
 
