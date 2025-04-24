@@ -284,9 +284,12 @@
               id: "toilets",
               type: "polygon",
               data: this.toilets,
-              tooltip: (d) => `${d.name}`,
-              color: (d) => d.color || "#AED6F1",
-              alpha: 1.2,
+              tooltip: (d) => {
+                const isFemale = d.name.includes("FT");
+                return `${d.name} - ${isFemale ? "Female Toilet" : "Male Toilet"}`;
+                },
+                            color: (d) => d.color || "#AED6F1",
+              alpha: 4.9,
               height: 2.9,
             });
           }
@@ -313,7 +316,7 @@
           return {
             ...toilet,
             available: "unavailable",
-            color: isFemale ? "#D54763" : "#276CA3",
+            color: isFemale ? "#A7384E" : "#1D547D",
           };
         }
       );
