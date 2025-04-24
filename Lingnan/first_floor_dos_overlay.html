@@ -1,244 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iframe with Responsive Overlay</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      #iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      #mini-map-container {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        width: 360px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-left: 0.5px solid #d4d4d4;
+        border-bottom: 0.5px solid #d4d4d4;
+        border-bottom-left-radius: 12px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        overflow: hidden;
+      }
+
+      #map-wrapper {
+        position: relative;
+        width: 100%;
+        height: 160px;
+        overflow: hidden;
+      }
+
+      #mini-map {
+        width: 100%;
+        transform-origin: center;
+        transition: transform 0.2s ease;
+        cursor: move;
+      }
+
+      .map-controls {
+        position: absolute;
+        bottom: 6px;
+        right: 2px;
+        display: flex;
+        flex-direction: row;
+        gap: 10px; /* between buttons */
+        z-index: 11;
+      }
+
+      .control-btn {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border: none;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        user-select: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .control-btn:hover {
+        background: #f5f5f5;
+      }
+
+      @media (max-width: 768px) {
+        #mini-map-container {
+          width: 210px;
         }
 
-        #iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+        #map-wrapper {
+          height: 100px;
         }
 
-         #overlay {
-            position: absolute;
-            top: 0px; 
-            right: 0px; 
-            width: 220px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(10px); 
-            border-left: 0.5px solid #d4d4d4;
-            border-bottom: 0.5px solid #d4d4d4;
-            border-bottom-left-radius: 12px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
-            z-index: 10; 
-            color: #878888;
-            font-family: Arial, sans-serif; 
-        }
-        #overlay p {
-            font-size: 14px;
-            margin: 8px 0;
-            line-height: 1.5; 
-        }
-        
- @media (max-width: 768px) {
-             #overlay {
-                width: 160px;
-            }
-
-             #overlay p {
-                font-size: 10px;
-                margin: 6px 0;
-                line-height: 1; 
-            }
-
+        .control-btn {
+          width: 18px;
+          height: 18px;
+          font-size: 14px;
+          border-radius: 2px;
         }
 
-        @media (max-width: 480px) {
-             #overlay {
-                width: 50px;
-                max-height:90px
-            }
+        .map-controls {
+          gap: 6px;
+        }
+      }
 
-             #overlay p {
-                font-size: 6px;
-                margin: 1.4px 0;
-                line-height: 1.4; 
-            }        
-        }
-        
-        #overlay p:first-child {
-            margin-top: 0;
-        }
-        #overlay p strong {
-            color: #878888;
+      @media (max-width: 480px) {
+        #mini-map-container {
+          width: 140px;
         }
 
-
-        .box {
-            position: absolute;
-            width: 200px;
-       
-            padding: 8px;
-            color: #878888;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: 0.5px solid #d4d4d4;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+        #map-wrapper {
+          height: 60px;
         }
 
-        #box1 {
-            bottom: 240px;
-            right: 10px;
+        .control-btn {
+          width: 12px;
+          height: 12px;
+          font-size: 8px;
+          border-radius: 2px;
         }
-
-        #box2 {
-            bottom: 160px;
-            right: 10px;
-        }
-
-        #box3 {
-            bottom: 80px;
-            right: 10px;
-        }
-
-        .box strong {
-            color: #878888;
-        }
-
-        @media (max-width: 768px) {
-            .box {
-                width: 120px;
-                font-size: 10px;
-                padding: 5px;
-            }
-
-            #box1 {
-                bottom: 160px;
-                right: 5px;
-            }
-
-            #box2 {
-                bottom: 100px;
-                right: 5px;
-            }
-
-            #box3 {
-                bottom: 40px;
-                right: 5px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .box {
-                width: 66px;
-                font-size: 7px;
-                padding: 4px;
-            }
-
-            #box1 {
-                bottom: 118px;
-                right: 3px;
-            }
-
-            #box2 {
-                bottom: 70px;
-                right: 3px;
-            }
-
-            #box3 {
-                bottom: 30px;
-                right: 3px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
-    <iframe id="iframe" src="https://pwwpdev.github.io/Lingnan/first_floor_dos.html"></iframe>
-    <div id="overlay">
-        <p><strong>Humidity:</strong> <span id="humidity">--</span></p>
-        <p><strong>Temperature:</strong> <span id="temperature">--</span></p>
-        <p><strong>CO2:</strong> <span id="co2">--</span></p>
-        <p><strong>TVOC:</strong> <span id="tvoc">--</span></p>
-        <p><strong>PM2.5:</strong> <span id="pm2_5">--</span></p>
-        <p><strong>PM10:</strong> <span id="pm10">--</span></p>
-        <p><strong>Pressure:</strong> <span id="pressure">--</span></p>
-    </div>
-
-    <div class="box" id="box2">
-        <p><strong>Computer Room 1:</strong> <span id="random1">0</span></p>
-    </div>
-    <div class="box" id="box3">
-        <p><strong>Computer Room 2:</strong> <span id="random2">0</span></p>
+  </head>
+  <body>
+    <iframe
+      id="iframe"
+      src="https://pwwpdev.github.io/Lingnan/first_floor_dos.html"
+    ></iframe>
+    <div id="mini-map-container">
+      <div id="map-wrapper">
+        <img id="mini-map" src="mini_map.png" alt="Mini Map" />
+        <div class="map-controls">
+          <div class="control-btn" id="zoom-in">+</div>
+          <div class="control-btn" id="zoom-out">−</div>
+        </div>
+      </div>
     </div>
 
     <script>
-       
-        async function fetchIAQData() {
-            try {
-              
-                const response = await fetch('https://optimusc.flowfuse.cloud/iaq');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                
-                // Update the overlay with IAQ-P01 data
-                if (data && data["IAQ-P01"]) {
-                    const iaqData = data["IAQ-P01"];
-                    
-                    // Update values (excluding pir, light_level, and battery)
-                    document.getElementById('humidity').textContent = iaqData.humidity || '--';
-                    document.getElementById('temperature').textContent = iaqData.temperature || '--';
-                    document.getElementById('co2').textContent = iaqData.co2 || '--';
-                    document.getElementById('tvoc').textContent = iaqData.tvoc || '--';
-                    document.getElementById('pm2_5').textContent = iaqData.pm2_5 || '--';
-                    document.getElementById('pm10').textContent = iaqData.pm10 || '--';
-                    document.getElementById('pressure').textContent = iaqData.pressure || '--';
-                }
-            } catch (error) {
-                console.error('Error fetching IAQ data:', error);
-            }
-        }
+      document.addEventListener("DOMContentLoaded", function () {
+        const miniMap = document.getElementById("mini-map");
+        const mapWrapper = document.getElementById("map-wrapper");
+        const zoomInBtn = document.getElementById("zoom-in");
+        const zoomOutBtn = document.getElementById("zoom-out");
 
- 
-        async function fetchOccupancyData() {
-            try {
-                const response = await fetch('https://optimusc.flowfuse.cloud/lingnan-library-occupancy');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                
-           
-                if (data && Array.isArray(data)) {
-                    // Find Computer Room 1 data
-                    const cr1Data = data.find(item => item.area === "1F-CR1");
-                    if (cr1Data) {
-                        document.getElementById('random1').textContent = cr1Data.occupancy;
-                    }
-                    
-                    // Find Computer Room 2 data
-                    const cr2Data = data.find(item => item.area === "1F-CR2");
-                    if (cr2Data) {
-                        document.getElementById('random2').textContent = cr2Data.occupancy;
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching occupancy data:', error);
-            }
-        }
+        let scale = 1;
+        let isDragging = false;
+        let startX,
+          startY,
+          translateX = 0,
+          translateY = 0;
 
-      
-        fetchIAQData();
-        fetchOccupancyData();
-        
-    
-        setInterval(fetchIAQData, 5000); 
-        setInterval(fetchOccupancyData, 5000);
+        // Set initial transform
+        updateTransform();
+
+        // Zoom in button
+        zoomInBtn.addEventListener("click", function () {
+          if (scale < 3) {
+            // Max zoom level
+            scale += 0.2;
+            updateTransform();
+          }
+        });
+
+        // Zoom out button
+        zoomOutBtn.addEventListener("click", function () {
+          if (scale > 0.5) {
+            // Min zoom level
+            scale -= 0.2;
+            updateTransform();
+          }
+        });
+
+        // Mouse down event to start dragging
+        miniMap.addEventListener("mousedown", function (e) {
+          isDragging = true;
+          startX = e.clientX - translateX;
+          startY = e.clientY - translateY;
+          miniMap.style.cursor = "grabbing";
+        });
+
+        // Touch start event for mobile devices
+        miniMap.addEventListener("touchstart", function (e) {
+          isDragging = true;
+          startX = e.touches[0].clientX - translateX;
+          startY = e.touches[0].clientY - translateY;
+        });
+
+        // Mouse move event to handle dragging
+        window.addEventListener("mousemove", function (e) {
+          if (!isDragging) return;
+          translateX = e.clientX - startX;
+          translateY = e.clientY - startY;
+          updateTransform();
+        });
+
+        // Touch move event for mobile devices
+        window.addEventListener("touchmove", function (e) {
+          if (!isDragging) return;
+          translateX = e.touches[0].clientX - startX;
+          translateY = e.touches[0].clientY - startY;
+          updateTransform();
+        });
+
+        // Mouse up event to stop dragging
+        window.addEventListener("mouseup", function () {
+          isDragging = false;
+          miniMap.style.cursor = "move";
+        });
+
+        // Touch end event for mobile devices
+        window.addEventListener("touchend", function () {
+          isDragging = false;
+        });
+
+        // Function to update the transform style
+        function updateTransform() {
+          // Calculate boundaries to prevent dragging too far
+          const mapRect = mapWrapper.getBoundingClientRect();
+          const imageRect = miniMap.getBoundingClientRect();
+
+          const maxTranslateX = (imageRect.width * scale - mapRect.width) / 2;
+          const maxTranslateY = (imageRect.height * scale - mapRect.height) / 2;
+
+          // Constrain translation within bounds
+          if (scale > 1) {
+            translateX = Math.max(
+              -maxTranslateX,
+              Math.min(maxTranslateX, translateX)
+            );
+            translateY = Math.max(
+              -maxTranslateY,
+              Math.min(maxTranslateY, translateY)
+            );
+          } else {
+            translateX = 0;
+            translateY = 0;
+          }
+
+          miniMap.style.transform = `scale(${scale}) translate(${
+            translateX / scale
+          }px, ${translateY / scale}px)`;
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
