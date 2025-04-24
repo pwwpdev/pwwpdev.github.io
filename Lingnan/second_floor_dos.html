@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Second Floor Smplrspace Viewer</title>
+  </head>
+  <style>
+    .gap {
+      margin-top: 3rem; /* adds space at bottom */
+    }
+  </style>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <div id="wrapper">
+      <div id="smplrspace-container" class="gap"></div>
+    </div>
+
+    <script>
+      // Replace with your second floor specific values
+      const API_ENDPOINT =
+        "https://optimusc.flowfuse.cloud/lingnan-library-dos";
+
+      // Replace with your second floor client and space IDs
+      const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
+      const SPACE_ID = "spc_vyvqclk6";
+
+      const UPDATE_FREQUENCY = 60;
+
+      // Keep toilet indices
+      const toilet_index = {
+        "2F-FT1": 0,
+        "2F-FT2": 1,
+        "2F-MT1": 2,
+        "2F-MT2": 3,
+      };
+
+      const toilet_filter = {
+        "2F-FT1": "2F-FT1",
+        "2F-FT2": "2F-FT2",
+        "2F-MT1": "2F-MT1",
+        "2F-MT2": "2F-MT2",
+      };
+
+      // Keep non-accessible area index
+      const non_accessible_area_index = {
+        1: 0,
+      };
+
+      const non_accessible_area_filter = {
+        NonAssessibleArea: "1",
+      };
+
+      const color_dict = {
+        occupied: "#ff3f34",
+        countdown: "#ff3f34",
+        vacant: "#3aa655",
+        free: "#3aa655",
+        unoccupied: "#3aa655",
+        passive_occupied: "#ffbf00",
+        away: "#ffbf00",
+        demo: "#6888be",
+        unavailable: "#949494",
+        restricted: "#768590",
+      };
+
+      // Define the assets for the second floor - keep only what's needed
+      const dict = [
+        {
+          id: "93b14a37-7e7b-4747-bbc5-c2f5f18735d7",
+          name: "NonAssessibleArea",
+          type: "polygon",
+          assets: [
+            {
+              id: "f5d5e69f-4585-4317-a54a-777906f1ecea",
+              name: "1",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: -6.407248135534445,
+                  z: -43.441402318528525,
+                  levelIndex: 0,
+                },
+                {
+                  x: 6.289352934393706,
+                  z: -43.393199031079675,
+                  levelIndex: 0,
+                },
+                {
+                  x: 6.144430063100443,
+                  z: -58.60595181076779,
+                  levelIndex: 0,
+                },
+                {
+                  x: -6.127392349434192,
+                  z: -58.65769138601162,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+          ],
+        },
+        {
+          id: "83510d18-ceb2-4bec-9d23-cd9b59cf250c",
+          name: "FemaleToilet",
+          type: "polygon",
+          assets: [
+            {
+              id: "424a1af4-39d2-4151-b29b-f9f18cffbf5b",
+              name: "2F-FT1",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 57.08569258696032,
+                  z: -35.10202572447962,
+                  levelIndex: 0,
+                },
+                {
+                  x: 56.93652306391822,
+                  z: -39.24817290432272,
+                  levelIndex: 0,
+                },
+                {
+                  x: 64.55352096231063,
+                  z: -39.303442110560546,
+                  levelIndex: 0,
+                },
+                {
+                  x: 64.55789918126538,
+                  z: -35.08410640249816,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "f521dd85-af3d-47bd-9303-ee54eaf7b3bf",
+              name: "2F-FT2",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: -6.14517719767415,
+                  z: -35.35140156639011,
+                  levelIndex: 0,
+                },
+                {
+                  x: -6.175408218644672,
+                  z: -39.125046166899885,
+                  levelIndex: 0,
+                },
+                {
+                  x: -0.14861293697484335,
+                  z: -39.20734934818246,
+                  levelIndex: 0,
+                },
+                {
+                  x: -0.02613251824597756,
+                  z: -35.232796201092924,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+          ],
+        },
+        {
+          id: "bca7d0da-c371-4f2c-bc50-86d3446428cc",
+          name: "MaleToilet",
+          type: "polygon",
+          assets: [
+            {
+              id: "a9dcd490-f664-4f93-9cbe-43fc75be9c9c",
+              name: "2F-MT1",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: 64.64895444416587,
+                  z: -35.24973109242798,
+                  levelIndex: 0,
+                },
+                {
+                  x: 64.71128068641265,
+                  z: -39.25481212751941,
+                  levelIndex: 0,
+                },
+                {
+                  x: 72.2148614236938,
+                  z: -39.19535841831681,
+                  levelIndex: 0,
+                },
+                {
+                  x: 72.18778332468625,
+                  z: -35.14339969166269,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "3f5516f9-cde2-48ef-be9d-f8dfc4149119",
+              name: "2F-MT2",
+              levelIndex: 0,
+              coordinates: [
+                {
+                  x: -0.3652502097998667,
+                  z: -35.07051267107641,
+                  levelIndex: 0,
+                },
+                {
+                  x: -0.19766553810557244,
+                  z: -39.06384282767762,
+                  levelIndex: 0,
+                },
+                {
+                  x: 6.126428255135291,
+                  z: -39.2149628395631,
+                  levelIndex: 0,
+                },
+                {
+                  x: 6.042867567526267,
+                  z: -35.19638419757436,
+                  levelIndex: 0,
+                },
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+          ],
+        },
+      ];
+
+      // Space class to handle the Smplrspace viewer and data
+      class Space {
+        constructor(spaceId, clientToken, toilets, nonAccessibleArea) {
+          this.spaceId = spaceId;
+          this.clientToken = clientToken;
+          this.space = null;
+          this.toilets = toilets;
+          this.nonAccessibleArea = nonAccessibleArea;
+        }
+
+        initSpace(smplr) {
+          this.space = new smplr.Space({
+            spaceId: this.spaceId,
+            clientToken: this.clientToken,
+            containerId: "smplrspace-container",
+          });
+          this.space.startViewer({
+            preview: false,
+            cameraPlacement: {
+              alpha: 1.5707963267948966,
+              beta: 0.5,
+              radius: 95.41364113309166,
+              target: {
+                x: 32,
+                y: -10,
+                z: -51,
+              },
+            },
+            onReady: () => this.updateDataLayers(),
+            onError: (error) => console.error("Could not start viewer", error),
+          });
+        }
+
+        updateDataLayers() {
+          // Remove previous layers if any
+          this.space.removeDataLayer("toilets");
+          this.space.removeDataLayer("nonAccessibleArea");
+
+          const isToiletsEmpty = !this.toilets || this.toilets.length === 0;
+          const isNonAccessibleAreaEmpty =
+            !this.nonAccessibleArea || this.nonAccessibleArea.length === 0;
+
+          if (!isToiletsEmpty) {
+            this.space.addDataLayer({
+              id: "toilets",
+              type: "polygon",
+              data: this.toilets,
+              tooltip: (d) => `${d.name}`,
+              color: (d) => d.color || "#AED6F1",
+              alpha: 1.2,
+              height: 2.9,
+            });
+          }
+
+          if (!isNonAccessibleAreaEmpty) {
+            this.space.addDataLayer({
+              id: "nonAccessibleArea",
+              type: "polygon",
+              data: this.nonAccessibleArea,
+              tooltip: (d) => `${d.name} - Not Accessible`,
+              color: (d) => d.color || color_dict.restricted,
+              alpha: 2.2,
+              height: 2.9,
+            });
+          }
+        }
+      }
+
+      // Initialize toilet assets
+      const toilet_assets = [...dict[1]["assets"], ...dict[2]["assets"]].map(
+        (toilet) => {
+          // Pink for female, blue for male
+          const isFemale = toilet.name.includes("FT");
+          return {
+            ...toilet,
+            available: "unavailable",
+            color: isFemale ? "#D54763" : "#276CA3",
+          };
+        }
+      );
+
+      // Initialize non-accessible area with red color
+      const nonAccessibleArea_assets = dict[0]["assets"].map((area) => {
+        return {
+          ...area,
+          available: "restricted",
+          color: color_dict["restricted"],
+        };
+      });
+
+      // Create the Space instance
+      let spc = new Space(
+        SPACE_ID,
+        CLIENT_ID,
+        toilet_assets,
+        nonAccessibleArea_assets
+      );
+
+      delete dict;
+
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      async function start() {
+        while (typeof smplr === "undefined") {
+          await wait();
+        }
+        spc.initSpace(smplr);
+      }
+
+      start();
+    </script>
+
+    <style>
+      #wrapper {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+      }
+
+      #smplrspace-container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </body>
+</html>
