@@ -21,15 +21,15 @@
 
       #mini-map-container {
         position: absolute;
-        bottom: 30px;
+        top: 0px;
         right: 0px;
         width: 360px;
         padding: 8px;
         background: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
         border-left: 0.5px solid #d4d4d4;
-        border-top: 0.5px solid #d4d4d4;
-        border-top-left-radius: 12px;
+        border-bottom: 0.5px solid #d4d4d4;
+        border-bottom-left-radius: 12px;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         z-index: 10;
         overflow: hidden;
@@ -82,7 +82,6 @@
       @media (max-width: 768px) {
         #mini-map-container {
           width: 210px;
-          
         }
 
         #map-wrapper {
@@ -127,7 +126,7 @@
     <div id="mini-map-container">
       <div id="map-wrapper">
         <img id="mini-map" src="mini_map.png" alt="Mini Map" />
-<!--         <div class="map-controls">
+        <!-- <div class="map-controls">
           <div class="control-btn" id="zoom-in">+</div>
           <div class="control-btn" id="zoom-out">−</div>
         </div> -->
