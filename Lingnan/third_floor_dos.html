@@ -30,20 +30,79 @@
 
       // Keep non-accessible area index
       const non_accessible_area_index = {
-        "1": 0,
-        "2": 1,
-        "3": 2,
-        "4": 3,
-        "5": 4
+        1: 0,
+        2: 1,
+        3: 2,
+        4: 3,
+        5: 4,
       };
 
       // Filter for non-accessible areas
       const non_accessible_area_filter = {
-        "1": "1",
-        "2": "2",
-        "3": "3",
-        "4": "4",
-        "5": "5"
+        1: "1",
+        2: "2",
+        3: "3",
+        4: "4",
+        5: "5",
+      };
+
+      // Toilet area indexes
+      const toilet_area_index = {
+        "3F-MT1": 0, // Male toilet
+        "3F-FT1": 1, // Female toilet
+        "3F-UT1": 2, // Unisex toilet
+      };
+
+      // Study carrel indexes (similar to your desk_index example)
+      const study_carrel_index = {
+        "3FS-S01": 0,
+        "3FS-S02": 1,
+        "3FS-S03": 2,
+        "3FS-S04": 3,
+        "3FS-S05": 4,
+        "3FS-S06": 5,
+        "3FS-S07": 6,
+        "3FS-S08": 7,
+        "3FS-S09": 8,
+        "3FS-S10": 9,
+        "3FS-S11": 10,
+        "3FS-S12": 11,
+        "3FN-S01": 12,
+        "3FN-S02": 13,
+        "3FN-S03": 14,
+        "3FN-S04": 15,
+        "3FN-S05": 16,
+        "3FN-S06": 17,
+        "3FN-S07": 18,
+      };
+
+      // Filters for these areas
+      const toilet_area_filter = {
+        "3F-MT1": "3F-MT1",
+        "3F-FT1": "3F-FT1",
+        "3F-UT1": "3F-UT1",
+      };
+
+      const study_carrel_filter = {
+        "3FS-S01": "3FS-S01",
+        "3FS-S02": "3FS-S02",
+        "3FS-S03": "3FS-S03",
+        "3FS-S04": "3FS-S04",
+        "3FS-S05": "3FS-S05",
+        "3FS-S06": "3FS-S06",
+        "3FS-S07": "3FS-S07",
+        "3FS-S08": "3FS-S08",
+        "3FS-S09": "3FS-S09",
+        "3FS-S10": "3FS-S10",
+        "3FS-S11": "3FS-S11",
+        "3FS-S12": "3FS-S12",
+        "3FN-S01": "3FN-S01",
+        "3FN-S02": "3FN-S02",
+        "3FN-S03": "3FN-S03",
+        "3FN-S04": "3FN-S04",
+        "3FN-S05": "3FN-S05",
+        "3FN-S06": "3FN-S06",
+        "3FN-S07": "3FN-S07",
       };
 
       const color_dict = {
@@ -61,196 +120,387 @@
 
       // Non-accessible area data
       const nonAccessibleAreaData = {
-        "id": "2e95877e-f91c-4a3b-b6c4-7eb1281ed8d4",
-        "name": "NonAssessibleArea",
-        "type": "polygon",
-        "assets": [
+        id: "2e95877e-f91c-4a3b-b6c4-7eb1281ed8d4",
+        name: "NonAssessibleArea",
+        type: "polygon",
+        assets: [
           {
-            "id": "57ea7aa9-ae01-4590-a2a8-2e4fcfd8693f",
-            "name": "1",
-            "levelIndex": 0,
-            "coordinates": [
+            id: "57ea7aa9-ae01-4590-a2a8-2e4fcfd8693f",
+            name: "1",
+            levelIndex: 0,
+            coordinates: [
               {
-                "x": 68.32956289771808,
-                "z": -41.17089608217181,
-                "levelIndex": 0
+                x: 68.32956289771808,
+                z: -41.17089608217181,
+                levelIndex: 0,
               },
               {
-                "x": 68.21073716331547,
-                "z": -48.68131204892148,
-                "levelIndex": 0
+                x: 68.21073716331547,
+                z: -48.68131204892148,
+                levelIndex: 0,
               },
               {
-                "x": 77.36742725207854,
-                "z": -48.58309216764699,
-                "levelIndex": 0
+                x: 77.36742725207854,
+                z: -48.58309216764699,
+                levelIndex: 0,
               },
               {
-                "x": 77.6114752014466,
-                "z": -41.41165491730443,
-                "levelIndex": 0
-              }
+                x: 77.6114752014466,
+                z: -41.41165491730443,
+                levelIndex: 0,
+              },
             ],
-            "layerType": "polygon",
-            "mapped": true
+            layerType: "polygon",
+            mapped: true,
           },
           {
-            "id": "25ff2879-8cdd-4862-b74d-34ba861bc3c0",
-            "name": "2",
-            "levelIndex": 0,
-            "coordinates": [
+            id: "25ff2879-8cdd-4862-b74d-34ba861bc3c0",
+            name: "2",
+            levelIndex: 0,
+            coordinates: [
               {
-                "x": 50.044476703660806,
-                "z": -41.23369670412247,
-                "levelIndex": 0
+                x: 50.044476703660806,
+                z: -41.23369670412247,
+                levelIndex: 0,
               },
               {
-                "x": 50.072399106646,
-                "z": -46.924584976818224,
-                "levelIndex": 0
+                x: 50.072399106646,
+                z: -46.924584976818224,
+                levelIndex: 0,
               },
               {
-                "x": 61.206211058006375,
-                "z": -46.99810934362567,
-                "levelIndex": 0
+                x: 61.206211058006375,
+                z: -46.99810934362567,
+                levelIndex: 0,
               },
               {
-                "x": 61.04446277394342,
-                "z": -41.20628910259305,
-                "levelIndex": 0
-              }
+                x: 61.04446277394342,
+                z: -41.20628910259305,
+                levelIndex: 0,
+              },
             ],
-            "layerType": "polygon",
-            "mapped": true
+            layerType: "polygon",
+            mapped: true,
           },
           {
-            "id": "7096e5ec-9195-4120-80b7-e12cd072c308",
-            "name": "3",
-            "levelIndex": 0,
-            "coordinates": [
+            id: "7096e5ec-9195-4120-80b7-e12cd072c308",
+            name: "3",
+            levelIndex: 0,
+            coordinates: [
               {
-                "x": -0.4148542187773714,
-                "z": -41.43034932362043,
-                "levelIndex": 0
+                x: -0.4148542187773714,
+                z: -41.43034932362043,
+                levelIndex: 0,
               },
               {
-                "x": -0.5608730869583809,
-                "z": -46.979858017539016,
-                "levelIndex": 0
+                x: -0.5608730869583809,
+                z: -46.979858017539016,
+                levelIndex: 0,
               },
               {
-                "x": 8.642534083266085,
-                "z": -46.73210388315975,
-                "levelIndex": 0
+                x: 8.642534083266085,
+                z: -46.73210388315975,
+                levelIndex: 0,
               },
               {
-                "x": 8.421777201450201,
-                "z": -41.29722680694566,
-                "levelIndex": 0
-              }
+                x: 8.421777201450201,
+                z: -41.29722680694566,
+                levelIndex: 0,
+              },
             ],
-            "layerType": "polygon",
-            "mapped": true
+            layerType: "polygon",
+            mapped: true,
           },
           {
-            "id": "7eddaca0-1c0f-4dd7-97dd-8475c95cf139",
-            "name": "4",
-            "levelIndex": 0,
-            "coordinates": [
+            id: "7eddaca0-1c0f-4dd7-97dd-8475c95cf139",
+            name: "4",
+            levelIndex: 0,
+            coordinates: [
               {
-                "x": -13.881517090392148,
-                "z": -41.49116627830768,
-                "levelIndex": 0
+                x: -13.881517090392148,
+                z: -41.49116627830768,
+                levelIndex: 0,
               },
               {
-                "x": -5.374512892676876,
-                "z": -41.5213242541602,
-                "levelIndex": 0
+                x: -5.374512892676876,
+                z: -41.5213242541602,
+                levelIndex: 0,
               },
               {
-                "x": -5.395558332093825,
-                "z": -41.76897173716827,
-                "levelIndex": 0
+                x: -5.395558332093825,
+                z: -41.76897173716827,
+                levelIndex: 0,
               },
               {
-                "x": -5.336164756068307,
-                "z": -47.99344509416271,
-                "levelIndex": 0
+                x: -5.336164756068307,
+                z: -47.99344509416271,
+                levelIndex: 0,
               },
               {
-                "x": -13.822942336672895,
-                "z": -47.9277166938746,
-                "levelIndex": 0
-              }
+                x: -13.822942336672895,
+                z: -47.9277166938746,
+                levelIndex: 0,
+              },
             ],
-            "layerType": "polygon",
-            "mapped": true
+            layerType: "polygon",
+            mapped: true,
           },
           {
-            "id": "1a3d37e4-2696-4552-9309-7e4faae46e29",
-            "name": "5",
-            "levelIndex": 0,
-            "coordinates": [
+            id: "1a3d37e4-2696-4552-9309-7e4faae46e29",
+            name: "5",
+            levelIndex: 0,
+            coordinates: [
               {
-                "x": 72.41863968879858,
-                "z": -63.0780507895337,
-                "levelIndex": 0
+                x: 72.41863968879858,
+                z: -63.0780507895337,
+                levelIndex: 0,
               },
               {
-                "x": 72.28129050451366,
-                "z": -63.51937986144018,
-                "levelIndex": 0
+                x: 72.28129050451366,
+                z: -63.51937986144018,
+                levelIndex: 0,
               },
               {
-                "x": 72.40921387252835,
-                "z": -63.063649028587676,
-                "levelIndex": 0
+                x: 72.40921387252835,
+                z: -63.063649028587676,
+                levelIndex: 0,
               },
               {
-                "x": 72.35661853946851,
-                "z": -66.87407896096673,
-                "levelIndex": 0
+                x: 72.35661853946851,
+                z: -66.87407896096673,
+                levelIndex: 0,
               },
               {
-                "x": 67.3186923251089,
-                "z": -66.84022704780462,
-                "levelIndex": 0
+                x: 67.3186923251089,
+                z: -66.84022704780462,
+                levelIndex: 0,
               },
               {
-                "x": 67.16558802109795,
-                "z": -65.85840399442287,
-                "levelIndex": 0
+                x: 67.16558802109795,
+                z: -65.85840399442287,
+                levelIndex: 0,
               },
               {
-                "x": 58.49594424883006,
-                "z": -65.79752227067453,
-                "levelIndex": 0
+                x: 58.49594424883006,
+                z: -65.79752227067453,
+                levelIndex: 0,
               },
               {
-                "x": 58.38015257543433,
-                "z": -62.95781121210062,
-                "levelIndex": 0
+                x: 58.38015257543433,
+                z: -62.95781121210062,
+                levelIndex: 0,
               },
               {
-                "x": 60.748083445841914,
-                "z": -62.08173915625558,
-                "levelIndex": 0
+                x: 60.748083445841914,
+                z: -62.08173915625558,
+                levelIndex: 0,
               },
               {
-                "x": 64.86325173495962,
-                "z": -62.123783459958936,
-                "levelIndex": 0
+                x: 64.86325173495962,
+                z: -62.123783459958936,
+                levelIndex: 0,
               },
               {
-                "x": 67.3587856783585,
-                "z": -63.15343343903772,
-                "levelIndex": 0
-              }
+                x: 67.3587856783585,
+                z: -63.15343343903772,
+                levelIndex: 0,
+              },
             ],
-            "layerType": "polygon",
-            "mapped": true
-          }
-        ]
+            layerType: "polygon",
+            mapped: true,
+          },
+        ],
+      };
+
+      // Male Toilet data
+      const maleToiletData = {
+        id: "92f435fc-d529-4006-a205-b8c74841ead8",
+        name: "Male Toilet",
+        type: "polygon",
+        assets: [
+          {
+            id: "f1056163-33ef-44fe-a3bb-45e7cdf92021",
+            name: "3F-MT1",
+            levelIndex: 0,
+            coordinates: [
+              { x: -5.1202800477927894, z: -41.3549738249112, levelIndex: 0 },
+              { x: -5.108056258755923, z: -45.722187811832626, levelIndex: 0 },
+              { x: -2.562654809232889, z: -45.73378318552386, levelIndex: 0 },
+              { x: -2.498243420819037, z: -46.94290185904312, levelIndex: 0 },
+              { x: -0.7160729402271571, z: -46.911344394424574, levelIndex: 0 },
+              { x: -0.7000991131369858, z: -41.423262009782135, levelIndex: 0 },
+            ],
+            layerType: "polygon",
+            mapped: true,
+          },
+        ],
+      };
+
+      // Female Toilet data
+      const femaleToiletData = {
+        id: "63c8526e-be69-4754-92f7-49a729fc0e1c",
+        name: "Female Toilet",
+        type: "polygon",
+        assets: [
+          {
+            id: "cbd9ef5f-471f-4c4d-8c0c-8c88eab0fedb",
+            name: "3F-FT1",
+            levelIndex: 0,
+            coordinates: [
+              { x: 61.16853661384839, z: -41.19032289969002, levelIndex: 0 },
+              { x: 66.3321813143042, z: -41.14280536850943, levelIndex: 0 },
+              { x: 66.35587208359964, z: -48.5650494754356, levelIndex: 0 },
+              { x: 61.24388137826961, z: -48.63467435047042, levelIndex: 0 },
+            ],
+            layerType: "polygon",
+            mapped: true,
+          },
+        ],
+      };
+
+      // Unisex Toilet data
+      const uniToiletData = {
+        id: "f591f3ae-d03b-4f3f-9125-a40306509203",
+        name: "UniToilet/Accessible",
+        type: "polygon",
+        assets: [
+          {
+            id: "befd02b8-25f3-4098-bc51-365f4cb83089",
+            name: "3F-UT1",
+            levelIndex: 0,
+            coordinates: [
+              { x: 66.6235225233567, z: -41.39543411715886, levelIndex: 0 },
+              { x: 68.0893652770982, z: -41.372901380237636, levelIndex: 0 },
+              { x: 68.08391636568123, z: -45.91022938849667, levelIndex: 0 },
+              { x: 66.55755355735361, z: -45.87462621407755, levelIndex: 0 },
+            ],
+            layerType: "polygon",
+            mapped: true,
+          },
+        ],
+      };
+
+      // Study Carrels data
+      const studyCarrelsData = {
+        id: "2a157564-9754-4704-b4ea-09c508103eac",
+        name: "Study Carrels",
+        type: "furniture",
+        assets: [
+          {
+            id: "cd1783b4-9d52-4e13-a472-fe64a69294b7",
+            name: "3FS-S01",
+            furnitureId: "64564b70-f27e-4458-85c7-008dc7171a5c",
+            layerType: "furniture",
+          },
+          {
+            id: "00ec65c9-7eb8-4957-bc64-e06f859281b2",
+            name: "3FS-S02",
+            furnitureId: "3fd5bfc7-f79c-4761-b52c-17096d4deaa2",
+            layerType: "furniture",
+          },
+          {
+            id: "3fe617f5-26e0-48d4-86e6-29ab47452447",
+            name: "3FS-S03",
+            furnitureId: "20a6b627-4152-4e10-bf48-b7dc1a99895e",
+            layerType: "furniture",
+          },
+          {
+            id: "488337aa-7f91-495e-85f0-d71961f72d8f",
+            name: "3FS-S04",
+            furnitureId: "60caa7a0-cbad-43c7-983e-4220381e313f",
+            layerType: "furniture",
+          },
+          {
+            id: "e190788d-c0dd-40b9-a22e-c0a4acfee95e",
+            name: "3FS-S05",
+            furnitureId: "b01d26cc-cb8c-46cb-acaf-1d4ff636e7e9",
+            layerType: "furniture",
+          },
+          {
+            id: "0d923746-f964-4783-bc27-705f1077adbb",
+            name: "3FS-S06",
+            furnitureId: "ec1ea0db-0a83-42bc-b33d-f5d08eea4083",
+            layerType: "furniture",
+          },
+          {
+            id: "d99cb602-c972-4873-9702-ad5b4c42af48",
+            name: "3FS-S07",
+            furnitureId: "777432af-115a-47e9-82fc-86bf6b496119",
+            layerType: "furniture",
+          },
+          {
+            id: "902c7ae3-27ce-4aca-af01-89242cdbf4e8",
+            name: "3FS-S08",
+            furnitureId: "d9b290e5-d7a7-447b-a67b-7691949c0b80",
+            layerType: "furniture",
+          },
+          {
+            id: "e74916c4-e4bf-40bf-a6cf-7e817ebd33e2",
+            name: "3FS-S09",
+            furnitureId: "fb83c9a1-c37c-4a22-8669-dce128cab370",
+            layerType: "furniture",
+          },
+          {
+            id: "e88822bf-7b30-4b9c-b2bb-f5e390547a1a",
+            name: "3FS-S10",
+            furnitureId: "0543baf9-c6b7-4df4-b2e1-f0ca75bcbee5",
+            layerType: "furniture",
+          },
+          {
+            id: "28bffe88-b5bf-4a7d-954a-0fc20cf6df10",
+            name: "3FS-S11",
+            furnitureId: "dc7267e0-7126-4faf-9e04-b83ecf64cace",
+            layerType: "furniture",
+          },
+          {
+            id: "215eeb30-fe2e-4f1c-82cc-d36d7b9db25c",
+            name: "3FS-S12",
+            furnitureId: "0ff02935-d46e-4dd8-8194-d7b1bc00a9aa",
+            layerType: "furniture",
+          },
+          {
+            id: "6bc01d8d-8372-4136-85b4-40722b9ac209",
+            name: "3FN-S01",
+            furnitureId: "97e12b06-6dff-47ad-ace2-c8894324204a",
+            layerType: "furniture",
+          },
+          {
+            id: "3b92faf3-ce0d-428e-b04d-abdbc456758e",
+            name: "3FN-S02",
+            furnitureId: "6260e985-d626-4779-9e95-f5f47d3054fb",
+            layerType: "furniture",
+          },
+          {
+            id: "97568c09-48f1-4b4d-9655-6c78d542fc01",
+            name: "3FN-S03",
+            furnitureId: "767fa843-ab9e-4b3a-92f9-fa9c9c322ae2",
+            layerType: "furniture",
+          },
+          {
+            id: "43aecc11-f9f8-4a34-a978-a5d733e05d7e",
+            name: "3FN-S04",
+            furnitureId: "2ae7d26f-7d3c-4008-8bcd-c3dddd29a3be",
+            layerType: "furniture",
+          },
+          {
+            id: "5f3614e0-c7a8-4804-8a54-bf754e8203c4",
+            name: "3FN-S05",
+            furnitureId: "67becb20-a4bc-4836-9448-6b7cde70db28",
+            layerType: "furniture",
+          },
+          {
+            id: "11617b47-415c-4e10-9a7d-bff80d8a89be",
+            name: "3FN-S06",
+            furnitureId: "f5b2807a-0cc7-44b2-a1d0-996963568eb8",
+            layerType: "furniture",
+          },
+          {
+            id: "4e02a1cb-f73d-40a1-9eb0-18db02499a2e",
+            name: "3FN-S07",
+            furnitureId: "5087463c-386c-4009-9b74-adb9666f46d8",
+            layerType: "furniture",
+          },
+        ],
       };
 
       // Space class to handle the Smplrspace viewer and data
@@ -260,6 +510,9 @@
           this.clientToken = clientToken;
           this.space = null;
           this.nonAccessibleArea = nonAccessibleArea;
+          this.toiletAreas = toiletAreas;
+          this.studyCarrels = studyCarrels;
+          this.deskStatus = [];
         }
 
         initSpace(smplr) {
@@ -271,16 +524,16 @@
           this.space.startViewer({
             preview: false,
             cameraPlacement: {
-              alpha: -1.5726702585685455,
-              beta: 0.39278097218549923,
-              radius: 79.02889993229235,
+              alpha: -1.5791741648185431,
+              beta: 0.05150000000000005,
+              radius: 75.52716916956724,
               target: {
                 x: 44,
                 y: 1,
                 z: -51,
               },
             },
-            onReady: () => this.updateDataLayers(),
+            onReady: () => this.fetchAll(),
             onError: (error) => console.error("Could not start viewer", error),
           });
         }
@@ -288,6 +541,10 @@
         updateDataLayers() {
           // Remove previous layers if any
           this.space.removeDataLayer("nonAccessibleArea");
+          this.space.removeDataLayer("maleToiletArea");
+          this.space.removeDataLayer("femaleToiletArea");
+          this.space.removeDataLayer("uniToiletArea");
+          this.space.removeDataLayer("studyCarrels");
 
           const isNonAccessibleAreaEmpty =
             !this.nonAccessibleArea || this.nonAccessibleArea.length === 0;
@@ -297,34 +554,172 @@
               id: "nonAccessibleArea",
               type: "polygon",
               data: this.nonAccessibleArea,
-              tooltip: (d) => `${d.name} - Not Accessible`,
+              tooltip: (d) => `Not Accessible`,
               color: (d) => d.color || color_dict.restricted,
               alpha: 2.2,
               height: 2.9,
             });
           }
+
+          // Replace the existing toiletAreas code block with these three separate data layers
+
+          const isToiletAreasEmpty =
+            !this.toiletAreas || this.toiletAreas.length === 0;
+
+          if (!isToiletAreasEmpty) {
+            // Add Male Toilet layer
+            this.space.addDataLayer({
+              id: "maleToiletArea",
+              type: "polygon",
+              data: this.toiletAreas.filter((d) => d.name === "3F-MT1"),
+              tooltip: (d) => `Male Toilet`,
+              color: (d) => "#1D547D",
+              alpha: 2.2,
+              height: 2.9,
+            });
+
+            // Add Female Toilet layer
+            this.space.addDataLayer({
+              id: "femaleToiletArea",
+              type: "polygon",
+              data: this.toiletAreas.filter((d) => d.name === "3F-FT1"),
+              tooltip: (d) => `Female Toilet`,
+              color: (d) => "#A7384E",
+              alpha: 2.2,
+              height: 2.9,
+            });
+
+            // Add Unisex/Accessible Toilet layer
+            this.space.addDataLayer({
+              id: "uniToiletArea",
+              type: "polygon",
+              data: this.toiletAreas.filter((d) => d.name === "3F-UT1"),
+              tooltip: (d) => `Uni/Accessible Toilet`,
+              color: (d) => "#3aa655",
+              alpha: 2.2,
+              height: 2.9,
+            });
+          }
+
+          const isStudyCarrelsEmpty =
+            !this.studyCarrels || this.studyCarrels.length === 0;
+
+          if (!isStudyCarrelsEmpty) {
+            this.space.addDataLayer({
+              id: "studyCarrels",
+              type: "furniture",
+              data: this.studyCarrels,
+              tooltip: (d) => `${d.name} - ${d.available || "Unknown"}`,
+              color: (d) => d.color || color_dict.unavailable,
+            });
+          }
+        }
+        fetchAll() {
+          this.fetchData();
+        }
+
+        fetchData() {
+          fetch(API_ENDPOINT)
+            .then((res) => res.json())
+            .then((data) => {
+              let occupancy = {};
+              for (let i = 0; i < data.length; i++) {
+                let value = data[i];
+                let loc = value.area;
+                let timestamp = value.timestamp;
+                let available = value.occupancy;
+
+                let color = color_dict.hasOwnProperty(available)
+                  ? color_dict[available]
+                  : "#ffffff";
+
+                if (!occupancy.hasOwnProperty(loc)) {
+                  occupancy[loc] = {
+                    timestamp: timestamp,
+                    available: available,
+                    occupancy: value.occupancy,
+                    color: color,
+                  };
+                } else if (occupancy[loc].timestamp < timestamp) {
+                  occupancy[loc] = {
+                    timestamp: timestamp,
+                    available: available,
+                    occupancy: value.occupancy,
+                    color: color,
+                  };
+                }
+              }
+
+              // Update study carrels based on occupancy data
+              for (let key in occupancy) {
+                if (
+                  occupancy.hasOwnProperty(key) &&
+                  study_carrel_filter.hasOwnProperty(key)
+                ) {
+                  const jsonKey = study_carrel_filter[key];
+                  const _index = study_carrel_index[jsonKey];
+
+                  console.log("updated " + jsonKey);
+                  console.log(occupancy[key]);
+                  this.studyCarrels[_index]["available"] =
+                    occupancy[key]["available"];
+                  this.studyCarrels[_index]["color"] = occupancy[key]["color"];
+                }
+              }
+              this.updateDataLayers();
+            });
         }
       }
 
-      // Initialize non-accessible area assets with the new JSON structure
-      const nonAccessibleArea_assets = nonAccessibleAreaData.assets.map((area, index) => {
-        // Map each area to its index in the non_accessible_area_index object
-        const areaName = area.name;
-        return {
+      const nonAccessibleArea_assets = nonAccessibleAreaData.assets.map(
+        (area, index) => {
+          const areaName = area.name;
+          return {
+            ...area,
+            index:
+              non_accessible_area_index[areaName] !== undefined
+                ? non_accessible_area_index[areaName]
+                : index,
+            available: "restricted",
+            color: color_dict["restricted"],
+          };
+        }
+      );
+
+      // Initialize toilet areas with specific colors
+      const toiletAreas = [
+        ...maleToiletData.assets.map((area) => ({
           ...area,
-          // Use the index from non_accessible_area_index if available
-          index: non_accessible_area_index[areaName] !== undefined ? 
-                 non_accessible_area_index[areaName] : index,
-          available: "restricted",
-          color: color_dict["restricted"],
-        };
-      });
+          color: "#1D547D",
+          index: toilet_area_index[area.name] || 0,
+        })),
+        ...femaleToiletData.assets.map((area) => ({
+          ...area,
+          color: "#A7384E",
+          index: toilet_area_index[area.name] || 1,
+        })),
+        ...uniToiletData.assets.map((area) => ({
+          ...area,
+          color: "#3aa655",
+          index: toilet_area_index[area.name] || 2,
+        })),
+      ];
+
+      // Initialize study carrels with default status
+      const studyCarrels = studyCarrelsData.assets.map((carrel) => ({
+        ...carrel,
+        available: "unavailable", // Default status until API provides data
+        color: color_dict["unavailable"],
+        index: study_carrel_index[carrel.name] || 0,
+      }));
 
       // Create the Space instance with only non-accessible areas
       let spc = new Space(
         SPACE_ID,
         CLIENT_ID,
-        nonAccessibleArea_assets
+        nonAccessibleArea_assets,
+        toiletAreas,
+        studyCarrels
       );
 
       async function wait() {
@@ -340,6 +735,9 @@
           await wait();
         }
         spc.initSpace(smplr);
+        setInterval(() => {
+          spc.fetchAll();
+        }, UPDATE_FREQUENCY * 1000);
       }
 
       start();
