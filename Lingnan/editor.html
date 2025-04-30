@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
+  <style>
+.equipment-panel {
+  /* Prevent unwanted scaling or movement */
+  transform: none !important;
+  animation: none !important;
+  transition: opacity 0.3s ease !important;
+  overflow: auto;
+  max-height: 80vh;
+}
+
+/* Fix for continuous movement in y-axis */
+.editor-canvas.equipment-mode {
+  overflow: hidden !important;
+  position: relative !important;
+  transform-origin: center !important;
+}
+</style>
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
     <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
@@ -30,6 +47,64 @@
         containerId: "test",
       });
       editor.startSession();
-    </script>
+      // Handle messages from parent frame
+window.addEventListener('message', function(event) {
+  // Make sure message is from parent
+  if (event.source !== window.parent) return;
+  
+  // Process message
+  if (event.data && event.data.type === 'EDITOR_STATE_UPDATE') {
+    const { equipmentMode, canvasScale } = event.data;
+    
+    // Apply changes to the canvas
+    const canvas = document.querySelector('.editor-canvas'); // Update selector to match your canvas element
+    if (canvas) {
+      if (equipmentMode) {
+        // Fix equipment mode rendering
+        canvas.style.transform = `scale(${canvasScale})`;
+        canvas.style.transformOrigin = 'center center';
+        
+        // Prevent continuous scrolling in y direction
+        stopContinuousUpdates();
+      }
+    }
+  }
+});
+
+// Function to prevent continuous updates/rendering
+function stopContinuousUpdates() {
+  // Find animation frames or intervals that might be causing continuous updates
+  const equipmentPanel = document.querySelector('.equipment-panel'); // Update selector
+  if (equipmentPanel) {
+    // Remove event listeners that might be causing issues
+    const clonedPanel = equipmentPanel.cloneNode(true);
+    equipmentPanel.parentNode.replaceChild(clonedPanel, equipmentPanel);
+    
+    // Add back essential event listeners
+    addEssentialListeners(clonedPanel);
+  }
+  
+  // Cancel any animation frames that might be running
+  if (window._animationFrameId) {
+    cancelAnimationFrame(window._animationFrameId);
+    window._animationFrameId = null;
+  }
+}
+
+// Add back only essential event listeners to the equipment panel
+function addEssentialListeners(panel) {
+  // Add essential event listeners here
+  // This will depend on your specific implementation
+}
+
+// Send updates to parent frame
+function notifyParent(data) {
+  window.parent.postMessage({
+    type: 'CANVAS_UPDATE',
+    ...data
+  }, '*');
+}
+</script>
+  
   </body>
 </html>
