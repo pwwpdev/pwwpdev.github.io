@@ -1641,7 +1641,7 @@
 
             // Split the UniToilets into two groups - ones between male/female toilets and others
             const uniToilets = this.toiletAreas.filter((t) => {
-              if (t.available !== "UniToilet/Accessible") return false;
+              if (t.available !== "Unisex Toilet/Accessible") return false;
 
               // Check if this is one of the middle UniToilets (1F-UT1 or 1F-UT2)
               // These are the ones next to the male/female toilets
@@ -1650,7 +1650,7 @@
             });
 
             const otherUniToilets = this.toiletAreas.filter((t) => {
-              if (t.available !== "UniToilet/Accessible") return false;
+              if (t.available !== "Unisex Toilet/Accessible") return false;
 
               // This is for the other UniToilet (1F-UT3)
               return t.name === "1F-UT3";
@@ -1814,12 +1814,12 @@
           };
         }),
 
-        // UniToilet/Accessible - green
+        // Unisex Toilet/Accessible - green
         ...dict[5]["assets"].map((area) => {
           return {
             ...area,
-            available: "UniToilet/Accessible",
-            color: "#3aa655",
+            available: "Unisex Toilet/Accessible",
+              color: "#023b8c",
           };
         }),
       ];
