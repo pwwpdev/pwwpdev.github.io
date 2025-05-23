@@ -13,20 +13,31 @@
     </style>
   </head>
   <body>
-
     <iframe
       id="first_floor_iframe"
       src="https://pwwpdev.github.io/Lingnan/first_floor_book_finder_2?callNumber="
     ></iframe>
     <br />
+
+    <iframe
+      id="second_floor_iframe"
+      src="https://pwwpdev.github.io/Lingnan/second_floor_book_finder_2?callNumber="
+    ></iframe>
+    <br />
+
+    <iframe
+      id="third_floor_iframe"
+      src="https://pwwpdev.github.io/Lingnan/third_floor_book_finder_2?callNumber="
+    ></iframe>
+    <br />
+
     <iframe
       id="m_floor_iframe"
       src="https://pwwpdev.github.io/Lingnan/m_floor_book_finder_2?callNumber="
     ></iframe>
 
     <script>
-
-function getQueryParameter(param) {
+      function getQueryParameter(param) {
         // Get the current URL
         const url = new URL(window.location.href);
 
@@ -36,19 +47,23 @@ function getQueryParameter(param) {
         return value;
       }
 
-
       function alert_input() {
-        const callNumber = getQueryParameter("callNumber")
+        const callNumber = getQueryParameter("callNumber");
         document.getElementById(
           "first_floor_iframe"
         ).src = `https://pwwpdev.github.io/Lingnan/first_floor_book_finder_2?callNumber=${callNumber}`;
+        document.getElementById(
+          "second_floor_iframe"
+        ).src = `https://pwwpdev.github.io/Lingnan/second_floor_book_finder_2?callNumber=${callNumber}`;
+        document.getElementById(
+          "third_floor_iframe"
+        ).src = `https://pwwpdev.github.io/Lingnan/third_floor_book_finder_2?callNumber=${callNumber}`;
         document.getElementById(
           "m_floor_iframe"
         ).src = `https://pwwpdev.github.io/Lingnan/m_floor_book_finder_2?callNumber=${callNumber}`;
       }
 
       alert_input();
-
     </script>
   </body>
 </html>
