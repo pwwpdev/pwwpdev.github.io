@@ -1460,7 +1460,7 @@
               tooltip: (d) => `Not Accessible`,
               color: (d) => d.color || color_dict.restricted,
               alpha: 2.2,
-              height: 1.0,
+              height: (d) => (d.name === "8" || d.name === "9") ? 3.0 : 1.0,
             });
           }
 
@@ -1573,6 +1573,8 @@
             });
         }
       }
+
+      
 
       const nonAccessibleArea_assets = nonAccessibleAreaData.assets.map(
         (area, index) => {
