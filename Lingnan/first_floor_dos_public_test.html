@@ -1651,7 +1651,6 @@
           this.space.removeDataLayer("rooms");
           this.space.removeDataLayer("desks");
           this.space.removeDataLayer("Notaccessible");
-         
 
           const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
           const isDesksEmpty = !this.desks || this.desks.length === 0;
@@ -1694,8 +1693,6 @@
               height: 2.9,
             });
           }
-
-          
         }
 
         fetchAll() {
@@ -1715,7 +1712,7 @@
 
                 let color = color_dict.hasOwnProperty(available)
                   ? color_dict[available]
-                  : "#ffffff";
+                  : "#ffa500";
 
                 if (!occupancy.hasOwnProperty(loc)) {
                   occupancy[loc] = {
@@ -1787,6 +1784,72 @@
         };
       });
 
+      // Get the current URL
+      const currentUrl = window.location.href;
+
+      // Create a URL object
+      const url = new URL(currentUrl);
+
+      // Use URLSearchParams to get query parameters
+      const params = new URLSearchParams(url.search);
+
+      // Example: Get a specific query parameter by name
+      const facility = params.get("facility"); // Replace 'yourParameterName' with the actual parameter name
+
+      console.log(paramValue); // Outputs the value of the query parameter
+
+      if (!!facility) {
+        if (facility === "Service Counter") {
+          // Use the first facility
+          dict[0]["assets"].push({
+            id: "53c88883-8018-4407-8b8b-5b08e4c84866",
+            name: "ServiceCounter",
+            furnitureId: "de7dd1fb-e868-46a6-a77f-fdfee928ad06",
+            layerType: "furniture",
+          });
+        } else if (facility === "Study Rooms") {
+          dict[2]["assets"].push({
+            id: "2c742e1d-1ab7-4600-8376-76626e90c084",
+            name: "Individual Study Room 1",
+            levelIndex: 0,
+            coordinates: [
+              [
+                {
+                  x: 117.426,
+                  z: -56.963,
+                  levelIndex: 0,
+                },
+                {
+                  x: 119.377,
+                  z: -56.963,
+                  levelIndex: 0,
+                },
+                {
+                  x: 119.377,
+                  z: -54.059,
+                  levelIndex: 0,
+                },
+                {
+                  x: 117.426,
+                  z: -54.059,
+                  levelIndex: 0,
+                },
+                {
+                  x: 117.426,
+                  z: -56.963,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+        } else if (facility === "Computers") {
+
+        } else if (facility === "Study Spaces") {
+        } else if (facility === "Drinking Water Stations") {
+        }
+      }
 
       // Create the Space instance with the updated parameters
       spc = new Space(
