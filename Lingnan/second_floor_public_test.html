@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Second Floor Smplrspace Viewer</title>
+  </head>
+    <style>
+    body,
+    html {
+      height: 100vh !important;
+      overflow: hidden;
+    }
+    #wrapper,
+    #smplrspace-container {
+      height: 100vh !important;
+    }
+  </style>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <div id="wrapper">
+      <div id="smplrspace-container" class="gap"></div>
+    </div>
+
+    <script>
+      // Replace with your second floor specific values
+      const API_ENDPOINT =
+        "https://optimusc.flowfuse.cloud/lingnan-library-dos";
+
+      // Replace with your second floor client and space IDs
+      const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
+      const SPACE_ID = "spc_vyvqclk6";
+
+      const UPDATE_FREQUENCY = 60;
+
+      // Keep toilet indices
+      const toilet_index = {
+        "2F-FT1": 0,
+        "2F-FT2": 1,
+        "2F-MT1": 2,
+        "2F-MT2": 3,
+      };
+
+      const toilet_filter = {
+        "2F-FT1": "2F-FT1",
+        "2F-FT2": "2F-FT2",
+        "2F-MT1": "2F-MT1",
+        "2F-MT2": "2F-MT2",
+      };
+
+      // Keep non-accessible area index
+      const non_accessible_area_index = {
+        1: 0,
+      };
+
+      const non_accessible_area_filter = {
+        NonAssessibleArea: "1",
+      };
+
+      const color_dict = {
+        occupied: "#ff3f34",
+        countdown: "#ff3f34",
+        vacant: "#3aa655",
+        free: "#3aa655",
+        unoccupied: "#3aa655",
+        passive_occupied: "#ffbf00",
+        away: "#ffbf00",
+        demo: "#6888be",
+        unavailable: "#949494",
+        restricted: "#768590",
+      };
+
+      // Define the assets for the second floor - keep only what's needed
+      const dict = [
+  {
+    "id": "93b14a37-7e7b-4747-bbc5-c2f5f18735d7",
+    "name": "NonAssessibleArea",
+    "type": "polygon",
+    "assets": [
+      {
+        "id": "f5d5e69f-4585-4317-a54a-777906f1ecea",
+        "name": "1",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": -6.407,
+              "z": -43.441,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.289,
+              "z": -43.393,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.16,
+              "z": -51.687,
+              "levelIndex": 0
+            },
+            {
+              "x": -6.41,
+              "z": -51.723,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      }
+    ]
+  },
+  {
+    "id": "83510d18-ceb2-4bec-9d23-cd9b59cf250c",
+    "name": "FemaleToilet",
+    "type": "polygon",
+    "assets": [
+      {
+        "id": "424a1af4-39d2-4151-b29b-f9f18cffbf5b",
+        "name": "2F-FT1",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 57.086,
+              "z": -35.102,
+              "levelIndex": 0
+            },
+            {
+              "x": 56.986,
+              "z": -39.93,
+              "levelIndex": 0
+            },
+            {
+              "x": 64.578,
+              "z": -39.989,
+              "levelIndex": 0
+            },
+            {
+              "x": 64.558,
+              "z": -35.084,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "f521dd85-af3d-47bd-9303-ee54eaf7b3bf",
+        "name": "2F-FT2",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": -6.145,
+              "z": -35.351,
+              "levelIndex": 0
+            },
+            {
+              "x": -6.175,
+              "z": -39.125,
+              "levelIndex": 0
+            },
+            {
+              "x": -0.149,
+              "z": -39.207,
+              "levelIndex": 0
+            },
+            {
+              "x": -0.026,
+              "z": -35.233,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      }
+    ]
+  },
+  {
+    "id": "bca7d0da-c371-4f2c-bc50-86d3446428cc",
+    "name": "MaleToilet",
+    "type": "polygon",
+    "assets": [
+      {
+        "id": "a9dcd490-f664-4f93-9cbe-43fc75be9c9c",
+        "name": "2F-MT1",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 64.655,
+              "z": -35.105,
+              "levelIndex": 0
+            },
+            {
+              "x": 64.697,
+              "z": -39.958,
+              "levelIndex": 0
+            },
+            {
+              "x": 72.253,
+              "z": -40.03,
+              "levelIndex": 0
+            },
+            {
+              "x": 72.191,
+              "z": -35.064,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "3f5516f9-cde2-48ef-be9d-f8dfc4149119",
+        "name": "2F-MT2",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": -0.266,
+              "z": -35.052,
+              "levelIndex": 0
+            },
+            {
+              "x": -0.236,
+              "z": -39.274,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.238,
+              "z": -39.393,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.264,
+              "z": -35.016,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      }
+    ]
+  },
+  {
+    "id": "151f6d04-df83-4bc6-8525-aa0bf2ff6290",
+    "name": "BookShelves",
+    "type": "furniture",
+    "assets": [
+      {
+        "id": "1727459a-e8cc-4263-8bbc-2def247d5285",
+        "name": "2A01",
+        "furnitureId": "c55bbbeb-3b46-416a-a0db-72da7a02c088",
+        "layerType": "furniture"
+      },
+      {
+        "id": "60accb8b-e47c-4d4f-b6ef-5a37d4a413a1",
+        "name": "2A02",
+        "furnitureId": "786e3c28-b5fc-4c22-a8c7-77140c8e05da",
+        "layerType": "furniture"
+      },
+      {
+        "id": "2b5a2bf9-7bd3-4ae0-8872-ff4ca0b026e9",
+        "name": "2A03",
+        "furnitureId": "324cb7c4-9bed-4d69-872b-a555490cca1a",
+        "layerType": "furniture"
+      },
+      {
+        "id": "0068d637-9ed9-4297-b4c4-3ef1589d8bee",
+        "name": "2A04",
+        "furnitureId": "cae6debd-4d18-4fc8-a4d2-e51fc7e56c2b",
+        "layerType": "furniture"
+      },
+      {
+        "id": "fbaeaa0d-cb98-4678-a2e8-752234e4989b",
+        "name": "2A05",
+        "furnitureId": "f8561d0d-a792-4291-976c-cd97420c9fb3",
+        "layerType": "furniture"
+      },
+      {
+        "id": "a248058a-d1b7-4260-9181-c6b8a662a91d",
+        "name": "2A06",
+        "furnitureId": "ac652397-6719-4761-82c8-41cd6feda332",
+        "layerType": "furniture"
+      },
+      {
+        "id": "3bcc8aeb-b7ea-4d0d-b125-140e47d27c47",
+        "name": "2A07",
+        "furnitureId": "94860a18-4475-4d98-9171-b72638dcf712",
+        "layerType": "furniture"
+      },
+      {
+        "id": "e260d647-69c9-4d22-873f-e9a56381e836",
+        "name": "2A08",
+        "furnitureId": "6cb338b0-3cd9-413d-af3f-e38b6469809c",
+        "layerType": "furniture"
+      },
+      {
+        "id": "50a90140-ba34-4c64-b39a-33d60bc7a4d3",
+        "name": "2A09",
+        "furnitureId": "917cd55f-143a-46b9-931a-668e2c516aac",
+        "layerType": "furniture"
+      },
+      {
+        "id": "4115810e-573f-4c66-91fd-74ed0186ae09",
+        "name": "2A10",
+        "furnitureId": "3a7974f2-15a0-4c62-b3c3-40361aa43c16",
+        "layerType": "furniture"
+      },
+      {
+        "id": "02adc9df-0fd7-485b-ac1d-f06e672079e7",
+        "name": "2A11",
+        "furnitureId": "96e21748-6676-46db-ab9d-6c7b1f92200c",
+        "layerType": "furniture"
+      },
+      {
+        "id": "26102806-3235-4c08-9bc1-2632cad41e1e",
+        "name": "2A12",
+        "furnitureId": "9f31aafd-20f2-4866-8433-bc4b3baf51f0",
+        "layerType": "furniture"
+      },
+      {
+        "id": "020c961b-4e35-4c23-bda1-044efb59ac05",
+        "name": "2A13",
+        "furnitureId": "67e72ce6-c7ae-495e-a118-abb105a7e536",
+        "layerType": "furniture"
+      },
+      {
+        "id": "3e466842-9de8-49c3-b020-e6ec3a0fded5",
+        "name": "2A14",
+        "furnitureId": "fc91e751-f7b3-4856-92cd-89ddbcba1c02",
+        "layerType": "furniture"
+      },
+      {
+        "id": "b00235d4-d5a3-4bdb-9ee1-d481fcfac7e0",
+        "name": "2A15",
+        "furnitureId": "872efea0-72f9-4f09-9e81-88ba15c8271e",
+        "layerType": "furniture"
+      },
+      {
+        "id": "339d7ec5-8a3e-47a6-a27c-ecb75791c428",
+        "name": "2A16",
+        "furnitureId": "960c01a1-7ae3-45c2-9eda-3023b6442fa2",
+        "layerType": "furniture"
+      },
+      {
+        "id": "0cc0920b-f058-4aa9-81aa-fc52fd995317",
+        "name": "2B01",
+        "furnitureId": "92a9b2ac-cdfa-479f-8dda-6635d58bf1ba",
+        "layerType": "furniture"
+      },
+      {
+        "id": "6b29764c-ec9c-4c2e-9fbd-f2e5aba99ed1",
+        "name": "2B02",
+        "furnitureId": "b2766e86-0806-4007-8ade-23aa0c6f506d",
+        "layerType": "furniture"
+      },
+      {
+        "id": "3999a195-727f-4c0d-97d8-c18a91eb950a",
+        "name": "2B03",
+        "furnitureId": "2418b769-ef4d-4477-ae6e-0ca4de40149f",
+        "layerType": "furniture"
+      },
+      {
+        "id": "ec949863-6901-4c9c-b81b-2746fff018c5",
+        "name": "2C01",
+        "furnitureId": "145e5cc3-397e-4033-8e31-ece819adacae",
+        "layerType": "furniture"
+      },
+      {
+        "id": "1d015d63-1ceb-4687-a73e-5a1fb6f6611f",
+        "name": "2C02",
+        "furnitureId": "0cfea22c-3348-48a1-8594-71c13f39bf1b",
+        "layerType": "furniture"
+      },
+      {
+        "id": "8cfaa9f7-0f23-4700-9a57-70272590ecec",
+        "name": "2C03",
+        "furnitureId": "74064f90-d461-41c6-8028-227d1d00e141",
+        "layerType": "furniture"
+      },
+      {
+        "id": "c7b2de7d-0c7f-470b-b9b6-d6e076e0d0e1",
+        "name": "2C04",
+        "furnitureId": "9fab116b-2659-4d02-81e4-bc73a85e7ba2",
+        "layerType": "furniture"
+      },
+      {
+        "id": "4e3187fb-c4f9-4be3-a599-9276615d23ef",
+        "name": "2C05",
+        "furnitureId": "3ef34bab-a2cb-4f02-b4a0-1965d7397a3c",
+        "layerType": "furniture"
+      },
+      {
+        "id": "e63233e1-c9aa-40fe-8eb1-f9840763dbad",
+        "name": "2C06",
+        "furnitureId": "2a11f3db-70ca-4c30-9f3a-4405bbfb17f0",
+        "layerType": "furniture"
+      },
+      {
+        "id": "e90f59a3-46fd-48b9-857d-11271ab512f9",
+        "name": "2C07",
+        "furnitureId": "9d6357e7-38e5-4cb3-ac37-49030cec0e8a",
+        "layerType": "furniture"
+      },
+      {
+        "id": "d7a94605-10d4-4185-b4c3-90f5834f67a1",
+        "name": "2C08",
+        "furnitureId": "2458dc8d-a511-45b9-a7e4-4725910e0e11",
+        "layerType": "furniture"
+      },
+      {
+        "id": "0b3184e4-2c23-4b50-9cc8-bdcb2b2b0f0b",
+        "name": "2C09",
+        "furnitureId": "12a84d00-67fa-429e-8894-a9eec7482196",
+        "layerType": "furniture"
+      },
+      {
+        "id": "94b5b0fe-701c-4604-ac8d-c3e53a45966d",
+        "name": "2C10",
+        "furnitureId": "b000fe3e-e354-4868-a6e6-f282d8be9d50",
+        "layerType": "furniture"
+      },
+      {
+        "id": "cba708b6-0814-4d78-96a9-c48d0e7b922d",
+        "name": "2C11",
+        "furnitureId": "9e5e5f47-682c-41bf-b817-8cd2c0933c55",
+        "layerType": "furniture"
+      },
+      {
+        "id": "5120890d-86e5-48fd-b0c4-58ff014a5312",
+        "name": "2C12",
+        "furnitureId": "7956beae-3335-4ca2-88d1-f75ea4ab5c43",
+        "layerType": "furniture"
+      },
+      {
+        "id": "3908f14b-c6a7-4f0c-8b6d-d705c6f0e69e",
+        "name": "2C13",
+        "furnitureId": "3ca8bbe4-015b-4ab3-ad9b-0168ad010552",
+        "layerType": "furniture"
+      },
+      {
+        "id": "a53fce80-8e8e-4d41-bbf1-4cc12013f483",
+        "name": "2C14",
+        "furnitureId": "b5666417-21ef-4fec-99c0-9c492a633074",
+        "layerType": "furniture"
+      },
+      {
+        "id": "733e7731-094c-48d9-899a-1d25f5dfd75a",
+        "name": "2C15",
+        "furnitureId": "27e78ede-8a5c-45f9-b1b0-4f79aa47b9ba",
+        "layerType": "furniture"
+      },
+      {
+        "id": "d859b6e8-343a-4adc-9b94-f5ed0fa256f3",
+        "name": "2A17",
+        "furnitureId": "8a029e32-5149-42ce-a809-444f883efbf8",
+        "layerType": "furniture"
+      }
+    ]
+  }
+];
+
+      // Space class to handle the Smplrspace viewer and data
+      class Space {
+        constructor(spaceId, clientToken, toilets, nonAccessibleArea) {
+          this.spaceId = spaceId;
+          this.clientToken = clientToken;
+          this.space = null;
+          this.toilets = toilets;
+          this.nonAccessibleArea = nonAccessibleArea;
+        }
+
+        initSpace(smplr) {
+          this.space = new smplr.Space({
+            spaceId: this.spaceId,
+            clientToken: this.clientToken,
+            containerId: "smplrspace-container",
+          });
+          this.space.startViewer({
+            preview: false,
+            cameraPlacement: {
+              alpha:  
+              -1.5818693835785191,
+              beta: 
+              0.3078471223552482,
+              radius: 66.25724782434426,
+              target: {
+                x: 32,
+                y: 14,
+                z: -51,
+              },
+            },
+            onReady: () => this.updateDataLayers(),
+            onError: (error) => console.error("Could not start viewer", error),
+          });
+        }
+
+        updateDataLayers() {
+          // Remove previous layers if any
+          this.space.removeDataLayer("toilets");
+          this.space.removeDataLayer("nonAccessibleArea");
+
+          const isToiletsEmpty = !this.toilets || this.toilets.length === 0;
+          const isNonAccessibleAreaEmpty =
+            !this.nonAccessibleArea || this.nonAccessibleArea.length === 0;
+
+          if (!isToiletsEmpty) {
+            this.space.addDataLayer({
+              id: "toilets",
+              type: "polygon",
+              data: this.toilets,
+              tooltip: (d) => {
+                const isFemale = d.name.includes("FT");
+                return `${isFemale ? "Female Toilet" : "Male Toilet"}`;
+                },
+                            color: (d) => d.color || "#AED6F1",
+              alpha: 4.9,
+              height: 1.0,
+            });
+          }
+
+          if (!isNonAccessibleAreaEmpty) {
+            this.space.addDataLayer({
+              id: "nonAccessibleArea",
+              type: "polygon",
+              data: this.nonAccessibleArea,
+              tooltip: (d) => ` Not Accessible`,
+              color: (d) => d.color || color_dict.restricted,
+              alpha: 2.2,
+              height: 1.0,
+            });
+          }
+        }
+      }
+
+      // Initialize toilet assets
+      const toilet_assets = [...dict[1]["assets"], ...dict[2]["assets"]].map(
+        (toilet) => {
+          // Pink for female, blue for male
+          const isFemale = toilet.name.includes("FT");
+          return {
+            ...toilet,
+            available: "unavailable",
+            color: isFemale ? "#A7384E" : "#1D547D",
+          };
+        }
+      );
+
+      // Initialize non-accessible area with red color
+      const nonAccessibleArea_assets = dict[0]["assets"].map((area) => {
+        return {
+          ...area,
+          available: "restricted",
+          color: color_dict["restricted"],
+        };
+      });
+
+      // Create the Space instance
+      let spc = new Space(
+        SPACE_ID,
+        CLIENT_ID,
+        toilet_assets,
+        nonAccessibleArea_assets
+      );
+
+      delete dict;
+
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      async function start() {
+        while (typeof smplr === "undefined") {
+          await wait();
+        }
+        spc.initSpace(smplr);
+      }
+
+      start();
+    </script>
+
+  </body>
+</html>
