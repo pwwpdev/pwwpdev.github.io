@@ -1654,7 +1654,7 @@
               tooltip: (d) => ` ${d.available}`,
               color: (d) => d.color,
               alpha: 2.6,
-              height: 1.0,
+              height: (d) => d.height,
             });
           }
         }
@@ -1739,12 +1739,17 @@
         }
       }
 
-      // initialize with the new Not Accessivble assets
+      const customHeightIds = [
+        "031bae15-7140-44c3-b06a-eb777de0ee23",
+        "5a9bbacf-986a-4ec8-ba38-837e646edba8",
+      ];
+
       const Notaccessible = dict[1]["assets"].map((area) => {
         return {
           ...area,
           available: "Not Accessible",
           color: color_dict["unavailable"],
+          height: customHeightIds.includes(area.id) ? 3.0 : 1.0,
         };
       });
 
