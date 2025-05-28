@@ -1599,12 +1599,15 @@
           });
           this.space.startViewer({
             preview: false,
-            cameraPlacement: {
-              alpha: 1.5707963267948966,
+             cameraPlacement: {
+              alpha: Math.PI / 2,
               beta: 0.5,
-              radius: 2,
-              target: { x: 70, y: 1, z: -51 },
-            },
+              radius: 24,
+              target: {
+                x: 70,
+                y: 1,
+                z: -51,
+              },
             onReady: () => this.fetchAll(),
             onError: (error) => console.error("Could not start viewer", error),
           });
