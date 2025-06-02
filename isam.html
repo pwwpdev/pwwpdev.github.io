@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sensor Map</title>
+  </head>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+
+    <div id="wrapper">
+      <div id="smplrspace-container" style="width: 100vw; height: 100vh"></div>
+    </div>
+
+    <script>
+      // Your space configuration
+      const SPACE_ID = "spc_k8fevpoo";
+      const CLIENT_ID = "pub_ec44327e146e46b191ce11a36a9c2138";
+
+      // Sensor assets from your JSON file
+      const sensorAssets = [
+        {
+          id: "2f27c6f7-459f-4029-af48-ed6773d6e22d",
+          name: "ISAM-IAQ-05",
+          levelIndex: 0,
+          position: {
+            x: 7.145,
+            z: -8.535,
+            elevation: 0.01,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "81f72088-af79-4367-a153-681213bfadf6",
+          name: "ISAM-IAQ-06",
+          levelIndex: 0,
+          position: {
+            x: 7.517,
+            z: -13.318,
+            elevation: 1.051,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "43465e1b-6311-4ef0-bdf6-cdc75bf2ba63",
+          name: "ISAM-IAQ-02",
+          levelIndex: 0,
+          position: {
+            x: 9.529,
+            z: -13.159,
+            elevation: 0.46,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "c09d07b0-0c15-4c21-af1b-185730141c73",
+          name: "ISAM-IAQ-04",
+          levelIndex: 0,
+          position: {
+            x: 13.002,
+            z: -7.074,
+            elevation: 0.01,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "8144c33f-ecea-4997-86d9-25890f990e18",
+          name: "ISAM-IAQ-01",
+          levelIndex: 0,
+          position: {
+            x: 19.604,
+            z: -11.229,
+            elevation: 0.01,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "20e0899a-ed2b-472e-98f3-45b0b12f58af",
+          name: "ISAM-WL-07",
+          levelIndex: 0,
+          position: {
+            x: 16.592,
+            z: -9.559,
+            elevation: 0.764,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "1403cf2a-4cd6-4758-a800-a1c7694c303d",
+          name: "ISAM-WL-04",
+          levelIndex: 0,
+          position: {
+            x: 19.271,
+            z: -9.594,
+            elevation: 0.66,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "e6f60c2e-7618-4631-b999-a81d70854af1",
+          name: "ISAM-WL-06",
+          levelIndex: 0,
+          position: {
+            x: 22.373,
+            z: -9.567,
+            elevation: 0.764,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "14bdece5-42bc-43a3-a248-959c1c5ce88a",
+          name: "ISAM-WL-02",
+          levelIndex: 0,
+          position: {
+            x: 17.137,
+            z: -11.898,
+            elevation: 0.168,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "585bb419-1432-4c3d-84e0-dc383a4ae4a2",
+          name: "ISAM-WL-01",
+          levelIndex: 0,
+          position: {
+            x: 22.272,
+            z: -12.107,
+            elevation: 3.446,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+        {
+          id: "532e9c6c-7ef7-4c1a-bb73-0000007f389b",
+          name: "ISAM-IAQ-03",
+          levelIndex: 0,
+          position: {
+            x: 17.21,
+            z: -12.891,
+            elevation: 0.01,
+            levelIndex: 0,
+          },
+          layerType: "point",
+        },
+      ];
+
+      // Color mapping for different sensor types and status
+      const colorMapping = {
+        IAQ: "#4ade80", // Green for IAQ sensors
+        WL: "#3b82f6", // Blue for WL sensors (water level?)
+        good: "#4ade80",
+        warning: "#fbbf24",
+        danger: "#ef4444",
+      };
+
+      // Add mock data and color to sensors
+      const processedSensors = sensorAssets.map((sensor) => {
+        const sensorType = sensor.name.includes("IAQ") ? "IAQ" : "WL";
+
+        // Mock sensor data - replace with real API data
+        const mockData = {
+          temperature: 22 + Math.random() * 6, // 22-28°C
+          humidity: 50 + Math.random() * 30, // 50-80%
+          co2: 400 + Math.random() * 400, // 400-800 ppm
+          status: Math.random() > 0.8 ? "warning" : "good",
+        };
+
+        return {
+          ...sensor,
+          color: colorMapping[sensorType],
+          data: mockData,
+          sensorType: sensorType,
+        };
+      });
+
+      // Space class to handle the Smplrspace viewer
+      class Space {
+        constructor(spaceId, clientToken, sensors) {
+          this.spaceId = spaceId;
+          this.clientToken = clientToken;
+          this.space = null;
+          this.sensors = sensors;
+        }
+
+        initSpace(smplr) {
+          this.space = new smplr.Space({
+            spaceId: this.spaceId,
+            clientToken: this.clientToken,
+            containerId: "smplrspace-container",
+          });
+
+          this.space.startViewer({
+            preview: false,
+            allowModeChange: true,
+            cameraPlacement: {
+              alpha: -1.5838724035526692,
+              beta: 0.23386752853912393,
+              radius: 27.08214314818048,
+              target: { x: 15, y: 0, z: -10 },
+            },
+            onReady: () => this.updateDataLayers(),
+            onError: (error) => console.error("Could not start viewer", error),
+          });
+        }
+
+        updateDataLayers() {
+          // Remove previous layers if any
+          this.space.removeDataLayer("sensors");
+
+          if (this.sensors && this.sensors.length > 0) {
+            this.space.addDataLayer({
+              id: "sensors",
+              type: "point",
+              data: this.sensors,
+              tooltip: (sensor) => {
+                const data = sensor.data;
+                return `
+                  <div style="padding: 2px;">
+                    <strong>${sensor.name}</strong><br/>
+                    Type: ${sensor.sensorType}<br/>
+                    ${
+                      sensor.sensorType === "IAQ"
+                        ? `
+                      Temperature: ${data.temperature.toFixed(1)}°C<br/>
+                      Humidity: ${data.humidity.toFixed(1)}%<br/>
+                      CO₂: ${data.co2.toFixed(0)} ppm<br/>
+                    `
+                        : "Water Level Sensor<br/>"
+                    }
+                    Status: ${data.status}
+                  </div>
+                `;
+              },
+              color: (sensor) => sensor.color,
+              radius: 0.5,
+              height: 1.5,
+              alpha: 0.8,
+            });
+          }
+        }
+
+        // Method to update sensor data (call this to refresh with real data)
+        updateSensorData(newSensorData) {
+          this.sensors = this.sensors.map((sensor) => {
+            const newData = newSensorData.find((d) => d.id === sensor.id);
+            if (newData) {
+              return {
+                ...sensor,
+                data: newData.data,
+                color: colorMapping[newData.data.status] || sensor.color,
+              };
+            }
+            return sensor;
+          });
+          this.updateDataLayers();
+        }
+      }
+
+      // Create the Space instance
+      let spc = new Space(SPACE_ID, CLIENT_ID, processedSensors);
+
+      // Helper function to wait for smplr to load
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      // Start the viewer
+      async function start() {
+        while (typeof smplr === "undefined") {
+          await wait();
+        }
+        spc.initSpace(smplr);
+      }
+
+      // Simulate real-time data updates (replace with actual API calls)
+      function simulateDataUpdates() {
+        setInterval(() => {
+          const updatedData = processedSensors.map((sensor) => ({
+            id: sensor.id,
+            data: {
+              temperature: 22 + Math.random() * 6,
+              humidity: 50 + Math.random() * 30,
+              co2: 400 + Math.random() * 400,
+              status: Math.random() > 0.8 ? "warning" : "good",
+            },
+          }));
+
+          if (spc && spc.space) {
+            spc.updateSensorData(updatedData);
+          }
+        }, 30000); // Update every 30 seconds
+      }
+
+      // Start everything
+      start().then(() => {
+        // Start data simulation after viewer is ready
+        setTimeout(simulateDataUpdates, 5000);
+      });
+
+      // Expose function to update data from parent window (for React integration)
+      window.updateSensorData = function (sensorData) {
+        if (spc && spc.space) {
+          spc.updateSensorData(sensorData);
+        }
+      };
+    </script>
+  </body>
+</html>
