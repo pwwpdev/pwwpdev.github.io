@@ -171,20 +171,20 @@
         co2: { min: 400, max: 1000 },      // ppm
         temperature: { min: 18, max: 28 }, // °C
         humidity: { min: 30, max: 70 },    // %
-        pm2_5: { min: 0, max: 25 },        // μg/m³
-        pm10: { min: 0, max: 50 }          // μg/m³
+        pm2_5: { min: 0, max: 10 },        // μg/m³
+        pm10: { min: 0, max: 10 }          // μg/m³
       };
 
       // Check if IAQ values are extreme
       function isIAQExtreme(data) {
-        const temp = data.temprature; // Note: API has typo "temprature"
+        const temp = data.temprature; // API has typo "temprature"
         const co2 = data.co2;
         const pm2_5 = data.pm2_5;
         const pm10 = data.pm10;
         
         return (
-          temp < thresholds.temperature.min || temp > thresholds.temperature.max ||
-          co2 < thresholds.co2.min || co2 > thresholds.co2.max ||
+        temp > thresholds.temperature.max ||
+         co2 > thresholds.co2.max ||
           pm2_5 > thresholds.pm2_5.max ||
           pm10 > thresholds.pm10.max
         );
