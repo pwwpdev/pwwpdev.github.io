@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IAQ Sensor Map</title>
+    <title>Sensor Map</title>
   </head>
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
@@ -322,17 +322,19 @@
                   }
                   return `
                     <div style="font-family: Inter, sans-serif; padding: 4px">
-                      <strong>${sensor.name}</strong><br/>
-                      <div style="margin-top: 1px;">
+                        <strong>${sensor.name}</strong><br/>
+                        <div style="margin-top: 1px;">
                         <div>CO₂: <strong>${data.co2 || 'N/A'} ppm</strong></div>
                         <div>Temperature: <strong>${data.temperature || 'N/A'}°C</strong></div>
                         <div>Humidity: <strong>${data.humidity || 'N/A'}%</strong></div>
-                      </div>
-                      <div style=" color: ${data.status === 'extreme' ? '#ef4444' : '#4ade80'};">
+                        <div>PM2.5: <strong>${data.pm2_5 || 'N/A'} μg/m³</strong></div>
+                        <div>PM10: <strong>${data.pm10 || 'N/A'} μg/m³</strong></div>
+                        </div>
+                        <div style=" color: ${data.status === 'extreme' ? '#ef4444' : '#4ade80'};">
                         Status: <strong>${data.status}</strong>
-                      </div>
+                        </div>
                     </div>
-                  `;
+                    `;
                 } else {
                   // WL sensor
                   if (data.status === 'no_data') {
