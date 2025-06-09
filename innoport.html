@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Desk Occupancy Viewer</title>
+  </head>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+
+    <div id="wrapper">
+      <div id="smplrspace-container" class="gap"></div>
+    </div>
+
+    <script>
+      // Replace with your actual values
+      const CLIENT_ID = "pub_04eb96c04e314f58a87386e12f7c9e4f";
+      const SPACE_ID = "spc_ikf4kyot";
+      const API_ENDPOINT = "https://njs-01.optimuslab.space/api/desks/occupancy/live";
+      const UPDATE_FREQUENCY = 30;
+
+      const color_dict = {
+        occupied: "#E78576",
+        vacant: "#73C787",
+        unavailable: "#949494",
+        default: "#AED6F1"
+      };
+
+      // Desk assets from your JSON mapping
+      const deskAssets = [
+        { id: "b6e6bb2a-d643-4b71-aa1b-e025b0866530", name: "DS-01", furnitureId: "4bcaef1a-3d54-4a19-a471-1340a6e0f26f", layerType: "furniture" },
+        { id: "8081e888-58ef-4c8c-af73-e5b4bed47f93", name: "DS-02", furnitureId: "c98f0be2-e755-4326-87e9-58efd1b56315", layerType: "furniture" },
+        { id: "2b96d341-5dde-4273-8390-63a5c5d24a53", name: "DS-03", furnitureId: "56491491-b21a-48e7-ae4f-8fcacc20c67d", layerType: "furniture" },
+        { id: "a7ef4878-c42f-4b1f-abfe-8b6243ec8176", name: "DS-04", furnitureId: "9c2e2593-d485-49eb-8a4b-3ce5f266232b", layerType: "furniture" },
+        { id: "9ceb3ef4-2d45-4bb7-8d23-b0b3cdd600a7", name: "DS-05", furnitureId: "eac0f274-3fbb-4f10-8ca8-e490b973a6fd", layerType: "furniture" },
+        { id: "59a1c4ee-6b03-44b9-97bb-553405beb0ce", name: "DS-06", furnitureId: "012d45bd-6302-407d-a65e-ddbe24c7b3ee", layerType: "furniture" },
+        { id: "d224b777-836f-4cc8-9ea3-cc407c3ec24b", name: "DS-07", furnitureId: "382acbbc-bd78-4a96-8130-9b75f9db13f3", layerType: "furniture" },
+        { id: "c002e0cc-e25b-4877-b0b4-e0c46f43f4c6", name: "DS-08", furnitureId: "f11fb178-9f14-4f70-96f2-acfb638859e8", layerType: "furniture" },
+        { id: "f9c9f180-13dd-47ea-ac37-b016b979b20d", name: "DS-09", furnitureId: "ac2ddedb-c948-416a-a925-6874a1e9de07", layerType: "furniture" },
+        { id: "b8e7c693-87ec-4fe2-9e9c-7477c7d498d3", name: "DS-10", furnitureId: "45557771-1eed-4f60-aead-01375d01881a", layerType: "furniture" },
+        { id: "6b0d92c5-3177-45c6-98d9-f48e52371380", name: "DS-11", furnitureId: "aa35697c-cfc6-4b0f-8ed0-47d6c3e8d777", layerType: "furniture" },
+        { id: "417b7409-edb0-496f-a6e9-d5cc098288f3", name: "DS-12", furnitureId: "1872569f-164a-4b49-a96a-7a993e85d0bf", layerType: "furniture" },
+        { id: "a2728fa1-59e6-4c23-97e1-119c51820ab1", name: "DS-13", furnitureId: "e98dff77-26f0-4cb6-8ef0-e8d104f28f0a", layerType: "furniture" },
+        { id: "69fae56f-fa0d-409a-9e5e-945919c3d4fe", name: "DS-14", furnitureId: "eb44bec6-f7ef-46a1-86fc-0afd3ff5d3b7", layerType: "furniture" },
+        { id: "bb96253a-3315-4252-bab8-b4c0aa53ef3f", name: "DS-15", furnitureId: "16feb1c6-6ebe-468b-963b-b69f7823003b", layerType: "furniture" },
+        { id: "3ddebf25-d318-45ea-97e3-76367e209e8c", name: "DS-16", furnitureId: "773abd18-d6b1-442e-a09f-0d60db8f8b4f", layerType: "furniture" },
+        { id: "3d54be32-98d0-403f-80e6-d512bee1cb3c", name: "DS-17", furnitureId: "9031be27-ea04-478e-accd-65965de8a2d9", layerType: "furniture" },
+        { id: "9ffb4dcf-81f1-488b-bc94-25abb1a83274", name: "DS-18", furnitureId: "ad15b345-cb1f-46b5-b0f5-56efbb20060f", layerType: "furniture" },
+        { id: "28f7fb3b-0936-47a3-901f-91f3dfb5ee13", name: "DS-19", furnitureId: "514a652d-0f3f-4686-a27e-1b2ed18f25ec", layerType: "furniture" },
+        { id: "f2e9a91f-6e98-4fb8-9f84-46d8c96f5939", name: "DS-20", furnitureId: "6e12c422-8093-4a28-a950-5a9c0fbfcc84", layerType: "furniture" },
+        { id: "66d91ea8-9b3c-4fc7-a3dd-4e68026e1dee", name: "DS-21", furnitureId: "a2f78212-3ccd-4796-a72e-ab72914387a6", layerType: "furniture" },
+        { id: "f52bc867-d734-4522-a15e-8c3540f8fe5a", name: "DS-22", furnitureId: "3980349e-af6f-470b-9fa0-225c6712325a", layerType: "furniture" },
+        { id: "af9fcfc9-b43f-4a52-b25a-7ff11457e75d", name: "DS-23", furnitureId: "150a7185-10ae-4308-9340-5bbe45056bf3", layerType: "furniture" },
+        { id: "3cdb67ba-0379-496f-9db6-a52666b5a6f7", name: "DS-24", furnitureId: "259e4651-e8e9-4beb-b956-0a2ac5a3008a", layerType: "furniture" },
+        { id: "e48012a5-d170-48e8-9a15-3b63f1e52622", name: "DS-25", furnitureId: "1879e6e7-62e3-4b23-b4fc-047dfaa57b22", layerType: "furniture" },
+        { id: "949e021f-36fa-4e1d-9f2d-1a1e242ec64e", name: "DS-26", furnitureId: "26cc7bd7-aa19-48be-9f71-6f4d531769d8", layerType: "furniture" },
+        { id: "c9538b31-df15-4ad1-80d1-8331fc869eb0", name: "DS-27", furnitureId: "c336421c-2d1c-4c61-a6c2-a4af9a9708a3", layerType: "furniture" },
+        { id: "5b314049-44ba-40c2-9e7b-7b6edf984200", name: "DS-28", furnitureId: "d2da11b1-5dc4-479e-a690-01d620980c33", layerType: "furniture" },
+        { id: "7bed9d3b-e50a-4b94-a74f-71e3330e8b08", name: "DS-29", furnitureId: "7a4bb44e-2cc6-4da0-972f-3237da4e8f62", layerType: "furniture" },
+        { id: "39939923-7f8d-4d40-a753-387e657627b9", name: "DS-30", furnitureId: "a948bf4c-2c11-422b-abee-3631df0cec46", layerType: "furniture" },
+        { id: "d9220501-8a48-4da8-99d8-4da56152e37c", name: "DS-31", furnitureId: "7143420b-cbd9-46a4-8fa1-6fa4aa07bb16", layerType: "furniture" },
+        { id: "c1d5ec57-9b20-4473-ac72-d1eb155c9b1a", name: "DS-32", furnitureId: "bb7bcf8d-d7ce-46cd-84ff-f5b67f929106", layerType: "furniture" },
+        { id: "af443586-0b17-409a-8ced-4effdfa975ed", name: "DS-33", furnitureId: "db97283b-c07f-458d-97ec-9c723b37896c", layerType: "furniture" },
+        { id: "9d321431-64a1-4a8e-a670-2de182741640", name: "DS-34", furnitureId: "90296380-33c5-4e45-a4b0-b79eac7bc001", layerType: "furniture" },
+        { id: "f1a14f3f-9164-43e5-a8cf-42aed23d186e", name: "DS-35", furnitureId: "1e56c51e-be43-435a-b081-da0481a3b351", layerType: "furniture" },
+        { id: "0bf47782-71c2-4c2e-8942-2c43478da1e7", name: "DS-36", furnitureId: "473c8d4f-46bf-438f-a49d-6c5c19d9a2be", layerType: "furniture" }
+      ];
+
+      // Global variables
+      let occupancyData = {};
+      let deskAssignees = {};
+      let deskAvgOccupancy = {};
+
+      // Space class to handle the Smplrspace viewer and data
+      class Space {
+        constructor(spaceId, clientToken, desks) {
+          this.spaceId = spaceId;
+          this.clientToken = clientToken;
+          this.space = null;
+          this.desks = desks;
+        }
+
+        initSpace(smplr) {
+          this.space = new smplr.Space({
+            spaceId: this.spaceId,
+            clientToken: this.clientToken,
+            containerId: "smplrspace-container",
+          });
+          
+          this.space.startViewer({
+            preview: false,
+            cameraPlacement: {
+              alpha: -1.5717650426736078,
+              beta: 
+              0.19453347019876022,
+              radius: 29.161563416559808,
+              target: {
+                x: 17.026016260162606,
+                y: 3,
+                z: -11.296593076858606,
+              },
+            },
+            onReady: () => this.updateDataLayers(),
+            onError: (error) => console.error("Could not start viewer", error),
+          });
+        }
+
+        updateDataLayers() {
+          // Remove previous layers if any
+          this.space.removeDataLayer("desk-occupancy");
+
+          const isDeskDataEmpty = !this.desks || this.desks.length === 0;
+
+          if (!isDeskDataEmpty) {
+            this.space.addDataLayer({
+              id: "desk-occupancy",
+              type: "furniture",
+              data: this.desks,
+              tooltip: (d) => {
+                const assignee = deskAssignees[d.name] || "Unassigned";
+                const avgOccupancy = deskAvgOccupancy[d.name] || 0;
+                return `${d.name}\nAssignee: ${assignee}\nAvg Occupancy: ${Math.round(avgOccupancy)}%\nStatus: ${d.occupied ? 'Occupied' : 'Vacant'}`;
+              },
+              color: (d) => d.color || color_dict.default,
+              alpha: 0.8,
+              height: 1.0,
+            });
+          }
+        }
+      }
+
+      // Fetch occupancy data from API
+      async function fetchOccupancyData() {
+        try {
+          const response = await fetch(API_ENDPOINT);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Transform API data into a map
+          const transformedData = {};
+          data.forEach(desk => {
+            transformedData[desk.desk_id] = desk.occupied === 1;
+          });
+          
+          occupancyData = transformedData;
+          
+          // Update desk assets with occupancy data
+          const updatedDesks = deskAssets.map(desk => {
+            const isOccupied = occupancyData[desk.name] || false;
+            return {
+              ...desk,
+              occupied: isOccupied,
+              color: isOccupied ? color_dict.occupied : color_dict.vacant,
+            };
+          });
+
+          // Update space if initialized
+          if (spc && spc.space) {
+            spc.desks = updatedDesks;
+            spc.updateDataLayers();
+          }
+          
+        } catch (error) {
+          console.error("Error fetching occupancy data:", error);
+        }
+      }
+
+      // Fetch additional desk information
+      async function fetchDeskInfo() {
+        try {
+          const response = await fetch("https://njs-01.optimuslab.space/api/desks");
+          if (!response.ok) return;
+          
+          const data = await response.json();
+          
+          data.forEach(desk => {
+            deskAssignees[desk.desk_id] = desk.assignee_name || "Unassigned";
+          });
+          
+        } catch (err) {
+          console.error("Error fetching desk info:", err);
+        }
+      }
+
+      // Fetch historical data for average occupancy
+      async function fetchHistoricalData() {
+        try {
+          const today = new Date();
+          const dayOfWeek = today.getDay();
+          const startDate = new Date(today);
+          
+          const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+          startDate.setDate(today.getDate() - daysToSubtract);
+          startDate.setHours(0, 0, 0, 0);
+          
+          const formatDate = (date) => date.toISOString().split("T")[0];
+          const formattedStartDate = formatDate(startDate);
+          const formattedEndDate = formatDate(today);
+          
+          const url = `https://njs-01.optimuslab.space/api/desks/occupancy/history?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
+          const response = await fetch(url);
+          
+          if (!response.ok) return;
+          
+          const data = await response.json();
+          
+          data.forEach(desk => {
+            if (desk.daily_occupancy && desk.daily_occupancy.length > 0) {
+              const dailyPercentages = desk.daily_occupancy
+                .filter(day => {
+                  const dayDate = new Date(day.date);
+                  const dayOfWeek = dayDate.getDay();
+                  return dayOfWeek > 0;
+                })
+                .map(day => parseFloat(day.percentage) || 0);
+              
+              const totalPercentage = dailyPercentages.reduce((sum, percentage) => sum + percentage, 0);
+              deskAvgOccupancy[desk.desk_id] = dailyPercentages.length > 0 ? totalPercentage / dailyPercentages.length : 0;
+            } else {
+              deskAvgOccupancy[desk.desk_id] = 0;
+            }
+          });
+          
+        } catch (err) {
+          console.error("Error fetching historical data:", err);
+        }
+      }
+
+      // Initialize desk assets with default values
+      const initialDesks = deskAssets.map(desk => ({
+        ...desk,
+        occupied: false,
+        color: color_dict.unavailable,
+      }));
+
+      // Create the Space instance
+      let spc = new Space(SPACE_ID, CLIENT_ID, initialDesks);
+
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      async function start() {
+        while (typeof smplr === "undefined") {
+          await wait();
+        }
+        
+        spc.initSpace(smplr);
+        
+        // Fetch initial data
+        await Promise.all([
+          fetchOccupancyData(),
+          fetchDeskInfo(),
+          fetchHistoricalData()
+        ]);
+        
+        // Set up periodic updates
+        setInterval(async () => {
+          await Promise.all([
+            fetchOccupancyData(),
+            fetchDeskInfo(),
+            fetchHistoricalData()
+          ]);
+        }, UPDATE_FREQUENCY * 1000);
+      }
+
+      start();
+    </script>
+
+  </body>
+</html>
