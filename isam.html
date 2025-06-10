@@ -15,8 +15,8 @@
 
     <style>
       .text-size {
-        font-size: 10px; /* Set text size to 20 pixels */
-        /* You can also use other units like em, rem, % */
+        font-size: 12px; 
+        
       }
       .strong-text {
         font-size: 15px; /* Set text size to 24 pixels */
@@ -324,9 +324,9 @@
                     return `<div style="padding: 8px; height: 50vh; width: 20vw;"><strong>${sensor.name}</strong><br/>No data available</div>`;
                   }
                   return `
-                    <div style="font-family: Inter, sans-serif; padding: 0px; line-height: 0.6;">
+                    <div style="font-family: Inter, sans-serif; padding: 0px; line-height: 0.8;">
                         <strong class="strong-text">${sensor.name}</strong>
-                        <div style="margin-top: 0px;" class="text-size">
+                        <div style="margin-top: 6px;" class="text-size">
                         <div>CO₂: <strong>${
                           data.co2 || "N/A"
                         } ppm</strong></div>
@@ -351,14 +351,14 @@
                     </div>
                     `;
                 } else {
-                  // WL sensor
+                  // WL sensor - Updated to match IAQ styling
                   if (data.status === "no_data") {
-                    return `<div style="padding: 4px;"><strong>${sensor.name}</strong><br/>No data available</div>`;
+                    return `<div style="padding: 0px;"><strong class="strong-text">${sensor.name}</strong><br/>No data available</div>`;
                   }
                   return `
-                    <div style="padding: 8px; font-family: Arial, sans-serif;">
-                      <strong>${sensor.name}</strong><br/>
-                      <div style="margin-top: 1px;">
+                    <div style="font-family: Inter, sans-serif; padding: 0px; line-height: 0.8;">
+                      <strong  class="strong-text">${sensor.name}</strong>
+                      <div style="margin-top: 6px;" class="text-size">
                         <div>Leak Status: <strong style="color: ${
                           data.leakage_status === "normal"
                             ? "#4ade80"
@@ -367,6 +367,14 @@
                         <div>Humidity: <strong>${
                           data.humidity || "N/A"
                         }%</strong></div>
+                        <div>Temperature: <strong>${
+                          data.temperature || "N/A"
+                        }°C</strong></div>
+                      </div>
+                      <div style="color: ${
+                        data.status === "leak" ? "#ef4444" : "#4ade80"
+                      };">
+                        Status: <strong class="strong-text">${data.status}</strong>
                       </div>
                     </div>
                   `;
