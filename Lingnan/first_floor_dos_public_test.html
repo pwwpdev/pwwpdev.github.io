@@ -40,6 +40,7 @@
 
       const UPDATE_FREQUENCY = 60;
 
+      const rooms = []
       const desk_index = {
         "LRT01-S01": 0,
         "LRT01-S02": 1,
@@ -273,7 +274,7 @@
         "1FC-IS3": "Study3",
       };
 
-       const dict = [
+      const dict = [
         {
           id: "97bb9348-8841-42ea-91f2-f0589f05473c",
           name: "LRR Desk",
@@ -1763,8 +1764,7 @@
       const params = new URLSearchParams(url.search);
 
       // Example: Get a specific query parameter by name
-      const facility = params.get("facility"); // Replace 'yourParameterName' with the actual parameter name
-
+      const facility = params.get("facility"); 
 
       if (!!facility) {
         if (facility === "Service Counter") {
@@ -1776,7 +1776,7 @@
             layerType: "furniture",
           });
         } else if (facility === "Study Rooms") {
-          dict[2]["assets"].push({
+          rooms.push({
             id: "2c742e1d-1ab7-4600-8376-76626e90c084",
             name: "Individual Study Room 1",
             levelIndex: 0,
@@ -1813,69 +1813,68 @@
             mapped: true,
           });
         } else if (facility === "Computers") {
-
         } else if (facility === "Study Spaces") {
         } else if (facility === "Drinking Water Stations") {
         } else if (facility === "Zone A") {
-          dict[2]["assets"].push(
-          {
-          id: "a3f90bd7-d7c2-48b2-86ab-93e5efd573c4",
-          name: "Zone A",
-          levelIndex: 0,
-          coordinates: [
-            [
-              {
-                x: 126.388,
-                z: -56.716,
-                levelIndex: 0,
-              },
-              {
-                x: 91.819,
-                z: -56.888,
-                levelIndex: 0,
-              },
-              {
-                x: 91.485,
-                z: -52.512,
-                levelIndex: 0,
-              },
-              {
-                x: 81.633,
-                z: -52.507,
-                levelIndex: 0,
-              },
-              {
-                x: 81.861,
-                z: -36.474,
-                levelIndex: 0,
-              },
-              {
-                x: 87.842,
-                z: -33.048,
-                levelIndex: 0,
-              },
-              {
-                x: 99.503,
-                z: -33.121,
-                levelIndex: 0,
-              },
-              {
-                x: 99.73,
-                z: -30.165,
-                levelIndex: 0,
-              },
-              {
-                x: 125.663,
-                z: -30.186,
-                levelIndex: 0,
-              },
+          console.log("Adding Zone A to the space");
+          rooms.push({
+            id: "a3f90bd7-d7c2-48b2-86ab-93e5efd573c4",
+            name: "Zone A",
+            levelIndex: 0,
+            color: "#3aa655",
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 126.388,
+                  z: -56.716,
+                  levelIndex: 0,
+                },
+                {
+                  x: 91.819,
+                  z: -56.888,
+                  levelIndex: 0,
+                },
+                {
+                  x: 91.485,
+                  z: -52.512,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.633,
+                  z: -52.507,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.861,
+                  z: -36.474,
+                  levelIndex: 0,
+                },
+                {
+                  x: 87.842,
+                  z: -33.048,
+                  levelIndex: 0,
+                },
+                {
+                  x: 99.503,
+                  z: -33.121,
+                  levelIndex: 0,
+                },
+                {
+                  x: 99.73,
+                  z: -30.165,
+                  levelIndex: 0,
+                },
+                {
+                  x: 125.663,
+                  z: -30.186,
+                  levelIndex: 0,
+                },
+              ],
             ],
-          ],
-          layerType: "polygon",
-          mapped: false,
-        }  
-          )
-
+            layerType: "polygon",
+            mapped: false,
+          });
         }
       }
 
@@ -1884,7 +1883,7 @@
         SPACE_ID,
         CLIENT_ID,
         [...dict[0]["assets"], ...dict[2]["assets"]],
-        [],
+        rooms,
         [],
         Notaccessible
       );
