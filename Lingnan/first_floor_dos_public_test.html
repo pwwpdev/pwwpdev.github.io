@@ -1634,7 +1634,7 @@
               persistentTooltip: true,
               color: (d) => d.color,
               alpha: 0.7,
-              height: 1.0,
+              height: (d) => d.height || 1.0,
             });
           }
 
@@ -1822,8 +1822,9 @@
 
                     {
         "id": "b2c5ac66-9e8f-4831-a753-f9ca9dfc9127",
-        "name": "Zone C",
+        "name": "Books DS777-HJ (1/F Zone C)",
         "levelIndex": 0,
+        "height": 2.5,  
         "coordinates": [
           [
             {
@@ -2121,9 +2122,10 @@
           console.log("Adding Zone A to the space");
           rooms.push({
             id: "a3f90bd7-d7c2-48b2-86ab-93e5efd573c4",
-            name: "Zone A",
+            name: "Books A-DS776 (1/F Zone A)",
             levelIndex: 0,
             color: "#3aa655",
+            height: 2.5,
             available: "Available",
             coordinates: [
               [
