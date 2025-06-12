@@ -15,11 +15,10 @@
 
     <style>
       .text-size {
-        font-size: 12px; 
-        
+        font-size: 14px;
       }
       .strong-text {
-        font-size: 15px; /* Set text size to 24 pixels */
+        font-size: 18px; /* Set text size to 24 pixels */
       }
     </style>
 
@@ -259,7 +258,7 @@
                 humidity: realData.humidity,
                 temperature: realData.temprature,
                 timestamp: realData.timestamp,
-                status: isLeak ? "leak" : "normal",
+                status: isLeak ? "leak detected" : "normal",
               };
             } else {
               // Fallback if no data found
@@ -293,10 +292,10 @@
             preview: false,
             allowModeChange: true,
             cameraPlacement: {
-              alpha: -1.577544278552669,
-              beta: 0.21882065353912403,
-              radius: 27.08214314818048,
-              target: { x: 15, y: 0, z: -10 },
+              alpha: -1.5738684973026689,
+              beta: 0.21833237228912403,
+              radius: 18.952748299397644,
+              target: { x: 15.5, y: 4, z: -10 },
             },
             onReady: async () => {
               // Load initial data
@@ -344,9 +343,11 @@
                         } μg/m³</strong></div>
                         </div>
                         <div style=" color: ${
-                          data.status === "extreme" ? "#ef4444" : "#4ade80"
+                          data.status === "extreme" ? "#ef4444" : "#23ba30"
                         };">
-                        Status: <strong class="strong-text">${data.status}</strong>
+                        Status: <strong class="strong-text">${
+                          data.status
+                        }</strong>
                         </div>
                     </div>
                     `;
@@ -358,10 +359,10 @@
                   return `
                     <div style="font-family: Inter, sans-serif; padding: 0px; line-height: 0.8;">
                       <strong  class="strong-text">${sensor.name}</strong>
-                      <div style="margin-top: 6px;" class="text-size">
+                      <div style="margin-top: 4px;" class="text-size">
                         <div>Leak Status: <strong style="color: ${
                           data.leakage_status === "normal"
-                            ? "#4ade80"
+                            ? "#23ba30"
                             : "#ef4444"
                         };">${data.leakage_status || "N/A"}</strong></div>
                         <div>Humidity: <strong>${
@@ -372,9 +373,11 @@
                         }°C</strong></div>
                       </div>
                       <div style="color: ${
-                        data.status === "leak" ? "#ef4444" : "#4ade80"
+                        data.status === "leak detected" ? "#ef4444" : "#23ba30"
                       };">
-                        Status: <strong class="strong-text">${data.status}</strong>
+                        Status: <strong class="strong-text">${
+                          data.status
+                        }</strong>
                       </div>
                     </div>
                   `;
