@@ -1633,11 +1633,11 @@
               id: "rooms",
               type: "polygon",
               data: this.rooms,
-               tooltip: (d) => `<div style="padding: 0px;">
-  <p class="text-size" style="margin: 0 0 0px 0; padding-bottom: 0px; border-bottom: 0px solid #ccc;">${d.name}</p>
-  <p class="text-size" style="margin: 0px 0;">Status: ${d.available}</p>
+               tooltip: (d) => `<div style="padding: 0; margin: 0; line-height: 1;">
+  <div class="text-size" style="margin: 0; padding: 0; line-height: 1; display: block;">${d.name}</div>
+  <div class="text-size" style="margin: 0; padding: 0; line-height: 1; display: block;">Status: ${d.available}</div>
   <img src="https://www.wn-int.com/storage/resized/1052/1200x/%E9%A6%99%E6%B8%AF%E5%B6%BA%E5%8D%97%E5%A4%A7%E5%AD%B8%E5%9C%96%E6%9B%B8%E9%A4%A87.jpeg" 
-       style="width: 80px; height: auto; border-radius: 2px; margin-top: 0px;" />
+       style="width: 80px; height: auto; border-radius: 2px; margin: 0; padding: 0; display: block;" />
 </div>`,
               persistentTooltip: true,
               color: (d) => d.color,
