@@ -5,17 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Second Floor Smplrspace Viewer</title>
   </head>
-    <style>
-    body,
-    html {
-      height: 100vh !important;
-      overflow: hidden;
-    }
-    #wrapper,
-    #smplrspace-container {
-      height: 100vh !important;
-    }
-  </style>
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
     <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
@@ -80,7 +69,7 @@
 
       // Define the assets for the second floor - keep only what's needed
       const dict = [
-  {
+      {
     "id": "93b14a37-7e7b-4747-bbc5-c2f5f18735d7",
     "name": "NonAssessibleArea",
     "type": "polygon",
@@ -92,23 +81,28 @@
         "coordinates": [
           [
             {
-              "x": -6.407,
-              "z": -43.441,
+              "x": -4.404,
+              "z": -35.112,
               "levelIndex": 0
             },
             {
-              "x": 6.289,
-              "z": -43.393,
+              "x": 6.313,
+              "z": -34.996,
               "levelIndex": 0
             },
             {
-              "x": 6.16,
-              "z": -51.687,
+              "x": 6.275,
+              "z": -48.431,
               "levelIndex": 0
             },
             {
-              "x": -6.41,
-              "z": -51.723,
+              "x": -4.503,
+              "z": -48.344,
+              "levelIndex": 0
+            },
+            {
+              "x": -4.52,
+              "z": -35.377,
               "levelIndex": 0
             }
           ]
@@ -130,54 +124,23 @@
         "coordinates": [
           [
             {
-              "x": 57.086,
-              "z": -35.102,
+              "x": 55.279,
+              "z": -35.055,
               "levelIndex": 0
             },
             {
-              "x": 56.986,
-              "z": -39.93,
+              "x": 55.317,
+              "z": -37.932,
               "levelIndex": 0
             },
             {
-              "x": 64.578,
-              "z": -39.989,
+              "x": 59.832,
+              "z": -37.924,
               "levelIndex": 0
             },
             {
-              "x": 64.558,
-              "z": -35.084,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      },
-      {
-        "id": "f521dd85-af3d-47bd-9303-ee54eaf7b3bf",
-        "name": "2F-FT2",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": -6.145,
-              "z": -35.351,
-              "levelIndex": 0
-            },
-            {
-              "x": -6.175,
-              "z": -39.125,
-              "levelIndex": 0
-            },
-            {
-              "x": -0.149,
-              "z": -39.207,
-              "levelIndex": 0
-            },
-            {
-              "x": -0.026,
-              "z": -35.233,
+              "x": 59.907,
+              "z": -35.024,
               "levelIndex": 0
             }
           ]
@@ -199,54 +162,23 @@
         "coordinates": [
           [
             {
-              "x": 64.655,
-              "z": -35.105,
+              "x": 59.828,
+              "z": -35.01,
               "levelIndex": 0
             },
             {
-              "x": 64.697,
-              "z": -39.958,
+              "x": 59.894,
+              "z": -37.925,
               "levelIndex": 0
             },
             {
-              "x": 72.253,
-              "z": -40.03,
+              "x": 65.406,
+              "z": -37.872,
               "levelIndex": 0
             },
             {
-              "x": 72.191,
-              "z": -35.064,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      },
-      {
-        "id": "3f5516f9-cde2-48ef-be9d-f8dfc4149119",
-        "name": "2F-MT2",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": -0.266,
-              "z": -35.052,
-              "levelIndex": 0
-            },
-            {
-              "x": -0.236,
-              "z": -39.274,
-              "levelIndex": 0
-            },
-            {
-              "x": 6.238,
-              "z": -39.393,
-              "levelIndex": 0
-            },
-            {
-              "x": 6.264,
-              "z": -35.016,
+              "x": 65.227,
+              "z": -35.154,
               "levelIndex": 0
             }
           ]
@@ -493,16 +425,17 @@
           });
           this.space.startViewer({
             preview: false,
+            allowModeChange: true,
             cameraPlacement: {
               alpha:  
-              -1.5818693835785191,
+              -1.5722224976673886,
               beta: 
-              0.3078471223552482,
-              radius: 116.6554463211263,
+              0.22438049962679768,
+              radius: 55.566640313453746,
               target: {
-                x: 32,
+                x: 32.2418383712391,
                 y: 14,
-                z: -51,
+                z: -48.20580854095632,
               },
             },
             onReady: () => this.updateDataLayers(),
