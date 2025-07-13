@@ -26,8 +26,22 @@
 
 
     <script>
-      const API_ENDPOINT =
-        "https://optimusc.flowfuse.cloud/lingnan-library-dos";
+      function getIsAdmin() {
+          // Get the current URL
+          const urlParams = new URLSearchParams(window.location.search);
+          
+          // Get the isAdmin parameter
+          const isAdminParam = urlParams.get('isAdmin');
+
+          // Set isAdmin based on the parameter value
+          const isAdmin = (isAdminParam === 'true');
+
+          return isAdmin;
+      }
+
+      // Example usage
+      const isAdmin = getIsAdmin();
+      const API_ENDPOINT = isAdmin ? "https://optimusc.flowfuse.cloud/lingnan-library-dos-admin" : "https://optimusc.flowfuse.cloud/lingnan-library-dos";
 
       
 
