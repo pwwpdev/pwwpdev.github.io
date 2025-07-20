@@ -1869,7 +1869,7 @@ this.space.on('click', (event) => {
     name: "Books A-DS776 (1/F Zone A)",
     levelIndex: 0,
     color: "#3aa655",
-    height: 2.5,
+    height: 3.5,
     available: "Available",
     coordinates: [
       [
@@ -1930,6 +1930,104 @@ this.space.on('click', (event) => {
       spc.updateMapForFacility();
     }
   }, 2000);
+}
+
+else if (facility === "Books DS777-HJ (1/F Zone C)") {
+  rooms.push({
+    "id": "b2c5ac66-9e8f-4831-a753-f9ca9dfc9127",
+    "name": "Books DS777-HJ (1/F Zone C)",
+    "levelIndex": 0,
+    "height": 3.5,
+    "color": "#FF6B35", // Orange color for this facility
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 12.456,
+          "z": -57.147,
+          "levelIndex": 0
+        },
+        {
+          "x": 48.63,
+          "z": -56.92,
+          "levelIndex": 0
+        },
+        {
+          "x": 48.505,
+          "z": -52.496,
+          "levelIndex": 0
+        },
+        {
+          "x": 57.093,
+          "z": -52.396,
+          "levelIndex": 0
+        },
+        {
+          "x": 57.353,
+          "z": -36.335,
+          "levelIndex": 0
+        },
+        {
+          "x": 51.672,
+          "z": -33.077,
+          "levelIndex": 0
+        },
+        {
+          "x": 39.597,
+          "z": -33.372,
+          "levelIndex": 0
+        },
+        {
+          "x": 39.357,
+          "z": -30.29,
+          "levelIndex": 0
+        },
+        {
+          "x": 18.829,
+          "z": -30.132,
+          "levelIndex": 0
+        },
+        {
+          "x": 12.881,
+          "z": -30.062,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  // Update the layers after space is ready
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  // Show custom tooltip for this facility
+  function showBooksTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #FF6B35;">Books DS777-HJ Collection</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">Located in Zone C - Social Sciences & History</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Call numbers: DS777 through HJ</div>
+          <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  // Show tooltip after map loads
+  setTimeout(showBooksTooltip, 2500);
 }
       }
 
