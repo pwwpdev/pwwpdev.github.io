@@ -17,12 +17,13 @@
       height: 100vh !important;
     }
 
-    .text-size {
-      font-size: 14px;
-    }
-    .strong-text {
-      font-size: 18px; /* Set text size to 24 pixels */
-    }
+      .text-size {
+        font-size: 14px;
+      }
+      .strong-text {
+        font-size: 18px; /* Set text size to 24 pixels */
+      }
+   
   </style>
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
@@ -36,24 +37,21 @@
 
     <div id="wrapper">
       <div id="smplrspace-container"></div>
-      <div
-        id="custom-tooltip"
-        style="
-          position: absolute;
-          top: 20px;
-          left: 20px;
-          background: white;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          padding: 12px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          z-index: 1000;
-          display: none;
-          max-width: 300px;
-        "
-      >
-        <div id="tooltip-content"></div>
-      </div>
+      <div id="custom-tooltip" style="
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  display: none;
+  max-width: 300px;
+">
+  <div id="tooltip-content"></div>
+</div>
     </div>
 
     <script>
@@ -65,7 +63,7 @@
 
       const UPDATE_FREQUENCY = 60;
 
-      const rooms = [];
+      const rooms = []
       const desk_index = {
         "LRT01-S01": 0,
         "LRT01-S02": 1,
@@ -1656,7 +1654,7 @@
               id: "rooms",
               type: "polygon",
               data: this.rooms,
-
+              
               color: (d) => d.color,
               alpha: 0.7,
               height: 1.0,
@@ -1683,31 +1681,27 @@
             });
           }
           // Add click handlers for custom tooltip
-          this.space.on("click", (event) => {
-            if (event.data) {
-              const tooltipDiv = document.getElementById("custom-tooltip");
-              const contentDiv = document.getElementById("tooltip-content");
-
-              if (event.data.name && tooltipDiv && contentDiv) {
-                // Create custom tooltip content
-                let content = `
+this.space.on('click', (event) => {
+  if (event.data) {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (event.data.name && tooltipDiv && contentDiv) {
+      // Create custom tooltip content
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
-          <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px;">${
-            event.data.name
-          }</div>
-          <div style="margin-bottom: 8px; font-size: 12px;">Status: ${
-            event.data.available || "Unknown"
-          }</div>
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px;">${event.data.name}</div>
+          <div style="margin-bottom: 8px; font-size: 12px;">Status: ${event.data.available || 'Unknown'}</div>
           <img src="https://www.wn-int.com/storage/resized/1052/1200x/%E9%A6%99%E6%B8%AF%E5%B6%BA%E5%8D%97%E5%A4%A7%E5%AD%B8%E5%9C%96%E6%9B%B8%E9%A4%A87.jpeg" 
                style="width: 80px; height: auto; border-radius: 4px; display: block;" />
         </div>
       `;
-
-                contentDiv.innerHTML = content;
-                tooltipDiv.style.display = "block";
-              }
-            }
-          });
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+});
         }
         updateMapForFacility() {
           this.updateDataLayers();
@@ -1817,7 +1811,7 @@
       const params = new URLSearchParams(url.search);
 
       // Example: Get a specific query parameter by name
-      const facility = params.get("facility");
+      const facility = params.get("facility"); 
 
       if (!!facility) {
         if (facility === "Service Counter") {
@@ -1869,153 +1863,155 @@
         } else if (facility === "Study Spaces") {
         } else if (facility === "Drinking Water Stations") {
         } else if (facility === "Books A-DS776 (1/F Zone A)") {
-          console.log("Adding Zone A to the space");
-          rooms.push({
-            id: "a3f90bd7-d7c2-48b2-86ab-93e5efd573c4",
-            name: "Books A-DS776 (1/F Zone A)",
-            levelIndex: 0,
-            color: "#3aa655",
-            height: 3.5,
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 126.388,
-                  z: -56.716,
-                  levelIndex: 0,
-                },
-                {
-                  x: 91.819,
-                  z: -56.888,
-                  levelIndex: 0,
-                },
-                {
-                  x: 91.485,
-                  z: -52.512,
-                  levelIndex: 0,
-                },
-                {
-                  x: 81.633,
-                  z: -52.507,
-                  levelIndex: 0,
-                },
-                {
-                  x: 81.861,
-                  z: -36.474,
-                  levelIndex: 0,
-                },
-                {
-                  x: 87.842,
-                  z: -33.048,
-                  levelIndex: 0,
-                },
-                {
-                  x: 99.503,
-                  z: -33.121,
-                  levelIndex: 0,
-                },
-                {
-                  x: 99.73,
-                  z: -30.165,
-                  levelIndex: 0,
-                },
-                {
-                  x: 125.663,
-                  z: -30.186,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
+  console.log("Adding Zone A to the space");
+  rooms.push({
+    id: "a3f90bd7-d7c2-48b2-86ab-93e5efd573c4",
+    name: "Books A-DS776 (1/F Zone A)",
+    levelIndex: 0,
+    color: "#3aa655",
+    height: 3.5,
+    available: "Available",
+    coordinates: [
+      [
+        {
+          x: 126.388,
+          z: -56.716,
+          levelIndex: 0,
+        },
+        {
+          x: 91.819,
+          z: -56.888,
+          levelIndex: 0,
+        },
+        {
+          x: 91.485,
+          z: -52.512,
+          levelIndex: 0,
+        },
+        {
+          x: 81.633,
+          z: -52.507,
+          levelIndex: 0,
+        },
+        {
+          x: 81.861,
+          z: -36.474,
+          levelIndex: 0,
+        },
+        {
+          x: 87.842,
+          z: -33.048,
+          levelIndex: 0,
+        },
+        {
+          x: 99.503,
+          z: -33.121,
+          levelIndex: 0,
+        },
+        {
+          x: 99.73,
+          z: -30.165,
+          levelIndex: 0,
+        },
+        {
+          x: 125.663,
+          z: -30.186,
+          levelIndex: 0,
+        },
+      ],
+    ],
+    layerType: "polygon",
+    mapped: true,
+  });
+  
+  // Update the layers after space is ready
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+}
 
-          // Update the layers after space is ready
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-        } else if (facility === "Books DS777-HJ (1/F Zone C)") {
-          rooms.push({
-            id: "b2c5ac66-9e8f-4831-a753-f9ca9dfc9127",
-            name: "Books DS777-HJ (1/F Zone C)",
-            levelIndex: 0,
-            height: 3.5,
-            color: "#FF6B35", // Orange color for this facility
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 12.456,
-                  z: -57.147,
-                  levelIndex: 0,
-                },
-                {
-                  x: 48.63,
-                  z: -56.92,
-                  levelIndex: 0,
-                },
-                {
-                  x: 48.505,
-                  z: -52.496,
-                  levelIndex: 0,
-                },
-                {
-                  x: 57.093,
-                  z: -52.396,
-                  levelIndex: 0,
-                },
-                {
-                  x: 57.353,
-                  z: -36.335,
-                  levelIndex: 0,
-                },
-                {
-                  x: 51.672,
-                  z: -33.077,
-                  levelIndex: 0,
-                },
-                {
-                  x: 39.597,
-                  z: -33.372,
-                  levelIndex: 0,
-                },
-                {
-                  x: 39.357,
-                  z: -30.29,
-                  levelIndex: 0,
-                },
-                {
-                  x: 18.829,
-                  z: -30.132,
-                  levelIndex: 0,
-                },
-                {
-                  x: 12.881,
-                  z: -30.062,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          // Update the layers after space is ready
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          // Show custom tooltip for this facility
-          function showBooksTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+else if (facility === "Books DS777-HJ (1/F Zone C)") {
+  rooms.push({
+    "id": "b2c5ac66-9e8f-4831-a753-f9ca9dfc9127",
+    "name": "Books DS777-HJ (1/F Zone C)",
+    "levelIndex": 0,
+    "height": 3.5,
+    "color": "#FF6B35", // Orange color for this facility
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 12.456,
+          "z": -57.147,
+          "levelIndex": 0
+        },
+        {
+          "x": 48.63,
+          "z": -56.92,
+          "levelIndex": 0
+        },
+        {
+          "x": 48.505,
+          "z": -52.496,
+          "levelIndex": 0
+        },
+        {
+          "x": 57.093,
+          "z": -52.396,
+          "levelIndex": 0
+        },
+        {
+          "x": 57.353,
+          "z": -36.335,
+          "levelIndex": 0
+        },
+        {
+          "x": 51.672,
+          "z": -33.077,
+          "levelIndex": 0
+        },
+        {
+          "x": 39.597,
+          "z": -33.372,
+          "levelIndex": 0
+        },
+        {
+          "x": 39.357,
+          "z": -30.29,
+          "levelIndex": 0
+        },
+        {
+          "x": 18.829,
+          "z": -30.132,
+          "levelIndex": 0
+        },
+        {
+          "x": 12.881,
+          "z": -30.062,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  // Update the layers after space is ready
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  // Show custom tooltip for this facility
+  function showBooksTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #FF6B35;">Books DS777-HJ Collection</div>
           <div style="margin-bottom: 8px; font-size: 14px;">Located in Zone C - Social Sciences & History</div>
@@ -2024,64 +2020,66 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  // Show tooltip after map loads
+  setTimeout(showBooksTooltip, 2500);
+}
 
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
+// ADD THESE NEW CASES:
 
-          // Show tooltip after map loads
-          setTimeout(showBooksTooltip, 2500);
+else if (facility === "1/F (1/F Zone B)") {
+  rooms.push({
+    "id": "5fdbdc2e-2461-403d-a038-4a42e1500ca4",
+    "name": "Drinking water station 1F (1F/Zone B)",
+    "levelIndex": 0,
+    "height": 2.0,
+    "color": "#00BFFF", // Deep sky blue
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 82.416,
+          "z": -55.277,
+          "levelIndex": 0
+        },
+        {
+          "x": 82.418,
+          "z": -54.926,
+          "levelIndex": 0
+        },
+        {
+          "x": 81.779,
+          "z": -54.932,
+          "levelIndex": 0
+        },
+        {
+          "x": 81.777,
+          "z": -55.271,
+          "levelIndex": 0
         }
-        // ADD THESE NEW CASES:
-        else if (facility === "Drinking water station 1F (1F/Zone B)") {
-          rooms.push({
-            id: "5fdbdc2e-2461-403d-a038-4a42e1500ca4",
-            name: "Drinking water station 1F (1F/Zone B)",
-            levelIndex: 0,
-            height: 2.0,
-            color: "#00BFFF", // Deep sky blue
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 82.416,
-                  z: -55.277,
-                  levelIndex: 0,
-                },
-                {
-                  x: 82.418,
-                  z: -54.926,
-                  levelIndex: 0,
-                },
-                {
-                  x: 81.779,
-                  z: -54.932,
-                  levelIndex: 0,
-                },
-                {
-                  x: 81.777,
-                  z: -55.271,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          function showDrinkingWaterTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  function showDrinkingWaterTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #00BFFF;">Drinking Water Station</div>
           <div style="margin-bottom: 8px; font-size: 14px;">Located in Zone B - First Floor</div>
@@ -2090,66 +2088,68 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  setTimeout(showDrinkingWaterTooltip, 2500);
+}
 
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
-
-          setTimeout(showDrinkingWaterTooltip, 2500);
-        } else if (facility === "Service Counter (1/F Zone A)") {
-          rooms.push({
-            id: "b67fbf3b-382b-4a1b-8c14-11caa973a5a3",
-            name: "Service Counter (1/F Zone A)",
-            levelIndex: 0,
-            height: 2.5,
-            color: "#FFD700", // Gold
-            available: "Open",
-            coordinates: [
-              [
-                {
-                  x: 87.497,
-                  z: -40.895,
-                  levelIndex: 0,
-                },
-                {
-                  x: 87.487,
-                  z: -37.511,
-                  levelIndex: 0,
-                },
-                {
-                  x: 84.017,
-                  z: -37.456,
-                  levelIndex: 0,
-                },
-                {
-                  x: 84.024,
-                  z: -40.919,
-                  levelIndex: 0,
-                },
-                {
-                  x: 87.508,
-                  z: -40.916,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          function showServiceCounterTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+else if (facility === "Service Counter (1/F Zone A)") {
+  rooms.push({
+    "id": "b67fbf3b-382b-4a1b-8c14-11caa973a5a3",
+    "name": "Service Counter (1/F Zone A)",
+    "levelIndex": 0,
+    "height": 2.5,
+    "color": "#FFD700", // Gold
+    "available": "Open",
+    "coordinates": [
+      [
+        {
+          "x": 87.497,
+          "z": -40.895,
+          "levelIndex": 0
+        },
+        {
+          "x": 87.487,
+          "z": -37.511,
+          "levelIndex": 0
+        },
+        {
+          "x": 84.017,
+          "z": -37.456,
+          "levelIndex": 0
+        },
+        {
+          "x": 84.024,
+          "z": -40.919,
+          "levelIndex": 0
+        },
+        {
+          "x": 87.508,
+          "z": -40.916,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  function showServiceCounterTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #FFD700;">Main Service Counter</div>
           <div style="margin-bottom: 8px; font-size: 14px;">Library Information & Assistance</div>
@@ -2158,61 +2158,63 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  setTimeout(showServiceCounterTooltip, 2500);
+}
 
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
-
-          setTimeout(showServiceCounterTooltip, 2500);
-        } else if (facility === "Lift (1/F Zone B)") {
-          rooms.push({
-            id: "d283c740-b483-43b2-abe8-2a35f9dc47a2",
-            name: "Lift (1/F Zone B)",
-            levelIndex: 0,
-            height: 3.0,
-            color: "#C0C0C0", // Silver
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 60.386,
-                  z: -45.158,
-                  levelIndex: 0,
-                },
-                {
-                  x: 60.44,
-                  z: -47.509,
-                  levelIndex: 0,
-                },
-                {
-                  x: 63.386,
-                  z: -47.536,
-                  levelIndex: 0,
-                },
-                {
-                  x: 63.388,
-                  z: -45.151,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          function showLiftTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+else if (facility === "Lift (1/F – 3/F Zone B)") {
+  rooms.push({
+    "id": "d283c740-b483-43b2-abe8-2a35f9dc47a2",
+    "name": "Lift (1/F Zone B)",
+    "levelIndex": 0,
+    "height": 3.0,
+    "color": "#C0C0C0", // Silver
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 60.386,
+          "z": -45.158,
+          "levelIndex": 0
+        },
+        {
+          "x": 60.44,
+          "z": -47.509,
+          "levelIndex": 0
+        },
+        {
+          "x": 63.386,
+          "z": -47.536,
+          "levelIndex": 0
+        },
+        {
+          "x": 63.388,
+          "z": -45.151,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  function showLiftTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #C0C0C0;">Elevator</div>
           <div style="margin-bottom: 8px; font-size: 14px;">Access to all floors (1/F - 3/F)</div>
@@ -2221,84 +2223,83 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  setTimeout(showLiftTooltip, 2500);
+}
 
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
-
-          setTimeout(showLiftTooltip, 2500);
-        } else if (
-          facility ===
-          "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)"
-        ) {
-          rooms.push({
-            id: "9f4fec45-5420-4b57-b79d-7af998e96ece",
-            name: "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)",
-            levelIndex: 0,
-            height: 2.5,
-            color: "#FF4500", // Orange red
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 111.832,
-                  z: -56.924,
-                  levelIndex: 0,
-                },
-                {
-                  x: 111.833,
-                  z: -55.884,
-                  levelIndex: 0,
-                },
-                {
-                  x: 112.621,
-                  z: -55.876,
-                  levelIndex: 0,
-                },
-                {
-                  x: 112.655,
-                  z: -54.053,
-                  levelIndex: 0,
-                },
-                {
-                  x: 108.701,
-                  z: -54.055,
-                  levelIndex: 0,
-                },
-                {
-                  x: 108.695,
-                  z: -57.208,
-                  levelIndex: 0,
-                },
-                {
-                  x: 109.242,
-                  z: -57.264,
-                  levelIndex: 0,
-                },
-                {
-                  x: 109.307,
-                  z: -56.912,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          function showLaserCutterTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+else if (facility === "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)") {
+  rooms.push({
+    "id": "9f4fec45-5420-4b57-b79d-7af998e96ece",
+    "name": "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)",
+    "levelIndex": 0,
+    "height": 2.5,
+    "color": "#FF4500", // Orange red
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 111.832,
+          "z": -56.924,
+          "levelIndex": 0
+        },
+        {
+          "x": 111.833,
+          "z": -55.884,
+          "levelIndex": 0
+        },
+        {
+          "x": 112.621,
+          "z": -55.876,
+          "levelIndex": 0
+        },
+        {
+          "x": 112.655,
+          "z": -54.053,
+          "levelIndex": 0
+        },
+        {
+          "x": 108.701,
+          "z": -54.055,
+          "levelIndex": 0
+        },
+        {
+          "x": 108.695,
+          "z": -57.208,
+          "levelIndex": 0
+        },
+        {
+          "x": 109.242,
+          "z": -57.264,
+          "levelIndex": 0
+        },
+        {
+          "x": 109.307,
+          "z": -56.912,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  function showLaserCutterTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #FF4500;">Laser Cutter & Engraver</div>
           <div style="margin-bottom: 8px; font-size: 14px;">LU Barn Makerspace - Maker Room</div>
@@ -2307,63 +2308,63 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  setTimeout(showLaserCutterTooltip, 2500);
+}
 
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
-
-          setTimeout(showLaserCutterTooltip, 2500);
-        } else if (
-          facility === "SEN Equipment – Service Counter (1/F Zone B)"
-        ) {
-          rooms.push({
-            id: "21ed8b4d-c15b-4837-ad1a-eab600069ca4",
-            name: "SEN Equipment – Service Counter (1/F Zone B)",
-            levelIndex: 0,
-            height: 2.0,
-            color: "#9370DB", // Medium purple
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 84.719,
-                  z: -37.503,
-                  levelIndex: 0,
-                },
-                {
-                  x: 83.983,
-                  z: -37.46,
-                  levelIndex: 0,
-                },
-                {
-                  x: 84.009,
-                  z: -40.922,
-                  levelIndex: 0,
-                },
-                {
-                  x: 84.784,
-                  z: -40.905,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          function showSENTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+else if (facility === "SEN Equipment – Service Counter (1/F Zone B)") {
+  rooms.push({
+    "id": "21ed8b4d-c15b-4837-ad1a-eab600069ca4",
+    "name": "SEN Equipment – Service Counter (1/F Zone B)",
+    "levelIndex": 0,
+    "height": 2.0,
+    "color": "#9370DB", // Medium purple
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 84.719,
+          "z": -37.503,
+          "levelIndex": 0
+        },
+        {
+          "x": 83.983,
+          "z": -37.46,
+          "levelIndex": 0
+        },
+        {
+          "x": 84.009,
+          "z": -40.922,
+          "levelIndex": 0
+        },
+        {
+          "x": 84.784,
+          "z": -40.905,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  function showSENTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #9370DB;">SEN Equipment</div>
           <div style="margin-bottom: 8px; font-size: 14px;">Special Educational Needs Support</div>
@@ -2372,61 +2373,63 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  setTimeout(showSENTooltip, 2500);
+}
 
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
-
-          setTimeout(showSENTooltip, 2500);
-        } else if (facility === "Book Sterilizer (1/ F Zone B)") {
-          rooms.push({
-            id: "d2f5a585-036b-4087-8915-3aedaedc608f",
-            name: "Book Sterilizer (1/ F Zone B)",
-            levelIndex: 0,
-            height: 2.0,
-            color: "#20B2AA", // Light sea green
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 79.761,
-                  z: -46.464,
-                  levelIndex: 0,
-                },
-                {
-                  x: 79.777,
-                  z: -45.384,
-                  levelIndex: 0,
-                },
-                {
-                  x: 78.686,
-                  z: -45.356,
-                  levelIndex: 0,
-                },
-                {
-                  x: 78.678,
-                  z: -46.458,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          function showBookSterilizerTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+else if (facility === "Book Sterilizer (1/ F Zone B)") {
+  rooms.push({
+    "id": "d2f5a585-036b-4087-8915-3aedaedc608f",
+    "name": "Book Sterilizer (1/ F Zone B)",
+    "levelIndex": 0,
+    "height": 2.0,
+    "color": "#20B2AA", // Light sea green
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 79.761,
+          "z": -46.464,
+          "levelIndex": 0
+        },
+        {
+          "x": 79.777,
+          "z": -45.384,
+          "levelIndex": 0
+        },
+        {
+          "x": 78.686,
+          "z": -45.356,
+          "levelIndex": 0
+        },
+        {
+          "x": 78.678,
+          "z": -46.458,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  function showBookSterilizerTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #20B2AA;">Book Sterilizer</div>
           <div style="margin-bottom: 8px; font-size: 14px;">UV Sanitization Station</div>
@@ -2435,61 +2438,63 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  setTimeout(showBookSterilizerTooltip, 2500);
+}
 
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
-
-          setTimeout(showBookSterilizerTooltip, 2500);
-        } else if (facility === "Self-Checkout Machine (1/F Zone A & Zone B)") {
-          rooms.push({
-            id: "88f10fd7-5ee4-4c49-8ef6-60398b71c53c",
-            name: "Self-Checkout Machine (1/F Zone A & Zone B)",
-            levelIndex: 0,
-            height: 2.0,
-            color: "#DC143C", // Crimson
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 79.675,
-                  z: -44.157,
-                  levelIndex: 0,
-                },
-                {
-                  x: 78.673,
-                  z: -44.164,
-                  levelIndex: 0,
-                },
-                {
-                  x: 78.664,
-                  z: -45.151,
-                  levelIndex: 0,
-                },
-                {
-                  x: 79.719,
-                  z: -45.193,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          function showSelfCheckoutTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+else if (facility === "Self-Checkout Machine (1/F Zone A & Zone B)") {
+  rooms.push({
+    "id": "88f10fd7-5ee4-4c49-8ef6-60398b71c53c",
+    "name": "Self-Checkout Machine (1/F Zone A & Zone B)",
+    "levelIndex": 0,
+    "height": 2.0,
+    "color": "#DC143C", // Crimson
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 79.675,
+          "z": -44.157,
+          "levelIndex": 0
+        },
+        {
+          "x": 78.673,
+          "z": -44.164,
+          "levelIndex": 0
+        },
+        {
+          "x": 78.664,
+          "z": -45.151,
+          "levelIndex": 0
+        },
+        {
+          "x": 79.719,
+          "z": -45.193,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  function showSelfCheckoutTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #DC143C;">Self-Checkout Machine</div>
           <div style="margin-bottom: 8px; font-size: 14px;">Quick & Easy Book Checkout</div>
@@ -2498,66 +2503,68 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  setTimeout(showSelfCheckoutTooltip, 2500);
+}
 
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
-
-          setTimeout(showSelfCheckoutTooltip, 2500);
-        } else if (facility === "Self-Pickup Locker (1/F Zone B)") {
-          rooms.push({
-            id: "81b1d768-017c-40c1-b3b5-e02d1fb4ce2a",
-            name: "Self-Pickup Locker (1/F Zone B)",
-            levelIndex: 0,
-            height: 2.5,
-            color: "#2F4F4F", // Dark slate gray
-            available: "Available",
-            coordinates: [
-              [
-                {
-                  x: 62.875,
-                  z: -45.054,
-                  levelIndex: 0,
-                },
-                {
-                  x: 62.842,
-                  z: -44.483,
-                  levelIndex: 0,
-                },
-                {
-                  x: 60.5,
-                  z: -44.477,
-                  levelIndex: 0,
-                },
-                {
-                  x: 60.501,
-                  z: -45.04,
-                  levelIndex: 0,
-                },
-                {
-                  x: 62.786,
-                  z: -45.039,
-                  levelIndex: 0,
-                },
-              ],
-            ],
-            layerType: "polygon",
-            mapped: true,
-          });
-
-          setTimeout(() => {
-            if (spc && spc.space) {
-              spc.updateMapForFacility();
-            }
-          }, 2000);
-
-          function showPickupLockerTooltip() {
-            const tooltipDiv = document.getElementById("custom-tooltip");
-            const contentDiv = document.getElementById("tooltip-content");
-
-            if (tooltipDiv && contentDiv) {
-              let content = `
+else if (facility === "Self-Pickup Locker (1/F Zone B)") {
+  rooms.push({
+    "id": "81b1d768-017c-40c1-b3b5-e02d1fb4ce2a",
+    "name": "Self-Pickup Locker (1/F Zone B)",
+    "levelIndex": 0,
+    "height": 2.5,
+    "color": "#2F4F4F", // Dark slate gray
+    "available": "Available",
+    "coordinates": [
+      [
+        {
+          "x": 62.875,
+          "z": -45.054,
+          "levelIndex": 0
+        },
+        {
+          "x": 62.842,
+          "z": -44.483,
+          "levelIndex": 0
+        },
+        {
+          "x": 60.5,
+          "z": -44.477,
+          "levelIndex": 0
+        },
+        {
+          "x": 60.501,
+          "z": -45.04,
+          "levelIndex": 0
+        },
+        {
+          "x": 62.786,
+          "z": -45.039,
+          "levelIndex": 0
+        }
+      ]
+    ],
+    "layerType": "polygon",
+    "mapped": true
+  });
+  
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+  
+  function showPickupLockerTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #2F4F4F;">Self-Pickup Locker</div>
           <div style="margin-bottom: 8px; font-size: 14px;">24/7 Book Collection Point</div>
@@ -2566,24 +2573,24 @@
                style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
         </div>
       `;
-
-              contentDiv.innerHTML = content;
-              tooltipDiv.style.display = "block";
-            }
-          }
-
-          setTimeout(showPickupLockerTooltip, 2500);
-        }
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  setTimeout(showPickupLockerTooltip, 2500);
+}
       }
 
       // Function to show tooltip for selected facility when loaded via URL
-      if (!!facility) {
-        function showFacilityTooltip() {
-          const tooltipDiv = document.getElementById("custom-tooltip");
-          const contentDiv = document.getElementById("tooltip-content");
-
-          if (tooltipDiv && contentDiv) {
-            let content = `
+if (!!facility) {
+  function showFacilityTooltip() {
+    const tooltipDiv = document.getElementById('custom-tooltip');
+    const contentDiv = document.getElementById('tooltip-content');
+    
+    if (tooltipDiv && contentDiv) {
+      let content = `
         <div style="padding: 0; margin: 0; line-height: 1.2;">
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px;">${facility}</div>
           <div style="margin-bottom: 8px; font-size: 14px;">Selected from menu</div>
@@ -2591,15 +2598,15 @@
                style="width: 100px; height: auto; border-radius: 4px; display: block;" />
         </div>
       `;
-
-            contentDiv.innerHTML = content;
-            tooltipDiv.style.display = "block";
-          }
-        }
-
-        // Show tooltip after map loads
-        setTimeout(showFacilityTooltip, 1500);
-      }
+      
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = 'block';
+    }
+  }
+  
+  // Show tooltip after map loads
+  setTimeout(showFacilityTooltip, 1500);
+}
 
       // Create the Space instance with the updated parameters
       spc = new Space(
