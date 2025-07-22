@@ -2006,6 +2006,11 @@
               spc.updateMapForFacility();
             }
           }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
         } else if (facility === "Books DS777-HJ (1/F Zone C)") {
           rooms.push({
             id: "b2c5ac66-9e8f-4831-a753-f9ca9dfc9127",
@@ -2146,6 +2151,11 @@
               spc.updateMapForFacility();
             }
           }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
 
           function showDrinkingWaterTooltip() {
             const tooltipDiv = document.getElementById("custom-tooltip");
@@ -2214,6 +2224,11 @@
               spc.updateMapForFacility();
             }
           }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
 
           function showServiceCounterTooltip() {
             const tooltipDiv = document.getElementById("custom-tooltip");
@@ -2277,6 +2292,11 @@
               spc.updateMapForFacility();
             }
           }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
 
           function showLiftTooltip() {
             const tooltipDiv = document.getElementById("custom-tooltip");
@@ -2363,6 +2383,11 @@
               spc.updateMapForFacility();
             }
           }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
 
           function showLaserCutterTooltip() {
             const tooltipDiv = document.getElementById("custom-tooltip");
@@ -2428,6 +2453,11 @@
               spc.updateMapForFacility();
             }
           }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
 
           function showSENTooltip() {
             const tooltipDiv = document.getElementById("custom-tooltip");
@@ -2491,6 +2521,11 @@
               spc.updateMapForFacility();
             }
           }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
 
           function showBookSterilizerTooltip() {
             const tooltipDiv = document.getElementById("custom-tooltip");
@@ -2554,6 +2589,11 @@
               spc.updateMapForFacility();
             }
           }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
 
           function showSelfCheckoutTooltip() {
             const tooltipDiv = document.getElementById("custom-tooltip");
@@ -2624,10 +2664,10 @@
           }, 2000);
 
           setTimeout(() => {
-  if (spc && spc.space) {
-    spc.setCameraForFacility(facility);
-  }
-}, 3000); 
+      if (spc && spc.space) {
+        spc.setCameraForFacility(facility);
+      }
+    }, 2000); 
 
           function showPickupLockerTooltip() {
             const tooltipDiv = document.getElementById("custom-tooltip");
