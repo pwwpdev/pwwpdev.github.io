@@ -2,20 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    
+
     <title>Smplrspace Viewer</title>
     <!-- Load smplr.js and its styles -->
-      <style>
-    body,
-    html {
-      height: 100vh !important;
-      overflow: hidden;
-    }
-    #wrapper,
-    #smplrspace-container {
-      height: 100vh !important;
-    }
-  </style>
+    <style>
+      body,
+      html {
+        height: 100vh !important;
+        overflow: hidden;
+      }
+      #wrapper,
+      #smplrspace-container {
+        height: 100vh !important;
+      }
+    </style>
   </head>
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
@@ -25,13 +25,9 @@
       <div id="smplrspace-container"></div>
     </div>
 
-
-
     <script>
       const API_ENDPOINT =
         "https://optimusc.flowfuse.cloud/lingnan-library-dos";
-
-      
 
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
       const SPACE_ID = "90660c93-a72f-4412-ba81-07605f95d720";
@@ -66,7 +62,7 @@
       };
 
       const desk_filter = {
-        "MFC-S01": "MFC-S01", 
+        "MFC-S01": "MFC-S01",
         "MFC-S02": "MFC-S02",
         "MFC-S03": "MFC-S03",
         "MFC-S04": "MFC-S04",
@@ -250,8 +246,6 @@
         },
       ];
 
-
-
       const color_dict = {
         occupied: "#ff3f34",
         countdown: "#ff3f34",
@@ -282,19 +276,18 @@
             preview: false,
             cameraPlacement: {
               alpha: 1.5642931020318165,
-              beta: 0.5615178132728119,
-              radius: 146.6554463211263,
+              beta: 0.7099240223592373,
+              radius: 152.228814129728086,
               target: {
-                x: 68.64910054283883,
+                x: 69.04755001887268,
                 y: 1,
-                z: -49.63054124348335,
+                z: -44.24558015977757,
               },
             },
             onReady: () => this.fetchAll(),
             onError: (error) => console.error("Could not start viewer", error),
           });
         }
-
 
         updateDataLayers() {
           // remove previous layers if any
@@ -341,8 +334,7 @@
                 let value = data[i];
                 let loc = value.area;
                 let timestamp = value.timestamp;
-                let available = value.occupancy
-                
+                let available = value.occupancy;
 
                 let color = color_dict.hasOwnProperty(available)
                   ? color_dict[available]
@@ -398,13 +390,7 @@
         }
       }
 
-      spc = new Space(
-        SPACE_ID,
-        CLIENT_ID,
-        dict[0]["assets"],
-        [],
-        [] 
-      );
+      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], [], []);
 
       delete dict;
 
