@@ -11,10 +11,32 @@
         height: 100vh !important;
         overflow: hidden;
       }
+      button[title="Hide annotations"] {
+        display: none !important;
+      }
+
+      /* Disable rotation by preventing mouse events on the 3D canvas */
+      #smplrspace-container canvas {
+        pointer-events: none !important;
+      }
+
+      /* Re-enable pointer events only for zoom controls (if they're separate elements) */
+      .smplr-zoom-controls,
+      button[title*="zoom" i],
+      button[title*="Zoom" i] {
+        pointer-events: auto !important;
+      }
       #wrapper,
       #smplrspace-container {
         height: 100vh !important;
       }
+
+      .text-size {
+      font-size: 14px;
+    }
+    .strong-text {
+      font-size: 18px; 
+    }
     </style>
   </head>
   <body>
@@ -23,6 +45,58 @@
 
     <div id="wrapper">
       <div id="smplrspace-container"></div>
+    </div>
+
+    <!-- Combined Legend Box -->
+    <div
+      id="legend-container"
+      style="
+        position: absolute;
+        bottom: 2px;
+        left: 56px;
+        background: rgba(219, 218, 218, 0.492);
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        font-size: 12px;
+        font-weight: 500;
+        color: #333;
+        min-width: 100px;
+      "
+    >
+      <div
+        style="
+          padding: 4px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Rest View
+      </div>
+      <div
+        style="
+          padding: 4px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Zoom in
+      </div>
+      <div
+        style="
+          padding: 4px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Zoom Out
+      </div>
+      <div style="padding: 8px 4px 4px 4px; text-align: center">2D View</div>
     </div>
 
     <script>
@@ -274,6 +348,7 @@
           });
           this.space.startViewer({
             preview: false,
+            allowModeChange: true,
             cameraPlacement: {
               alpha: 1.5642931020318165,
               beta: 0.7099240223592373,
