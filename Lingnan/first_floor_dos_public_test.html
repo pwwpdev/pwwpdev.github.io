@@ -12,6 +12,10 @@
       height: 100vh !important;
       overflow: hidden;
     }
+    button[title="Hide annotations"] {
+  display: none !important;
+}
+
     #wrapper,
     #smplrspace-container {
       height: 100vh !important;
@@ -56,103 +60,35 @@
       </div>
     </div>
 
-    <!-- Individual Legend Items -->
-    <div id="legend-item-1" style="
-    position: absolute;
-    bottom: 132px;
-    left: 50px;
-    background: rgba(219, 218, 218, 0.492);
-    border: 1px solid #ddd;
-    border-radius: 6px;
-     padding: 4px 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    font-size: 10px;
-    font-weight: 500;
-    color: #333;
-    min-width: 100px;
-    text-align: center;
-  ">
-    Hide annotations
-  </div>
-
-  <div id="legend-item-2" style="
-    position: absolute;
-    bottom: 98px;
-    left: 50px;
-    background: rgba(219, 218, 218, 0.492);
-    border: 1px solid #ddd;
-    border-radius: 6px;
-     padding: 4px 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    font-size: 10px;
-    font-weight: 500;
-    color: #333;
-    min-width: 100px;
-    text-align: center;
-  ">
-    Default View
-  </div>
-
-  <div id="legend-item-3" style="
-    position: absolute;
-    bottom: 68px;
-    left: 50px;
-    background: rgba(219, 218, 218, 0.492);
-    border: 1px solid #ddd;
-    border-top-right-radius: 6px;
-    border-top-left-radius: 6px;
-     padding: 4px 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    font-size: 10px;
-    font-weight: 500;
-    color: #333;
-    min-width: 100px;
-    text-align: center;
-  ">
-    Zoom IN
-  </div>
-
-  <div id="legend-item-4" style="
-    position: absolute;
-    bottom: 40px;
-    left: 50px;
-    background: rgba(219, 218, 218, 0.492);
-    border: 1px solid #ddd;
-    border-bottom-right-radius: 6px;
-    border-bottom-left-radius: 6px;
-     padding: 4px 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    font-size: 10px;
-    font-weight: 500;
-    color: #333;
-    min-width: 100px;
-    text-align: center;
-  ">
-    Zoom OUT
-  </div>
-
-  <div id="legend-item-5" style="
-    position: absolute;
-    bottom: 6px;
-    left: 50px;
-    background: rgba(219, 218, 218, 0.492);
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 4px 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    font-size: 10px;
-    font-weight: 500;
-    color: #333;
-    min-width: 100px;
-    text-align: center;
-  ">
-    2D/3D Switch
-  </div>
+    <!-- Combined Legend Box -->
+    <div id="legend-container" style="
+      position: absolute;
+      bottom: 6px;
+      left: 50px;
+      background: rgba(219, 218, 218, 0.492);
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      font-size: 12px;
+      font-weight: 500;
+      color: #333;
+      min-width: 100px;
+    ">
+      <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+        Rest View
+      </div>
+      <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+        Zoom in
+      </div>
+      <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+        Zoom Out
+      </div>
+      <div style="padding: 2px 4px; text-align: center;">
+        2D View
+      </div>
+    </div>
 
     <script>
       const API_ENDPOINT =
