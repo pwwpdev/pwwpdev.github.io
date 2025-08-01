@@ -16,6 +16,18 @@
   display: none !important;
 }
 
+/* Disable rotation by preventing mouse events on the 3D canvas */
+#smplrspace-container canvas {
+  pointer-events: none !important;
+}
+
+/* Re-enable pointer events only for zoom controls (if they're separate elements) */
+.smplr-zoom-controls,
+button[title*="zoom" i],
+button[title*="Zoom" i] {
+  pointer-events: auto !important;
+}
+
     #wrapper,
     #smplrspace-container {
       height: 100vh !important;
@@ -1663,10 +1675,10 @@
             preview: false,
             allowModeChange: true,
             cameraPlacement: {
-              alpha: 1.5707963267948966,
-              beta: 0.5,
-              radius: 190.6554463211263,
-              target: { x: 70, y: 1, z: -51 },
+              alpha: 1.5737549088615568,
+              beta: 0.7099240223592374,
+              radius: 185.49815361318093,
+              target: { x: 70.43070629934955, y: 1, z: -48.22815466523894 },
             },
             onReady: () => this.fetchAll(),
             onError: (error) => console.error("Could not start viewer", error),
