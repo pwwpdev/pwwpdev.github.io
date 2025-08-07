@@ -20,23 +20,9 @@
     </div>
 
     <script>
-      function getIsAdmin() {
-          // Get the current URL
-          const urlParams = new URLSearchParams(window.location.search);
-          
-          // Get the isAdmin parameter
-          const isAdminParam = urlParams.get('isAdmin');
-
-          // Set isAdmin based on the parameter value
-          const isAdmin = (isAdminParam === 'true');
-
-          return isAdmin;
-      }
-
-      // Example usage
-      const isAdmin = getIsAdmin();
-      const API_ENDPOINT = isAdmin ? "https://optimusc.flowfuse.cloud/lingnan-library-dos-admin" : "https://optimusc.flowfuse.cloud/lingnan-library-dos";
-
+      // Replace with your second floor specific values
+      const API_ENDPOINT =
+        "https://optimusc.flowfuse.cloud/lingnan-library-dos";
 
       // Replace with your second floor client and space IDs
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
@@ -87,44 +73,7 @@
     "id": "93b14a37-7e7b-4747-bbc5-c2f5f18735d7",
     "name": "NonAssessibleArea",
     "type": "polygon",
-    "assets": [
-      {
-        "id": "f5d5e69f-4585-4317-a54a-777906f1ecea",
-        "name": "1",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": -2.414,
-              "z": -35.084,
-              "levelIndex": 0
-            },
-            {
-              "x": 6.313,
-              "z": -34.996,
-              "levelIndex": 0
-            },
-            {
-              "x": 6.275,
-              "z": -48.431,
-              "levelIndex": 0
-            },
-            {
-              "x": -2.695,
-              "z": -48.326,
-              "levelIndex": 0
-            },
-            {
-              "x": -2.582,
-              "z": -35.248,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      }
-    ]
+    "assets": []
   },
   {
     "id": "83510d18-ceb2-4bec-9d23-cd9b59cf250c",
@@ -439,18 +388,17 @@
           });
           this.space.startViewer({
             preview: false,
-            loadingMessage: "Loading...",
             allowModeChange: true,
             cameraPlacement: {
               alpha:  
               -1.5722224976673886,
               beta: 
               0.22438049962679768,
-              radius: 45.566640313453746,
+              radius: 55.566640313453746,
               target: {
                 x: 32.2418383712391,
                 y: 14,
-                z: -53.20580854095632,
+                z: -48.20580854095632,
               },
             },
             onReady: () => this.updateDataLayers(),
