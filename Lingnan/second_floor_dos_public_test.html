@@ -126,8 +126,56 @@ button[title="Hide annotations"] {
     />
 
     <div id="wrapper">
-      <div id="smplrspace-container" class="gap"></div>
-    </div>
+        <div id="smplrspace-container"></div>
+        <div
+          id="custom-tooltip"
+          style="
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            max-width: 300px;
+          "
+        >
+          <div id="tooltip-content"></div>
+        </div>
+      </div>
+  
+      <!-- Combined Legend Box -->
+      <div id="legend-container" style="
+        position: absolute;
+        bottom: 6px;
+        left: 50px;
+        background: rgba(219, 218, 218, 0.492);
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        font-size: 12px;
+        font-weight: 500;
+        color: #333;
+        min-width: 100px;
+      ">
+        <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+          Rest View
+        </div>
+        <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+          Zoom in
+        </div>
+        <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+          Zoom Out
+        </div>
+        <div style="padding: 2px 4px; text-align: center;">
+          2D View
+        </div>
+      </div>
 
     <div id="mini-map-container">
         <div id="map-wrapper">
