@@ -16,10 +16,6 @@
   display: none !important;
 }
 
-/* Disable rotation by preventing mouse events on the 3D canvas */
-#smplrspace-container canvas {
-  pointer-events: none !important;
-}
 
 /* Re-enable pointer events only for zoom controls (if they're separate elements) */
 .smplr-zoom-controls,
@@ -43,12 +39,6 @@ button[title*="Zoom" i] {
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
     <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
 
     <div id="wrapper">
       <div id="smplrspace-container"></div>
@@ -75,8 +65,8 @@ button[title*="Zoom" i] {
     <!-- Combined Legend Box -->
     <div id="legend-container" style="
       position: absolute;
-      bottom: 6px;
-      left: 50px;
+      bottom: 0px;
+      left: 54px;
       background: rgba(219, 218, 218, 0.492);
       border: 1px solid #ddd;
       border-radius: 6px;
@@ -88,16 +78,16 @@ button[title*="Zoom" i] {
       color: #333;
       min-width: 100px;
     ">
-      <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+      <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
         Default View
       </div>
-      <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-        Zoom in
+      <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+        Zoom IN
       </div>
-      <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-        Zoom Out
+      <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+        Zoom OUT
       </div>
-      <div style="padding: 2px 4px; text-align: center;">
+      <div style="padding: 4px 4px; text-align: center;">
         Switch 2D/3D 
       </div>
     </div>
@@ -1674,6 +1664,7 @@ button[title*="Zoom" i] {
           this.space.startViewer({
             preview: false,
             allowModeChange: true,
+            disableCameraRotation: true,
             loadingMessage: "Loading...",
             cameraPlacement: {
               alpha: 1.5737549088615568,
