@@ -1755,75 +1755,6 @@ button[title*="Zoom" i] {
           this.updateDataLayers();
         }
 
-        setCameraForFacility(facilityName) {
-  if (!this.space) return;
-  
-  setTimeout(() => {
-    try {
-      const cameraPositions = {
-        "Service Counter (1/F Zone A)": {
-          alpha: 7.864110885888427,
-          beta: 1.1647679615457573,
-          radius: 23.86273276531154,
-          target: {x: 89.1764920520704, y: 1, z: -42.919436175492336},
-          animated: true
-        },
-        "Book Sterilizer (1/F Zone B)": {
-          alpha: 7.814465182052254,
-          beta: 0.8555837625074109,
-          radius: 24.63379972867233,
-          target: {x: 75.9598831634401, y: 1, z: -44.38879736317431},
-          animated: true
-        },
-        "Self-Pickup Locker (1/F Zone B)": {
-          alpha: 7.814465182052254,
-          beta: 0.8555837625074109,
-          radius: 24.63379972867233,
-          target: {x: 59.2058475998287, y: 1, z: -45.92170777234999},
-          animated: true
-        },
-        "SEN Equipment – Service Counter (1/F Zone B)": {
-          alpha: 7.814465182052254,
-          beta: 0.9168404755001119,
-          radius: 24.63379972867233,
-          target: {x: 82.32504691590032, y: 1, z: -41.77974440379263},
-          animated: true
-        },
-        "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)": {
-          alpha: 7.847549811639201,
-          beta: 0.9952582916427428,
-          radius: 42.03759352878045,
-          target: {x: 110.53969413864208, y: 1, z: -43.10429414216473},
-          animated: true
-        },
-        "Lift (1/F Zone B)": {
-          alpha: 7.767853807090165,
-          beta: 1.1857331321226972,
-          radius: 50.55419467616028,
-          target: {x: 57.989016871180226, y: 1, z: -62.23564118742561},
-          animated: true
-        },
-        "Drinking water station 1F (1F/Zone B)": {
-          alpha: 7.8297436635980295,
-          beta: 1.3386096846313769,
-          radius: 44.686814391745756,
-          target: {x: 56.21204468280181, y: 1, z: -65.38252386537789},
-          animated: true
-        }
-      };
-
-      // Only set camera if facility has defined position
-      if (cameraPositions[facilityName]) {
-        console.log("Setting camera for:", facilityName);
-        this.space.setCameraPlacement(cameraPositions[facilityName]);
-      } else {
-        console.log("No camera position defined for:", facilityName);
-      }
-    } catch (e) {
-      console.log("Camera positioning error:", e);
-    }
-  }, 1000); // 1 second delay like in reference code
-}
 
         fetchAll() {
           this.fetchData();
@@ -2048,11 +1979,7 @@ button[title*="Zoom" i] {
               spc.updateMapForFacility();
             }
           }, 2000);
-          setTimeout(() => {
-  if (spc && spc.space) {
-    spc.setCameraForFacility(facility);
-  }
-}, 3000); 
+          
         } else if (facility === "Books DS777-HJ (1/F Zone C)") {
           rooms.push({
             id: "b2c5ac66-9e8f-4831-a753-f9ca9dfc9127",
