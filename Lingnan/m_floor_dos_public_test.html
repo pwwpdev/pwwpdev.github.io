@@ -2,187 +2,194 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    
+
     <title>Smplrspace Viewer</title>
     <!-- Load smplr.js and its styles -->
     <style>
-        body,
-        html {
-          height: 100vh !important;
-          overflow: hidden;
-          margin: 0;
-          padding: 0;
-        }
-        #wrapper,
-        #smplrspace-container {
-          height: 100vh !important;
-        }
-    
-        #mini-map-container {
-      position: absolute;
-      top: 0px;
-      right: 0px;
-      width: 360px;
-      padding: 4px 4px 0px 4px;
-      background: rgba(216, 216, 216, 0.956);
-      backdrop-filter: blur(10px);
-      border-left: 0.5px solid #d4d4d4;
-      border-bottom: 0.5px solid #d4d4d4;
-      border-bottom-left-radius: 4px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-      z-index: 10;
+       body,
+    html {
+      height: 100vh !important;
       overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
-    
-    #map-wrapper {
-      position: relative;
-      width: 100%;
-      height: fit-content;
-      overflow: hidden;
+    #wrapper,
+    #smplrspace-container {
+      height: 100vh !important;
     }
-    
-    #mini-map {
-      width: 100%;
-      transform-origin: center;
-      transition: transform 0.2s ease;
-      cursor: move;
-    }
-    
-    .map-controls {
-      position: absolute;
-      bottom: 6px;
-      right: 2px;
-      display: flex;
-      flex-direction: row;
-      gap: 10px;
-      z-index: 11;
-    }
-    
-    .control-btn {
-      width: 20px;
-      height: 20px;
-      background: white;
-      border: none;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-    
-    .control-btn:hover {
-      background: #f5f5f5;
-    }
-    
-    @media (max-width: 768px) {
+      button[title="Hide annotations"] {
+        display: none !important;
+      }
       #mini-map-container {
-        width: 210px;
-      }
-      #map-wrapper {
-        height: fit-content;
-      }
-      .control-btn {
-        width: 18px;
-        height: 18px;
-        font-size: 14px;
-        border-radius: 2px;
-      }
-      .map-controls {
-        gap: 6px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      #mini-map-container {
-        width: 140px;
-      }
-      #map-wrapper {
-        height: fit-content;
-      }
-      .control-btn {
-        width: 12px;
-        height: 12px;
-        font-size: 8px;
-        border-radius: 2px;
-      }
-    }
-    button[title="Hide annotations"] {
-      display: none !important;
-    }
-      </style>
-      <body>
-        <script src="https://app.smplrspace.com/lib/smplr.js"></script>
-        <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
-    
-        <div id="wrapper">
-          <div id="smplrspace-container"></div>
-          <div
-            id="custom-tooltip"
-            style="
-              position: absolute;
-              top: 20px;
-              left: 20px;
-              background: white;
-              border: 1px solid #ccc;
-              border-radius: 8px;
-              padding: 12px;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-              z-index: 1000;
-              display: none;
-              max-width: 300px;
-            "
-          >
-            <div id="tooltip-content"></div>
-          </div>
-        </div>
-    
-        <!-- Combined Legend Box -->
-        <div id="legend-container" style="
-          position: absolute;
-          bottom: 6px;
-          left: 54px;
-          background: rgba(219, 218, 218, 0.492);
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          padding: 6px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          z-index: 1000;
-          font-size: 12px;
-          font-weight: 500;
-          color: #333;
-          min-width: 100px;
-        ">
-          <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-            Default View
-          </div>
-          <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-            Zoom IN
-          </div>
-          <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-            Zoom OUT
-          </div>
-          <div style="padding: 4px 4px; text-align: center;">
-            Switch 2D/3D 
-          </div>
-        </div>
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 360px;
+  padding: 4px 4px 0px 4px;
+  background: rgba(216, 216, 216, 0.956);
+  backdrop-filter: blur(10px);
+  border-left: 0.5px solid #d4d4d4;
+  border-bottom: 0.5px solid #d4d4d4;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  overflow: hidden;
+}
 
-        <div id="mini-map-container">
-            <div id="map-wrapper">
-              <img id="mini-map" src="MFC.png" alt="Mini Map" />
-            </div>
-          </div>
+#map-wrapper {
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  overflow: hidden;
+}
+
+#mini-map {
+  width: 100%;
+  transform-origin: center;
+  transition: transform 0.2s ease;
+  cursor: move;
+}
+
+.map-controls {
+  position: absolute;
+  bottom: 6px;
+  right: 2px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  z-index: 11;
+}
+
+.control-btn {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn:hover {
+  background: #f5f5f5;
+}
+
+@media (max-width: 768px) {
+  #mini-map-container {
+    width: 210px;
+  }
+  #map-wrapper {
+    height: fit-content;
+  }
+  .control-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+    border-radius: 2px;
+  }
+  .map-controls {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  #mini-map-container {
+    width: 140px;
+  }
+  #map-wrapper {
+    height: fit-content;
+  }
+  .control-btn {
+    width: 12px;
+    height: 12px;
+    font-size: 8px;
+    border-radius: 2px;
+  }
+}
 
 
+      .text-size {
+      font-size: 14px;
+    }
+    .strong-text {
+      font-size: 18px; 
+    }
+    </style>
+  </head>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+
+    <div id="wrapper">
+      <div id="smplrspace-container"></div>
+    </div>
+
+    <!-- Combined Legend Box -->
+    <div
+      id="legend-container"
+      style="
+        position: absolute;
+        bottom: 2px;
+        left: 54px;
+        background: rgba(219, 218, 218, 0.492);
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        font-size: 12px;
+        font-weight: 500;
+        color: #333;
+        min-width: 100px;
+      "
+    >
+      <div
+        style="
+          padding: 6px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Default View
+      </div>
+      <div
+        style="
+          padding: 6px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Zoom IN
+      </div>
+      <div
+        style="
+          padding: 6px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Zoom OUT
+      </div>
+      <div style="padding: 6px 4px 4px 4px; text-align: center">Switch 2D/3D</div>
+    </div>
+    <div id="mini-map-container">
+      <div id="map-wrapper">
+        <img id="mini-map" src="mini_mf.png" alt="Mini Map" />
+      </div>
+    </div>
 
     <script>
       const API_ENDPOINT =
         "https://optimusc.flowfuse.cloud/lingnan-library-dos";
-
-      
 
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
       const SPACE_ID = "90660c93-a72f-4412-ba81-07605f95d720";
@@ -217,7 +224,7 @@
       };
 
       const desk_filter = {
-        "MFC-S01": "MFC-S01", 
+        "MFC-S01": "MFC-S01",
         "MFC-S02": "MFC-S02",
         "MFC-S03": "MFC-S03",
         "MFC-S04": "MFC-S04",
@@ -401,8 +408,6 @@
         },
       ];
 
-
-
       const color_dict = {
         occupied: "#ff3f34",
         countdown: "#ff3f34",
@@ -431,24 +436,22 @@
           });
           this.space.startViewer({
             preview: false,
-            disableCameraRotation: true,
             allowModeChange: true,
-           cameraPlacement: {
+            disableCameraRotation: true,
+            cameraPlacement: {
               alpha: 1.5642931020318165,
-              beta: 0.5615178132728119,
-              radius: 
-              28.190416908872134,
+              beta: 0.7099240223592373,
+              radius: 152.228814129728086,
               target: {
-                x: 44.64910054283883,
-                y: 0,
-                z: -49.63054124348335,
+                x: 69.04755001887268,
+                y: 1,
+                z: -44.24558015977757,
               },
             },
             onReady: () => this.fetchAll(),
             onError: (error) => console.error("Could not start viewer", error),
           });
         }
-
 
         updateDataLayers() {
           // remove previous layers if any
@@ -495,8 +498,7 @@
                 let value = data[i];
                 let loc = value.area;
                 let timestamp = value.timestamp;
-                let available = value.occupancy
-                
+                let available = value.occupancy;
 
                 let color = color_dict.hasOwnProperty(available)
                   ? color_dict[available]
@@ -552,13 +554,7 @@
         }
       }
 
-      spc = new Space(
-        SPACE_ID,
-        CLIENT_ID,
-        dict[0]["assets"],
-        [],
-        [] 
-      );
+      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], [], []);
 
       delete dict;
 
