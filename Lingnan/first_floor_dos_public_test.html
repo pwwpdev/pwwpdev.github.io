@@ -3624,7 +3624,7 @@ function getFacilityHeight(facilityName) {
   for (const [key, height] of Object.entries(heightMap)) {
     if (facilityName.includes(key)) return height;
   }
-  return 1.0; // default height
+  return 2.4; // default height
 }
 
 // Generic tooltip function using API data
@@ -3719,7 +3719,7 @@ function showGenericTooltip(facilityName) {
 
               color: (d) => d.color,
               alpha: 2.2,
-              height: 1.4,
+              height: 2.4,
             });
           }
 
