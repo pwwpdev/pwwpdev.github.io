@@ -16,10 +16,7 @@
   display: none !important;
 }
 
-/* Disable rotation by preventing mouse events on the 3D canvas */
-#smplrspace-container canvas {
-  pointer-events: none !important;
-}
+
 
 /* Re-enable pointer events only for zoom controls (if they're separate elements) */
 .smplr-zoom-controls,
@@ -43,91 +40,71 @@ button[title*="Zoom" i] {
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
     <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-
+   
     <div id="wrapper">
-        <div id="smplrspace-container"></div>
-        <div
-          id="custom-tooltip"
-          style="
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
-            max-width: 300px;
-          "
-        >
-          <div id="tooltip-content"></div>
-        </div>
+      <div id="smplrspace-container"></div>
+      <div
+        id="custom-tooltip"
+        style="
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          background: white;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          padding: 12px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+          display: none;
+          max-width: 300px;
+        "
+      >
+        <div id="tooltip-content"></div>
       </div>
-  
+    </div>
 
-     <!-- Combined Legend Box -->
-     <div id="legend-container" style="
-     position: absolute;
-     bottom: 6px;
-     left: 50px;
-     background: rgba(219, 218, 218, 0.492);
-     border: 1px solid #ddd;
-     border-radius: 6px;
-     padding: 6px;
-     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-     z-index: 1000;
-     font-size: 12px;
-     font-weight: 500;
-     color: #333;
-     min-width: 100px;
-   ">
-     <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-       Rest View
-     </div>
-     <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-       Zoom in
-     </div>
-     <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-       Zoom Out
-     </div>
-     <div style="padding: 2px 4px; text-align: center;">
-       2D View
-     </div>
+   <!-- Combined Legend Box -->
+   <div id="legend-container" style="
+   position: absolute;
+   bottom: 0px;
+   left: 54px;
+   background: rgba(219, 218, 218, 0.492);
+   border: 1px solid #ddd;
+   border-radius: 6px;
+   padding: 6px;
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+   z-index: 1000;
+   font-size: 12px;
+   
+   font-weight: 500;
+   color: #333;
+   min-width: 100px;
+ ">
+   <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+     Default View
    </div>
+   <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+     Zoom IN
+   </div>
+   <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+     Zoom OUT
+   </div>
+   <div style="padding: 4px 4px; text-align: center;">
+     Switch 2D/3D
+   </div>
+ </div>
 
 
     <script>
-
-      function getIsAdmin() {
-          // Get the current URL
-          const urlParams = new URLSearchParams(window.location.search);
-          
-          // Get the isAdmin parameter
-          const isAdminParam = urlParams.get('isAdmin');
-
-          // Set isAdmin based on the parameter value
-          const isAdmin = (isAdminParam === 'true');
-
-          return isAdmin;
-      }
-
-      // Example usage
-      const isAdmin = getIsAdmin();
-      const API_ENDPOINT = isAdmin ? "https://optimusc.flowfuse.cloud/lingnan-library-dos-admin" : "https://optimusc.flowfuse.cloud/lingnan-library-dos";
+      const API_ENDPOINT =
+        "https://optimusc.flowfuse.cloud/lingnan-library-dos";
 
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
       const SPACE_ID = "73242c82-a0e9-4c96-8d28-089829ecf3d0";
 
       const UPDATE_FREQUENCY = 60;
 
+      const rooms = [];
       const desk_index = {
         "LRT01-S01": 0,
         "LRT01-S02": 1,
@@ -730,324 +707,324 @@ button[title*="Zoom" i] {
           ],
         },
         {
-    "id": "161eabd8-3a08-4b1a-b297-2829cf8b31ea",
-    "name": "NonAccessibleArea",
-    "type": "polygon",
-    "assets": [
-      {
-        "id": "031bae15-7140-44c3-b06a-eb777de0ee23",
-        "name": "1",
-        "levelIndex": 0,
-        "coordinates": [
-          [
+          id: "161eabd8-3a08-4b1a-b297-2829cf8b31ea",
+          name: "NonAccessibleArea",
+          type: "polygon",
+          assets: [
             {
-              "x": 126.477,
-              "z": -57.205,
-              "levelIndex": 0
+              id: "031bae15-7140-44c3-b06a-eb777de0ee23",
+              name: "1",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 126.477,
+                    z: -57.205,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 129.655,
+                    z: -57.233,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 129.603,
+                    z: -29.791,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 126.771,
+                    z: -29.849,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 126.741,
+                    z: -48.307,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 126.533,
+                    z: -48.392,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 126.449,
+                    z: -56.376,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
             },
             {
-              "x": 129.655,
-              "z": -57.233,
-              "levelIndex": 0
+              id: "b8da8833-ac95-423a-a02b-04aa399172b0",
+              name: "2",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 98.375,
+                    z: -52.608,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 98.389,
+                    z: -56.918,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.036,
+                    z: -57.007,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.113,
+                    z: -57.253,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 108.742,
+                    z: -57.208,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 108.448,
+                    z: -56.509,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 108.664,
+                    z: -56.579,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 108.708,
+                    z: -54.039,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 103.068,
+                    z: -54.118,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 102.926,
+                    z: -52.613,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
             },
             {
-              "x": 129.603,
-              "z": -29.791,
-              "levelIndex": 0
+              id: "064c5862-54b8-4c31-bb23-13e50b27b5e4",
+              name: "4",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 54.05,
+                    z: -34.736,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 51.705,
+                    z: -33.127,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 39.737,
+                    z: -33.203,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 39.689,
+                    z: -34.756,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
             },
             {
-              "x": 126.771,
-              "z": -29.849,
-              "levelIndex": 0
+              id: "4e7221ef-19ee-44e6-84ea-8a8ad43bfd4f",
+              name: "5",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 30.966,
+                    z: -57.213,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 30.961,
+                    z: -56.465,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 30.76,
+                    z: -56.425,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 30.709,
+                    z: -54.063,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 38.26,
+                    z: -54.039,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 38.228,
+                    z: -52.627,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 43.798,
+                    z: -52.584,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 43.799,
+                    z: -54.003,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 43.045,
+                    z: -54.107,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 43.036,
+                    z: -56.912,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 40.013,
+                    z: -56.935,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 39.987,
+                    z: -57.271,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
             },
             {
-              "x": 126.741,
-              "z": -48.307,
-              "levelIndex": 0
+              id: "2e5718f5-8b5e-4337-ba4f-c8aa3470488a",
+              name: "6",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 90.582,
+                    z: -61.883,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 90.582,
+                    z: -58.519,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 90.133,
+                    z: -58.519,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 87.838,
+                    z: -58.519,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 87.838,
+                    z: -61.883,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 90.582,
+                    z: -61.883,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
             },
             {
-              "x": 126.533,
-              "z": -48.392,
-              "levelIndex": 0
+              id: "5a9bbacf-986a-4ec8-ba38-837e646edba8",
+              name: "7",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 112.699,
+                    z: -56.973,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 112.624,
+                    z: -54.035,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 113.684,
+                    z: -54.015,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 113.671,
+                    z: -56.988,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
             },
             {
-              "x": 126.449,
-              "z": -56.376,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      },
-      {
-        "id": "b8da8833-ac95-423a-a02b-04aa399172b0",
-        "name": "2",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": 98.375,
-              "z": -52.608,
-              "levelIndex": 0
+              id: "4666b2f4-5a2a-413a-82fc-8264607e0296",
+              name: "3",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 99.768,
+                    z: -33.183,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.768,
+                    z: -34.704,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 85.744,
+                    z: -34.658,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 87.792,
+                    z: -33.167,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
             },
-            {
-              "x": 98.389,
-              "z": -56.918,
-              "levelIndex": 0
-            },
-            {
-              "x": 99.036,
-              "z": -57.007,
-              "levelIndex": 0
-            },
-            {
-              "x": 99.113,
-              "z": -57.253,
-              "levelIndex": 0
-            },
-            {
-              "x": 108.742,
-              "z": -57.208,
-              "levelIndex": 0
-            },
-            {
-              "x": 108.448,
-              "z": -56.509,
-              "levelIndex": 0
-            },
-            {
-              "x": 108.664,
-              "z": -56.579,
-              "levelIndex": 0
-            },
-            {
-              "x": 108.708,
-              "z": -54.039,
-              "levelIndex": 0
-            },
-            {
-              "x": 103.068,
-              "z": -54.118,
-              "levelIndex": 0
-            },
-            {
-              "x": 102.926,
-              "z": -52.613,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      },
-      {
-        "id": "064c5862-54b8-4c31-bb23-13e50b27b5e4",
-        "name": "4",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": 39.687,
-              "z": -33.143,
-              "levelIndex": 0
-            },
-            {
-              "x": 39.75,
-              "z": -34.775,
-              "levelIndex": 0
-            },
-            {
-              "x": 54.014,
-              "z": -34.69,
-              "levelIndex": 0
-            },
-            {
-              "x": 51.627,
-              "z": -33.124,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      },
-      {
-        "id": "4e7221ef-19ee-44e6-84ea-8a8ad43bfd4f",
-        "name": "5",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": 30.966,
-              "z": -57.213,
-              "levelIndex": 0
-            },
-            {
-              "x": 30.961,
-              "z": -56.465,
-              "levelIndex": 0
-            },
-            {
-              "x": 30.76,
-              "z": -56.425,
-              "levelIndex": 0
-            },
-            {
-              "x": 30.709,
-              "z": -54.063,
-              "levelIndex": 0
-            },
-            {
-              "x": 38.26,
-              "z": -54.039,
-              "levelIndex": 0
-            },
-            {
-              "x": 38.228,
-              "z": -52.627,
-              "levelIndex": 0
-            },
-            {
-              "x": 43.798,
-              "z": -52.584,
-              "levelIndex": 0
-            },
-            {
-              "x": 43.799,
-              "z": -54.003,
-              "levelIndex": 0
-            },
-            {
-              "x": 43.045,
-              "z": -54.107,
-              "levelIndex": 0
-            },
-            {
-              "x": 43.036,
-              "z": -56.912,
-              "levelIndex": 0
-            },
-            {
-              "x": 40.013,
-              "z": -56.935,
-              "levelIndex": 0
-            },
-            {
-              "x": 39.987,
-              "z": -57.271,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      },
-      {
-        "id": "2e5718f5-8b5e-4337-ba4f-c8aa3470488a",
-        "name": "6",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": 90.582,
-              "z": -61.883,
-              "levelIndex": 0
-            },
-            {
-              "x": 90.582,
-              "z": -58.519,
-              "levelIndex": 0
-            },
-            {
-              "x": 90.133,
-              "z": -58.519,
-              "levelIndex": 0
-            },
-            {
-              "x": 87.838,
-              "z": -58.519,
-              "levelIndex": 0
-            },
-            {
-              "x": 87.838,
-              "z": -61.883,
-              "levelIndex": 0
-            },
-            {
-              "x": 90.582,
-              "z": -61.883,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      },
-      {
-        "id": "5a9bbacf-986a-4ec8-ba38-837e646edba8",
-        "name": "7",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": 112.699,
-              "z": -56.973,
-              "levelIndex": 0
-            },
-            {
-              "x": 112.624,
-              "z": -54.035,
-              "levelIndex": 0
-            },
-            {
-              "x": 113.684,
-              "z": -54.015,
-              "levelIndex": 0
-            },
-            {
-              "x": 113.671,
-              "z": -56.988,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      },
-      {
-        "id": "4666b2f4-5a2a-413a-82fc-8264607e0296",
-        "name": "3",
-        "levelIndex": 0,
-        "coordinates": [
-          [
-            {
-              "x": 85.358,
-              "z": -34.759,
-              "levelIndex": 0
-            },
-            {
-              "x": 87.858,
-              "z": -33.125,
-              "levelIndex": 0
-            },
-            {
-              "x": 99.759,
-              "z": -33.143,
-              "levelIndex": 0
-            },
-            {
-              "x": 99.727,
-              "z": -34.752,
-              "levelIndex": 0
-            }
-          ]
-        ],
-        "layerType": "polygon",
-        "mapped": true
-      }
-    ]
-  },
+          ],
+        },
         {
           id: "ccb6b67b-5390-4fee-86da-e9b6719a7abf",
           name: "Study Carrel",
@@ -1654,9 +1631,11 @@ button[title*="Zoom" i] {
         unoccupied: "#3aa655",
         passive_occupied: "#ffbf00",
         away: "#ffbf00",
-        demo: "#6888be",
+        demo: "#E566FF",
         unavailable: "#768590",
       };
+
+    
 
       // smplrspace-script.js
       class Space {
@@ -1689,15 +1668,12 @@ button[title*="Zoom" i] {
             preview: false,
             loadingMessage: "Loading...",
             allowModeChange: true,
+            disableCameraRotation: true,
             cameraPlacement: {
               alpha: 1.5737549088615568,
               beta: 0.7099240223592374,
-              radius: 93.49815361318093,
-              target: {
-                x: 70.83070629934955,
-                y: 1,
-                z: -48.22815466523894 ,
-              },
+              radius: 85.49815361318093,
+              target: { x: 70.43070629934955, y: 1, z: -48.22815466523894 },
             },
             onReady: () => this.fetchAll(),
             onError: (error) => console.error("Could not start viewer", error),
@@ -1709,10 +1685,6 @@ button[title*="Zoom" i] {
           this.space.removeDataLayer("rooms");
           this.space.removeDataLayer("desks");
           this.space.removeDataLayer("Notaccessible");
-          this.space.removeDataLayer("femaleToilets");
-          this.space.removeDataLayer("maleToilets");
-          this.space.removeDataLayer("middleUniToilets");
-          this.space.removeDataLayer("otherUniToilets");
 
           const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
           const isDesksEmpty = !this.desks || this.desks.length === 0;
@@ -1727,10 +1699,10 @@ button[title*="Zoom" i] {
               id: "rooms",
               type: "polygon",
               data: this.rooms,
-              tooltip: (d) => `${d.name} - ${d.available}`,
+
               color: (d) => d.color,
-              alpha: 0.7,
-              height: 2.9,
+              alpha: 2.2,
+              height: 1.4,
             });
           }
 
@@ -1739,7 +1711,6 @@ button[title*="Zoom" i] {
               id: "desks",
               type: "furniture",
               data: this.desks,
-              tooltip: (d) => `${d.name} - ${d.available}`,
               color: (d) => d.color,
             });
           }
@@ -1749,89 +1720,111 @@ button[title*="Zoom" i] {
               id: "Notaccessible",
               type: "polygon",
               data: this.Notaccessible,
-              tooltip: (d) => ` ${d.available}`,
               color: (d) => d.color,
               alpha: 2.6,
               height: (d) => d.height,
             });
           }
+          // Add click handlers for custom tooltip
+          this.space.on("click", (event) => {
+            if (event.data) {
+              const tooltipDiv = document.getElementById("custom-tooltip");
+              const contentDiv = document.getElementById("tooltip-content");
 
-          if (!isToiletAreasEmpty) {
-            // Separate toilet areas by type
-            const femaleToilets = this.toiletAreas.filter(
-              (t) => t.available === "Female Toilet"
-            );
-            const maleToilets = this.toiletAreas.filter(
-              (t) => t.available === "Male Toilet"
-            );
+              if (event.data.name && tooltipDiv && contentDiv) {
+                // Create custom tooltip content
+                let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px;">${
+            event.data.name
+          }</div>
+          <div style="margin-bottom: 8px; font-size: 12px;">Status: ${
+            event.data.available || "Unknown"
+          }</div>
+          <img src="https://www.wn-int.com/storage/resized/1052/1200x/%E9%A6%99%E6%B8%AF%E5%B6%BA%E5%8D%97%E5%A4%A7%E5%AD%B8%E5%9C%96%E6%9B%B8%E9%A4%A87.jpeg" 
+               style="width: 80px; height: auto; border-radius: 4px; display: block;" />
+        </div>
+      `;
 
-            // Split the UniToilets into two groups - ones between male/female toilets and others
-            const uniToilets = this.toiletAreas.filter((t) => {
-              if (t.available !== "Unisex Toilet/Accessible") return false;
-
-              // Check if this is one of the middle UniToilets (1F-UT1 or 1F-UT2)
-              // These are the ones next to the male/female toilets
-              const middleUniToilets = ["1F-UT1", "1F-UT2"];
-              return middleUniToilets.includes(t.name);
-            });
-
-            const otherUniToilets = this.toiletAreas.filter((t) => {
-              if (t.available !== "Unisex Toilet/Accessible") return false;
-
-              // This is for the other UniToilet (1F-UT3)
-              return t.name === "1F-UT3";
-            });
-
-            // Add separate layers
-            if (femaleToilets.length > 0) {
-              this.space.addDataLayer({
-                id: "femaleToilets",
-                type: "polygon",
-                data: femaleToilets,
-                tooltip: (d) => `${d.available}`,
-                color: (d) => d.color,
-                alpha: 2.7,
-                height: 1.0,
-              });
+                contentDiv.innerHTML = content;
+                tooltipDiv.style.display = "block";
+              }
             }
-
-            if (maleToilets.length > 0) {
-              this.space.addDataLayer({
-                id: "maleToilets",
-                type: "polygon",
-                data: maleToilets,
-                tooltip: (d) => `${d.available}`,
-                color: (d) => d.color,
-                alpha: 2.7,
-                height: 1.0,
-              });
-            }
-
-            if (uniToilets.length > 0) {
-              this.space.addDataLayer({
-                id: "middleUniToilets",
-                type: "polygon",
-                data: uniToilets,
-                tooltip: (d) => `${d.available}`,
-                color: (d) => d.color,
-                alpha: 2.7,
-                height: 1.0, // Same height as surrounding toilets
-              });
-            }
-
-            if (otherUniToilets.length > 0) {
-              this.space.addDataLayer({
-                id: "otherUniToilets",
-                type: "polygon",
-                data: otherUniToilets,
-                tooltip: (d) => `${d.available}`,
-                color: (d) => d.color,
-                alpha: 2.7,
-                height: 1.0, // Different height for the standalone UniToilet
-              });
-            }
-          }
+          });
         }
+        updateMapForFacility() {
+          this.updateDataLayers();
+        }
+
+        setCameraForFacility(facilityName) {
+  if (!this.space) return;
+  
+  setTimeout(() => {
+    try {
+      const cameraPositions = {
+        "Service Counter (1/F Zone A)": {
+          alpha: 7.864110885888427,
+          beta: 1.1647679615457573,
+          radius: 23.86273276531154,
+          target: {x: 89.1764920520704, y: 1, z: -42.919436175492336},
+          animated: true
+        },
+        "Book Sterilizer (1/F Zone B)": {
+          alpha: 7.814465182052254,
+          beta: 0.8555837625074109,
+          radius: 24.63379972867233,
+          target: {x: 75.9598831634401, y: 1, z: -44.38879736317431},
+          animated: true
+        },
+        "Self-Pickup Locker (1/F Zone B)": {
+          alpha: 7.814465182052254,
+          beta: 0.8555837625074109,
+          radius: 24.63379972867233,
+          target: {x: 59.2058475998287, y: 1, z: -45.92170777234999},
+          animated: true
+        },
+        "SEN Equipment – Service Counter (1/F Zone B)": {
+          alpha: 7.814465182052254,
+          beta: 0.9168404755001119,
+          radius: 24.63379972867233,
+          target: {x: 82.32504691590032, y: 1, z: -41.77974440379263},
+          animated: true
+        },
+        "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)": {
+          alpha: 7.847549811639201,
+          beta: 0.9952582916427428,
+          radius: 42.03759352878045,
+          target: {x: 110.53969413864208, y: 1, z: -43.10429414216473},
+          animated: true
+        },
+        "Lift (1/F Zone B)": {
+          alpha: 7.767853807090165,
+          beta: 1.1857331321226972,
+          radius: 50.55419467616028,
+          target: {x: 57.989016871180226, y: 1, z: -62.23564118742561},
+          animated: true
+        },
+        "Drinking water station 1F (1F/Zone B)": {
+          alpha: 7.8297436635980295,
+          beta: 1.3386096846313769,
+          radius: 44.686814391745756,
+          target: {x: 56.21204468280181, y: 1, z: -65.38252386537789},
+          animated: true
+        }
+      };
+
+      // Only set camera if facility has defined position
+      if (cameraPositions[facilityName]) {
+        console.log("Setting camera for:", facilityName);
+        this.space.setCameraPlacement(cameraPositions[facilityName]);
+      } else {
+        console.log("No camera position defined for:", facilityName);
+      }
+    } catch (e) {
+      console.log("Camera positioning error:", e);
+    }
+  }, 1000); // 1 second delay like in reference code
+}
 
         fetchAll() {
           this.fetchData();
@@ -1850,7 +1843,7 @@ button[title*="Zoom" i] {
 
                 let color = color_dict.hasOwnProperty(available)
                   ? color_dict[available]
-                  : "#ffffff";
+                  : "#ffa500";
 
                 if (!occupancy.hasOwnProperty(loc)) {
                   occupancy[loc] = {
@@ -1927,43 +1920,856 @@ button[title*="Zoom" i] {
         };
       });
 
-      // Initialize with the toilet areas with specific colors
-      const toiletAreas = [
-        ...dict[3]["assets"].map((area) => {
-          return {
-            ...area,
-            available: "Female Toilet",
-            color: "#A7384E",
-          };
-        }),
+      // Get the current URL
+      const currentUrl = window.location.href;
 
-        ...dict[4]["assets"].map((area) => {
-          return {
-            ...area,
-            available: "Male Toilet",
-            color: "#1D547D",
-          };
-        }),
+      // Create a URL object
+      const url = new URL(currentUrl);
 
-        // Unisex Toilet/Accessible - green
-        ...dict[5]["assets"].map((area) => {
-          return {
-            ...area,
-            available: "Unisex Toilet/Accessible",
-            color: "#023b8c",
-          };
-        }),
-      ];
+      // Use URLSearchParams to get query parameters
+      const params = new URLSearchParams(url.search);
+
+      // Example: Get a specific query parameter by name
+      const facility = params.get("facility");
+
+      if (!!facility) {
+        if (facility === "Service Counter") {
+          // Use the first facility
+          dict[0]["assets"].push({
+            id: "53c88883-8018-4407-8b8b-5b08e4c84866",
+            name: "ServiceCounter",
+            furnitureId: "de7dd1fb-e868-46a6-a77f-fdfee928ad06",
+            layerType: "furniture",
+          });
+        } else if (facility === "Study Rooms") {
+          rooms.push({
+            id: "2c742e1d-1ab7-4600-8376-76626e90c084",
+            name: "Individual Study Room 1",
+            levelIndex: 0,
+            coordinates: [
+              [
+                {
+                  x: 117.426,
+                  z: -56.963,
+                  levelIndex: 0,
+                },
+                {
+                  x: 119.377,
+                  z: -56.963,
+                  levelIndex: 0,
+                },
+                {
+                  x: 119.377,
+                  z: -54.059,
+                  levelIndex: 0,
+                },
+                {
+                  x: 117.426,
+                  z: -54.059,
+                  levelIndex: 0,
+                },
+                {
+                  x: 117.426,
+                  z: -56.963,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+        } else if (facility === "Computers") {
+        } else if (facility === "Study Spaces") {
+        } else if (facility === "Drinking Water Stations") {
+        } else if (facility === "Books A-DS776 (1/F Zone A)") {
+          console.log("Adding Zone A to the space");
+          rooms.push({
+            id: "a3f90bd7-d7c2-48b2-86ab-93e5efd573c4",
+            name: "Books A-DS776 (1/F Zone A)",
+            levelIndex: 0,
+            color: "#E566FF",
+            height: 1.0,
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 126.388,
+                  z: -56.716,
+                  levelIndex: 0,
+                },
+                {
+                  x: 91.819,
+                  z: -56.888,
+                  levelIndex: 0,
+                },
+                {
+                  x: 91.485,
+                  z: -52.512,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.633,
+                  z: -52.507,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.861,
+                  z: -36.474,
+                  levelIndex: 0,
+                },
+                {
+                  x: 87.842,
+                  z: -33.048,
+                  levelIndex: 0,
+                },
+                {
+                  x: 99.503,
+                  z: -33.121,
+                  levelIndex: 0,
+                },
+                {
+                  x: 99.73,
+                  z: -30.165,
+                  levelIndex: 0,
+                },
+                {
+                  x: 125.663,
+                  z: -30.186,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          // Update the layers after space is ready
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
+        } else if (facility === "Books DS777-HJ (1/F Zone C)") {
+          rooms.push({
+            id: "b2c5ac66-9e8f-4831-a753-f9ca9dfc9127",
+            name: "Books DS777-HJ (1/F Zone C)",
+            levelIndex: 0,
+            height: 1.0,
+            color: "#E566FF", 
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 12.456,
+                  z: -57.147,
+                  levelIndex: 0,
+                },
+                {
+                  x: 48.63,
+                  z: -56.92,
+                  levelIndex: 0,
+                },
+                {
+                  x: 48.505,
+                  z: -52.496,
+                  levelIndex: 0,
+                },
+                {
+                  x: 57.093,
+                  z: -52.396,
+                  levelIndex: 0,
+                },
+                {
+                  x: 57.353,
+                  z: -36.335,
+                  levelIndex: 0,
+                },
+                {
+                  x: 51.672,
+                  z: -33.077,
+                  levelIndex: 0,
+                },
+                {
+                  x: 39.597,
+                  z: -33.372,
+                  levelIndex: 0,
+                },
+                {
+                  x: 39.357,
+                  z: -30.29,
+                  levelIndex: 0,
+                },
+                {
+                  x: 18.829,
+                  z: -30.132,
+                  levelIndex: 0,
+                },
+                {
+                  x: 12.881,
+                  z: -30.062,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          // Update the layers after space is ready
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+
+          // Show custom tooltip for this facility
+          function showBooksTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #FF6B35;">Books DS777-HJ Collection</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">Located in Zone C - Social Sciences & History</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Call numbers: DS777 through HJ</div>
+          <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          // Show tooltip after map loads
+          setTimeout(showBooksTooltip, 2500);
+        }
+
+    
+        else if (facility === "1/F (1/F Zone B)") {
+          rooms.push({
+            id: "5fdbdc2e-2461-403d-a038-4a42e1500ca4",
+            name: "Drinking water station 1F (1F/Zone B)",
+            levelIndex: 0,
+            height: 0.3,
+            color: "#E566FF", 
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 82.416,
+                  z: -55.277,
+                  levelIndex: 0,
+                },
+                {
+                  x: 82.418,
+                  z: -54.926,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.779,
+                  z: -54.932,
+                  levelIndex: 0,
+                },
+                {
+                  x: 81.777,
+                  z: -55.271,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
+
+          function showDrinkingWaterTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">Drinking Water Station</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">Located in Zone B - First Floor</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Clean, filtered water available 24/7</div>
+          <img src="https://images.unsplash.com/photo-1628239532628-160d6033f01a?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          setTimeout(showDrinkingWaterTooltip, 2500);
+        } else if (facility === "Service Counter (1/F Zone A)") {
+          rooms.push({
+            id: "b67fbf3b-382b-4a1b-8c14-11caa973a5a3",
+            name: "Service Counter (1/F Zone A)",
+            levelIndex: 0,
+            height: 0.3,
+            color: "#E566FF", 
+            available: "Open",
+            coordinates: [
+              [
+                {
+                  x: 87.497,
+                  z: -40.895,
+                  levelIndex: 0,
+                },
+                {
+                  x: 87.487,
+                  z: -37.511,
+                  levelIndex: 0,
+                },
+                {
+                  x: 84.017,
+                  z: -37.456,
+                  levelIndex: 0,
+                },
+                {
+                  x: 84.024,
+                  z: -40.919,
+                  levelIndex: 0,
+                },
+                {
+                  x: 87.508,
+                  z: -40.916,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
+
+          function showServiceCounterTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">Main Service Counter</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">Library Information & Assistance</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Book checkout, returns, and general inquiries</div>
+          <img src="https://images.unsplash.com/photo-1565262353342-6e919eab5b58?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          setTimeout(showServiceCounterTooltip, 2500);
+        } else if (facility === "Lift (1/F Zone B)") {
+          rooms.push({
+            id: "d283c740-b483-43b2-abe8-2a35f9dc47a2",
+            name: "Lift (1/F Zone B)",
+            levelIndex: 0,
+            height: 2.4,
+            color: "#E566FF", 
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 60.386,
+                  z: -45.158,
+                  levelIndex: 0,
+                },
+                {
+                  x: 60.44,
+                  z: -47.509,
+                  levelIndex: 0,
+                },
+                {
+                  x: 63.386,
+                  z: -47.536,
+                  levelIndex: 0,
+                },
+                {
+                  x: 63.388,
+                  z: -45.151,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
+
+          function showLiftTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">Elevator</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">Access to all floors (1/F - 3/F)</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Wheelchair accessible</div>
+          <img src="https://images.unsplash.com/photo-1585293878107-569e3ebdab53?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          setTimeout(showLiftTooltip, 2500);
+        } else if (
+          facility ===
+          "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)"
+        ) {
+          rooms.push({
+            id: "9f4fec45-5420-4b57-b79d-7af998e96ece",
+            name: "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)",
+            levelIndex: 0,
+            height: 1.4,
+            color: "#E566FF", 
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 111.832,
+                  z: -56.924,
+                  levelIndex: 0,
+                },
+                {
+                  x: 111.833,
+                  z: -55.884,
+                  levelIndex: 0,
+                },
+                {
+                  x: 112.621,
+                  z: -55.876,
+                  levelIndex: 0,
+                },
+                {
+                  x: 112.655,
+                  z: -54.053,
+                  levelIndex: 0,
+                },
+                {
+                  x: 108.701,
+                  z: -54.055,
+                  levelIndex: 0,
+                },
+                {
+                  x: 108.695,
+                  z: -57.208,
+                  levelIndex: 0,
+                },
+                {
+                  x: 109.242,
+                  z: -57.264,
+                  levelIndex: 0,
+                },
+                {
+                  x: 109.307,
+                  z: -56.912,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
+
+          function showLaserCutterTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">Laser Cutter & Engraver</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">LU Barn Makerspace - Maker Room</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Precision cutting and engraving for creative projects</div>
+          <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=300&h=200&fit=crop" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          setTimeout(showLaserCutterTooltip, 2500);
+        } else if (
+          facility === "SEN Equipment – Service Counter (1/F Zone B)"
+        ) {
+          rooms.push({
+            id: "21ed8b4d-c15b-4837-ad1a-eab600069ca4",
+            name: "SEN Equipment – Service Counter (1/F Zone B)",
+            levelIndex: 0,
+            height: 0.1,
+            color: "#E566FF", 
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 84.719,
+                  z: -37.503,
+                  levelIndex: 0,
+                },
+                {
+                  x: 83.983,
+                  z: -37.46,
+                  levelIndex: 0,
+                },
+                {
+                  x: 84.009,
+                  z: -40.922,
+                  levelIndex: 0,
+                },
+                {
+                  x: 84.784,
+                  z: -40.905,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
+
+          function showSENTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">SEN Equipment</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">Special Educational Needs Support</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Assistive technology available at service counter</div>
+          <img src="https://images.unsplash.com/photo-1553632168-eb4237620881?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          setTimeout(showSENTooltip, 2500);
+        } else if (facility === "Book Sterilizer (1/F Zone B)") {
+          rooms.push({
+            id: "d2f5a585-036b-4087-8915-3aedaedc608f",
+            name: "Book Sterilizer (1/F Zone B)",
+            levelIndex: 0,
+            height: 1.0,
+            color: "#E566FF",
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 79.761,
+                  z: -46.464,
+                  levelIndex: 0,
+                },
+                {
+                  x: 79.777,
+                  z: -45.384,
+                  levelIndex: 0,
+                },
+                {
+                  x: 78.686,
+                  z: -45.356,
+                  levelIndex: 0,
+                },
+                {
+                  x: 78.678,
+                  z: -46.458,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+          setTimeout(() => {
+  if (spc && spc.space) {
+    spc.setCameraForFacility(facility);
+  }
+}, 3000); 
+
+          function showBookSterilizerTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">Book Sterilizer</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">UV Sanitization Station</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Sanitize books and materials safely</div>
+          <img src="https://images.unsplash.com/photo-1584467735871-8c5e8b8c9536?w=300&h=200&fit=crop" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          setTimeout(showBookSterilizerTooltip, 2500);
+        } else if (facility === "Self-Checkout Machine (1/F Zone A & Zone B)") {
+  rooms.push({
+    id: "88f10fd7-5ee4-4c49-8ef6-60398b71c53c",
+    name: "Self-Checkout Machine (1/F Zone A & Zone B)",
+    levelIndex: 0,
+    height: 1.0, 
+    color: "#E566FF", 
+    available: "Available",
+    coordinates: [
+      [
+        {
+          x: 79.675,
+          z: -44.157,
+          levelIndex: 0,
+        },
+        {
+          x: 78.673,
+          z: -44.164,
+          levelIndex: 0,
+        },
+        {
+          x: 78.664,
+          z: -45.151,
+          levelIndex: 0,
+        },
+        {
+          x: 79.719,
+          z: -45.193,
+          levelIndex: 0,
+        },
+      ],
+    ],
+    layerType: "polygon",
+    mapped: true,
+  });
+
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.updateMapForFacility();
+    }
+  }, 2000);
+
+  setTimeout(() => {
+    if (spc && spc.space) {
+      spc.setCameraForFacility(facility);
+    }
+  }, 2000); 
+
+          function showSelfCheckoutTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">Self-Checkout Machine</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">Quick & Easy Book Checkout</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Scan and borrow books independently</div>
+          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          setTimeout(showSelfCheckoutTooltip, 2500);
+        } else if (facility === "Self-Pickup Locker (1/F Zone B)") {
+          rooms.push({
+            id: "81b1d768-017c-40c1-b3b5-e02d1fb4ce2a",
+            name: "Self-Pickup Locker (1/F Zone B)",
+            levelIndex: 0,
+            height: 1.3,
+            color: "#E566FF", 
+            available: "Available",
+            coordinates: [
+              [
+                {
+                  x: 62.875,
+                  z: -45.054,
+                  levelIndex: 0,
+                },
+                {
+                  x: 62.842,
+                  z: -44.483,
+                  levelIndex: 0,
+                },
+                {
+                  x: 60.5,
+                  z: -44.477,
+                  levelIndex: 0,
+                },
+                {
+                  x: 60.501,
+                  z: -45.04,
+                  levelIndex: 0,
+                },
+                {
+                  x: 62.786,
+                  z: -45.039,
+                  levelIndex: 0,
+                },
+              ],
+            ],
+            layerType: "polygon",
+            mapped: true,
+          });
+
+          setTimeout(() => {
+            if (spc && spc.space) {
+              spc.updateMapForFacility();
+            }
+          }, 2000);
+
+          setTimeout(() => {
+      if (spc && spc.space) {
+        spc.setCameraForFacility(facility);
+      }
+    }, 2000); 
+
+          function showPickupLockerTooltip() {
+            const tooltipDiv = document.getElementById("custom-tooltip");
+            const contentDiv = document.getElementById("tooltip-content");
+
+            if (tooltipDiv && contentDiv) {
+              let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">Self-Pickup Locker</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">24/7 Book Collection Point</div>
+          <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Collect reserved books anytime</div>
+          <img src="https://plus.unsplash.com/premium_photo-1681400633393-b7d619e5bca6?q=80&w=2021&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+               style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" />
+        </div>
+      `;
+
+              contentDiv.innerHTML = content;
+              tooltipDiv.style.display = "block";
+            }
+          }
+
+          setTimeout(showPickupLockerTooltip, 2500);
+        }
+      }
+
+      // Function to show tooltip for selected facility when loaded via URL
+      if (!!facility) {
+        function showFacilityTooltip() {
+          const tooltipDiv = document.getElementById("custom-tooltip");
+          const contentDiv = document.getElementById("tooltip-content");
+
+          if (tooltipDiv && contentDiv) {
+            let content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px;">${facility}</div>
+          <div style="margin-bottom: 8px; font-size: 14px;">Selected from menu</div>
+          <img src="https://www.wn-int.com/storage/resized/1052/1200x/%E9%A6%99%E6%B8%AF%E5%B6%BA%E5%8D%97%E5%A4%A7%E5%AD%B8%E5%9C%96%E6%9B%B8%E9%A4%A87.jpeg" 
+               style="width: 100px; height: auto; border-radius: 4px; display: block;" />
+        </div>
+      `;
+
+            contentDiv.innerHTML = content;
+            tooltipDiv.style.display = "block";
+          }
+        }
+
+        // Show tooltip after map loads
+        setTimeout(showFacilityTooltip, 1500);
+      }
 
       // Create the Space instance with the updated parameters
       spc = new Space(
         SPACE_ID,
         CLIENT_ID,
         [...dict[0]["assets"], ...dict[2]["assets"]],
+        rooms,
         [],
-        [],
-        Notaccessible,
-        toiletAreas
+        Notaccessible
       );
 
       delete dict;
