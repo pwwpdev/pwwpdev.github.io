@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    
+   
     <title>Smplrspace Viewer</title>
     <!-- Load smplr.js and its styles -->
     <style>
@@ -13,11 +13,6 @@
         }
         button[title="Hide annotations"] {
       display: none !important;
-    }
-    
-    /* Disable rotation by preventing mouse events on the 3D canvas */
-    #smplrspace-container canvas {
-      pointer-events: none !important;
     }
     
     /* Re-enable pointer events only for zoom controls (if they're separate elements) */
@@ -70,8 +65,8 @@
      <!-- Combined Legend Box -->
      <div id="legend-container" style="
      position: absolute;
-     bottom: 6px;
-     left: 50px;
+     bottom: 0px;
+     left: 54px;
      background: rgba(219, 218, 218, 0.492);
      border: 1px solid #ddd;
      border-radius: 6px;
@@ -79,21 +74,22 @@
      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
      z-index: 1000;
      font-size: 12px;
+     
      font-weight: 500;
      color: #333;
      min-width: 100px;
    ">
-     <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-       Rest View
+     <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+       Default View
      </div>
-     <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-       Zoom in
+     <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+       Zoom IN
      </div>
-     <div style="padding: 2px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
-       Zoom Out
+     <div style="padding: 4px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+       Zoom OUT
      </div>
-     <div style="padding: 2px 4px; text-align: center;">
-       2D View
+     <div style="padding: 4px 4px; text-align: center;">
+       Switch 2D/3D
      </div>
    </div>
 
@@ -366,6 +362,7 @@
           });
           this.space.startViewer({
             preview: false,
+            disableCameraRotation: true,
             loadingMessage: "Loading...",
             allowModeChange: true,
             cameraPlacement: {
