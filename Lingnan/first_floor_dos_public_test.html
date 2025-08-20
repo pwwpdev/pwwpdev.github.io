@@ -3500,6 +3500,12 @@ button[title*="Zoom" i] {
         unavailable: "#768590",
       };
 
+async function refreshFacilityData() {
+  console.log('Refreshing facility data...');
+  await fetchFacilityData();
+  console.log('Facility data refreshed:', facilityAPIData);
+}
+
       // Fetch facility data from API
 let facilityAPIData = null;
 
@@ -3554,8 +3560,23 @@ function findFacilityInfo(facilityName) {
 
 // Generic facility handler
 function handleGenericFacility(facilityAsset, facilityName) {
-  const facilityInfo = findFacilityInfo(facilityName);
+  let facilityInfo = findFacilityInfo(facilityName);
   
+  // If facility not found, try refreshing data first
+  if (!facilityInfo) {
+    console.log('Facility not found, refreshing data...');
+    refreshFacilityData().then(() => {
+      facilityInfo = findFacilityInfo(facilityName);
+      updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+    });
+    return;
+  }
+  
+  updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+}
+
+// Extract display logic
+function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   const room = {
     id: facilityAsset.id,
     name: facilityAsset.name,
@@ -3571,7 +3592,6 @@ function handleGenericFacility(facilityAsset, facilityName) {
   
   rooms.push(room);
   
-  // Update map and show tooltip
   setTimeout(() => {
     if (spc && spc.space) {
       spc.updateMapForFacility();
@@ -3878,20 +3898,26 @@ function showGenericTooltip(facilityName) {
       // Use URLSearchParams to get query parameters
       const params = new URLSearchParams(url.search);
 
-     // Example: Get a specific query parameter by name
-const facility = params.get("facility");
+      const facility = params.get("facility");
 
 if (!!facility) {
-  // Find facility in facilities_list
-  const facilitiesData = dict[3]; // facilities_list is at index 3
-  const facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
+  // First check hardcoded facilities
+  const facilitiesData = dict[3];
+  let facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
   
   if (facilityAsset) {
-    // Generic facility handler
     handleGenericFacility(facilityAsset, facility);
   } else {
-    // Handle special cases that aren't in facilities_list
-    handleSpecialFacility(facility);
+    // If not found in hardcoded data, create synthetic asset for API facilities
+    const syntheticAsset = {
+      id: facility + "_api",
+      name: facility,
+      levelIndex: 0,
+      coordinates: [[]],
+      layerType: "polygon",
+      mapped: true
+    };
+    handleGenericFacility(syntheticAsset, facility);
   }
 }
 
