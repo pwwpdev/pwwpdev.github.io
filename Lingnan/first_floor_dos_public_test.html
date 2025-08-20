@@ -3663,7 +3663,6 @@ function showGenericTooltip(facilityName) {
       <div style="padding: 0; margin: 0; line-height: 1.2;">
         <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
         <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
-        <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Available for use</div>
         <img src="${imageUrl}" 
              style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
              onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop'" />
@@ -3906,19 +3905,12 @@ if (!!facility) {
   let facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
   
   if (facilityAsset) {
-    handleGenericFacility(facilityAsset, facility);
-  } else {
-    // If not found in hardcoded data, create synthetic asset for API facilities
-    const syntheticAsset = {
-      id: facility + "_api",
-      name: facility,
-      levelIndex: 0,
-      coordinates: [[]],
-      layerType: "polygon",
-      mapped: true
-    };
-    handleGenericFacility(syntheticAsset, facility);
-  }
+  handleGenericFacility(facilityAsset, facility);
+} else {
+  // For API-only facilities, just show tooltip without adding to map
+  console.log('Facility coordinates not found, will show tooltip only');
+  setTimeout(() => showGenericTooltip(facility), 2500);
+}
 }
 
       // Function to show tooltip for selected facility when loaded via URL
