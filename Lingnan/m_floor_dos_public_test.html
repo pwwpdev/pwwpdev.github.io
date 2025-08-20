@@ -974,6 +974,31 @@ function showGenericTooltip(facilityName) {
   }
 }
 
+// Get the current URL
+const currentUrl = window.location.href;
+
+// Create a URL object
+const url = new URL(currentUrl);
+
+// Use URLSearchParams to get query parameters
+const params = new URLSearchParams(url.search);
+
+const facility = params.get("facility");
+
+if (!!facility) {
+  // First check hardcoded facilities
+  const facilitiesData = dict[2]; // facilities_list
+  let facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
+  
+  if (facilityAsset) {
+    handleGenericFacility(facilityAsset, facility);
+  } else {
+    // For API-only facilities, just show tooltip without adding to map
+    console.log('Facility coordinates not found, will show tooltip only');
+    setTimeout(() => showGenericTooltip(facility), 2500);
+  }
+}
+
       class Space {
         constructor(spaceId, clientToken, desks, rooms, sensors) {
   this.spaceId = spaceId;
@@ -1016,7 +1041,7 @@ function showGenericTooltip(facilityName) {
           this.space.removeDataLayer("rooms");
           this.space.removeDataLayer("desks");
 
-          const isRoomsEmpty = Object.keys(this.rooms).length === 0;
+          const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
           const isDesksEmpty = Object.keys(this.desks).length === 0;
 
           if (!isRoomsEmpty) {
@@ -1041,7 +1066,30 @@ function showGenericTooltip(facilityName) {
               color: (d) => d.color,
             });
           }
-        }
+          this.space.on("click", (event) => {
+    if (event.data) {
+      const tooltipDiv = document.getElementById("custom-tooltip");
+      const contentDiv = document.getElementById("tooltip-content");
+
+      if (event.data.name && tooltipDiv && contentDiv) {
+        // Create custom tooltip content
+        let content = `
+          <div style="display: flex; align-items: flex-start; gap: 12px; padding: 0; margin: 0; line-height: 1.2;">
+            <div style="flex: 1;">
+              <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px;">${event.data.name}</div>
+              <div style="margin-bottom: 8px; font-size: 12px;">Status: ${event.data.available || "Unknown"}</div>
+            </div>
+            <img src="https://www.wn-int.com/storage/resized/1052/1200x/%E9%A6%99%E6%B8%AF%E5%B6%BA%E5%8D%97%E5%A4%A7%E5%AD%B8%E5%9C%96%E6%9B%B8%E9%A4%A87.jpeg" 
+                 style="width: 80px; height: 60px; border-radius: 4px; object-fit: cover; flex-shrink: 0;" />
+          </div>
+        `;
+
+        contentDiv.innerHTML = content;
+        tooltipDiv.style.display = "block";
+      }
+    }
+  });
+}
 
         updateMapForFacility() {
   this.updateDataLayers();
@@ -1118,7 +1166,7 @@ function showGenericTooltip(facilityName) {
 
       spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], rooms, []);
 
-      delete dict;
+      // delete dict;
 
       async function wait() {
         return new Promise((resolve) => {
