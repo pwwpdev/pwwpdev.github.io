@@ -3552,10 +3552,25 @@ function findFacilityInfo(facilityName) {
   return null;
 }
 
-// Generic facility handler
+// Modify handleGenericFacility to use .then() instead of await
 function handleGenericFacility(facilityAsset, facilityName) {
-  const facilityInfo = findFacilityInfo(facilityName);
+  let facilityInfo = findFacilityInfo(facilityName);
   
+  // If facility not found, try refreshing data first
+  if (!facilityInfo) {
+    console.log('Facility not found, refreshing data...');
+    refreshFacilityData().then(() => {
+      facilityInfo = findFacilityInfo(facilityName);
+      updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+    });
+    return;
+  }
+  
+  updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+}
+
+// Extract display logic (same as before)
+function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   const room = {
     id: facilityAsset.id,
     name: facilityAsset.name,
@@ -3571,7 +3586,6 @@ function handleGenericFacility(facilityAsset, facilityName) {
   
   rooms.push(room);
   
-  // Update map and show tooltip
   setTimeout(() => {
     if (spc && spc.space) {
       spc.updateMapForFacility();
@@ -3585,6 +3599,48 @@ function handleGenericFacility(facilityAsset, facilityName) {
   }, 3000);
   
   setTimeout(() => showGenericTooltip(facilityName), 2500);
+}
+
+// Fix showGenericTooltip to use .then() instead of await
+function showGenericTooltip(facilityName) {
+  const tooltipDiv = document.getElementById("custom-tooltip");
+  const contentDiv = document.getElementById("tooltip-content");
+  
+  if (tooltipDiv && contentDiv) {
+    let facilityInfo = findFacilityInfo(facilityName);
+    
+    // If facility not found, try refreshing data
+    if (!facilityInfo) {
+      console.log('Tooltip: Facility not found, refreshing data...');
+      refreshFacilityData().then(() => {
+        facilityInfo = findFacilityInfo(facilityName);
+        displayTooltipContent(tooltipDiv, contentDiv, facilityName, facilityInfo);
+      });
+      return;
+    }
+    
+    displayTooltipContent(tooltipDiv, contentDiv, facilityName, facilityInfo);
+  }
+}
+
+// Extract tooltip display logic
+function displayTooltipContent(tooltipDiv, contentDiv, facilityName, facilityInfo) {
+  const description = facilityInfo?.description || "Library facility available for use";
+  const imageUrl = facilityInfo?.image || "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop";
+  
+  const content = `
+    <div style="padding: 0; margin: 0; line-height: 1.2;">
+      <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+      <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
+      <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Available for use</div>
+      <img src="${imageUrl}" 
+           style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
+           onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop'" />
+    </div>
+  `;
+  
+  contentDiv.innerHTML = content;
+  tooltipDiv.style.display = "block";
 }
 
 // Handle special facilities not in facilities_list
@@ -3628,32 +3684,6 @@ function getFacilityHeight(facilityName) {
   return 2.4; // default height
 }
 
-// Generic tooltip function using API data
-function showGenericTooltip(facilityName) {
-  const tooltipDiv = document.getElementById("custom-tooltip");
-  const contentDiv = document.getElementById("tooltip-content");
-  
-  if (tooltipDiv && contentDiv) {
-    const facilityInfo = findFacilityInfo(facilityName);
-    
-    const description = facilityInfo?.description || "Library facility available for use";
-    const imageUrl = facilityInfo?.image || "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop";
-    
-    const content = `
-      <div style="padding: 0; margin: 0; line-height: 1.2;">
-        <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
-        <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
-        <div style="margin-bottom: 8px; font-size: 12px; color: #666;">Available for use</div>
-        <img src="${imageUrl}" 
-             style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
-             onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop'" />
-      </div>
-    `;
-    
-    contentDiv.innerHTML = content;
-    tooltipDiv.style.display = "block";
-  }
-}
 
       // smplrspace-script.js
       class Space {
