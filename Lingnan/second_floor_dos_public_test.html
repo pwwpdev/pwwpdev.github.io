@@ -328,24 +328,7 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   setTimeout(() => showGenericTooltip(facilityName), 2500);
 }
 
-// Get the current URL
-const currentUrl = window.location.href;
-const url = new URL(currentUrl);
-const params = new URLSearchParams(url.search);
-const facility = params.get("facility");
 
-if (!!facility) {
-  // Check facilities_list (dict[4])
-  const facilitiesData = dict[4];
-  let facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
-  
-  if (facilityAsset) {
-    handleGenericFacility(facilityAsset, facility);
-  } else {
-    console.log('Facility coordinates not found, will show tooltip only');
-    setTimeout(() => showGenericTooltip(facility), 2500);
-  }
-}
 
 // Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
@@ -1651,29 +1634,52 @@ function showGenericTooltip(facilityName) {
         }
 
         initSpace(smplr) {
-          this.space = new smplr.Space({
-            spaceId: this.spaceId,
-            clientToken: this.clientToken,
-            containerId: "smplrspace-container",
-          });
-          this.space.startViewer({
-            preview: false,
-            allowModeChange: true,
-            disableCameraRotation: true,
-           cameraPlacement: {
-  alpha: -1.5722224976673886,
-  beta: 0.22438049962679768,
-  radius: 151.566640313453746,
-  target: {
-    x: 30.2418383712391,
-    y: 14,
-    z: -48.20580854095632,
-  },
-},
-            onReady: () => this.updateDataLayers(),
-            onError: (error) => console.error("Could not start viewer", error),
+  this.space = new smplr.Space({
+    spaceId: this.spaceId,
+    clientToken: this.clientToken,
+    containerId: "smplrspace-container",
+  });
+  this.space.startViewer({
+    preview: false,
+    allowModeChange: true,
+    disableCameraRotation: true,
+    cameraPlacement: {
+      alpha: -1.5722224976673886,
+      beta: 0.22438049962679768,
+      radius: 151.566640313453746,
+      target: {
+        x: 30.2418383712391,
+        y: 14,
+        z: -48.20580854095632,
+      },
+    },
+    onReady: () => {
+      this.updateDataLayers();
+      // Check for facility parameter after space is ready
+      const params = new URLSearchParams(window.location.search);
+      const facility = params.get("facility");
+      if (facility && this.rooms && this.rooms.length > 0) {
+        // Focus camera on the facility if it exists
+        const facilityRoom = this.rooms.find(r => r.name === facility);
+        if (facilityRoom && facilityRoom.coordinates) {
+          // Calculate center of facility for camera positioning
+          // You may need to adjust these values based on your space
+          this.space.setCameraPlacement({
+            alpha: -1.5722224976673886,
+            beta: 0.22438049962679768,
+            radius: 80, // Zoom in closer
+            target: {
+              x: facilityRoom.coordinates[0][0].x,
+              y: 14,
+              z: facilityRoom.coordinates[0][0].z,
+            },
           });
         }
+      }
+    },
+    onError: (error) => console.error("Could not start viewer", error),
+  });
+}
 
         updateDataLayers() {
   // Remove previous layers if any
@@ -1791,6 +1797,26 @@ updateMapForFacility() {
   await fetchFacilityData();
   
   spc.initSpace(smplr);
+  
+  const currentUrl = window.location.href;
+  const url = new URL(currentUrl);
+  const params = new URLSearchParams(url.search);
+  const facility = params.get("facility");
+  
+  if (!!facility) {
+    // Wait for space to be ready
+    setTimeout(() => {
+      const facilitiesData = dict[4];
+      let facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
+      
+      if (facilityAsset) {
+        handleGenericFacility(facilityAsset, facility);
+      } else {
+        console.log('Facility coordinates not found, will show tooltip only');
+        setTimeout(() => showGenericTooltip(facility), 2500);
+      }
+    }, 1000);
+  }
 }
       start();
     </script>
