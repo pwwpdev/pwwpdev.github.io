@@ -3,11 +3,7 @@ on:
 push:
 branches:
 - main
-paths:
-- '1f_embed.html'
-- '2f_embed.html'
-- '3f_embed.html'
-- 'mf_embed.html'
+
 jobs:
 deploy:
 runs-on: ubuntu-latest
