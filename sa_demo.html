@@ -37,7 +37,7 @@
 
       // Example usage
       const isAdmin = getIsAdmin();
-      const API_ENDPOINT = isAdmin ? "https://optimusb.flowfuse.cloud/ats-occupancy" : "https://optimusb.flowfuse.cloud/ats-occupancy";
+      const API_ENDPOINT = isAdmin ? "https://optimus.flowforge.cloud/ats-occupancy" : "https://optimus.flowforge.cloud/ats-occupancy";
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
       const SPACE_ID = "73242c82-a0e9-4c96-8d28-089829ecf3d0";
 
@@ -1780,7 +1780,7 @@
       });
       
       // Generate fake data for all other desks
-      const fakeStatuses = ["away", "vacant", "occupied"];
+      const fakeStatuses = ["vacant", "vacant", "vacant", "vacant", "occupied", "occupied", "occupied", "occupied", "away", "vacant"];
       Object.keys(desk_filter).forEach(deskId => {
         if (!occupancy[deskId]) {
           const randomStatus = fakeStatuses[Math.floor(Math.random() * fakeStatuses.length)];
