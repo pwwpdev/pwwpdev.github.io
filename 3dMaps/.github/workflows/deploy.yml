@@ -1,26 +1,31 @@
 name: Deploy index.html files to Web Server
+
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
 
 jobs:
-deploy:
-runs-on: ubuntu-latest
-steps:
-- name: Checkout code
-uses: actions/checkout@v4
-- name: Install SSH key
-uses: shimataro/ssh-key-action@v2
-with:
-key: ${{ secrets.SSH_PRIVATE_KEY }}
-known_hosts: ${{ secrets.SERVER_HOST }}
-- name: Add known_hosts
-run: |
-ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-- name: Deploy index.html files
-run: |
-scp 1f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/1f/index.html
-scp 2f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/2f/index.html
-scp 3f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/3f/index.html
-scp mf_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/mf/index.html
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SERVER_HOST }}
+
+      - name: Add known_hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy index.html files
+        run: |
+          scp 1f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/1f/index.html
+          scp 2f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/2f/index.html
+          scp 3f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/3f/index.html
+          scp mf_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/mf/index.html
+
