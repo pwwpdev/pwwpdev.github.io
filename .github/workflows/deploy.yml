@@ -25,7 +25,7 @@ jobs:
 
       - name: Deploy index.html files
         run: |
-          scp 1f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/1f/index.html
+          scp 1f_test.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/1f/index.html
           scp 2f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/2f/index.html
           scp 3f_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/3f/index.html
           scp mf_embed.html ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/mnt/docker/volumes/njs-webserver/_data/lingnan-library-3d/mf/index.html
