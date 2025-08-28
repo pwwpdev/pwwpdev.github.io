@@ -2350,46 +2350,78 @@ updateDataLayers() {
     });
   }
 
-  const isToiletAreasEmpty =
-    !this.toiletAreas || this.toiletAreas.length === 0;
+  // Helper function to check if coordinates overlap
+  const hasOverlappingCoordinates = (coords1, coords2) => {
+    if (!coords1 || !coords2) return false;
+    return JSON.stringify(coords1) === JSON.stringify(coords2);
+  };
 
-  if (!isToiletAreasEmpty) {
-    // Add Male Toilet layer
-    this.space.addDataLayer({
-      id: "maleToiletArea",
-      type: "polygon",
-      data: this.toiletAreas.filter((d) => d.name === "3F-MT1"),
-      tooltip: (d) => `Male Toilet`,
-      color: (d) => "#1D547D",
-      alpha: 2.2,
-      height: 1.0,
-    });
-
-    // Add Female Toilet layer
-    this.space.addDataLayer({
-      id: "femaleToiletArea",
-      type: "polygon",
-      data: this.toiletAreas.filter((d) => d.name === "3F-FT1"),
-      tooltip: (d) => `Female Toilet`,
-      color: (d) => "#A7384E",
-      alpha: 2.2,
-      height: 1.0,
-    });
-
-    // Add Unisex/Accessible Toilet layer
-    this.space.addDataLayer({
-      id: "uniToiletArea",
-      type: "polygon",
-      data: this.toiletAreas.filter((d) => d.name === "3F-UT1"),
-      tooltip: (d) => `Unisex Toilet/Accessible`,
-      color: (d) => "#023b8c",
-      alpha: 2.2,
-      height: 1.0,
+  // Get list of toilet area IDs/coordinates that are being highlighted as facilities
+  const highlightedToiletAreas = new Set();
+  if (this.rooms && this.rooms.length > 0) {
+    this.rooms.forEach(room => {
+      // Check against male toilet
+      if (maleToiletData.assets.some(toilet => 
+        toilet.id === room.id || hasOverlappingCoordinates(toilet.coordinates, room.coordinates))) {
+        highlightedToiletAreas.add('male');
+      }
+      // Check against female toilet  
+      if (femaleToiletData.assets.some(toilet => 
+        toilet.id === room.id || hasOverlappingCoordinates(toilet.coordinates, room.coordinates))) {
+        highlightedToiletAreas.add('female');
+      }
+      // Check against unisex toilet
+      if (uniToiletData.assets.some(toilet => 
+        toilet.id === room.id || hasOverlappingCoordinates(toilet.coordinates, room.coordinates))) {
+        highlightedToiletAreas.add('unisex');
+      }
     });
   }
 
-  const isStudyCarrelsEmpty =
-    !this.studyCarrels || this.studyCarrels.length === 0;
+  const isToiletAreasEmpty = !this.toiletAreas || this.toiletAreas.length === 0;
+
+  if (!isToiletAreasEmpty) {
+    // Add Male Toilet layer only if not highlighted
+    if (!highlightedToiletAreas.has('male')) {
+      this.space.addDataLayer({
+        id: "maleToiletArea",
+        type: "polygon",
+        data: this.toiletAreas.filter((d) => d.name === "3F-MT1"),
+        tooltip: (d) => `Male Toilet`,
+        color: (d) => "#1D547D",
+        alpha: 2.2,
+        height: 1.0,
+      });
+    }
+
+    // Add Female Toilet layer only if not highlighted
+    if (!highlightedToiletAreas.has('female')) {
+      this.space.addDataLayer({
+        id: "femaleToiletArea",
+        type: "polygon",
+        data: this.toiletAreas.filter((d) => d.name === "3F-FT1"),
+        tooltip: (d) => `Female Toilet`,
+        color: (d) => "#A7384E",
+        alpha: 2.2,
+        height: 1.0,
+      });
+    }
+
+    // Add Unisex/Accessible Toilet layer only if not highlighted
+    if (!highlightedToiletAreas.has('unisex')) {
+      this.space.addDataLayer({
+        id: "uniToiletArea",
+        type: "polygon",
+        data: this.toiletAreas.filter((d) => d.name === "3F-UT1"),
+        tooltip: (d) => `Unisex Toilet/Accessible`,
+        color: (d) => "#023b8c",
+        alpha: 2.2,
+        height: 1.0,
+      });
+    }
+  }
+
+  const isStudyCarrelsEmpty = !this.studyCarrels || this.studyCarrels.length === 0;
 
   if (!isStudyCarrelsEmpty) {
     this.space.addDataLayer({
@@ -2401,7 +2433,7 @@ updateDataLayers() {
     });
   }
 
-  // Add rooms layer handling
+  // Add rooms layer handling (this will be on top for highlighting)
   const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
   
   if (!isRoomsEmpty) {
@@ -2410,7 +2442,7 @@ updateDataLayers() {
       type: "polygon",
       data: this.rooms,
       color: (d) => d.color,
-      alpha: 2.2,
+      alpha: 2.5,
       height: (d) => d.height || 2.4,
     });
   }
