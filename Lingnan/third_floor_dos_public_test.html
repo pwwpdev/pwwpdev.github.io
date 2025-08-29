@@ -2558,7 +2558,7 @@ const toiletAreas = [];
   if (!!facility) {
     setTimeout(() => {
       const facilitiesData = facilities_list;
-      let facilityAsset = facilitiesData.assets[0].assets.find(asset => asset.name === facility);
+      let facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
 
       
       if (facilityAsset) {
