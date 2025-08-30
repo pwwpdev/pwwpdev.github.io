@@ -4217,18 +4217,20 @@ function showGenericTooltip(facilityName) {
 
       const facility = params.get("facility");
 
-if (!!facility) {
-  // First check hardcoded facilities
-  const facilitiesData = dict[3];
-  let facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
+      if (!!facility) {
+  // Check both facilities_list (dict[3]) and facilities_demo (dict[4])
+  let facilityAsset = dict[3].assets.find(asset => asset.name === facility);
+  if (!facilityAsset) {
+    facilityAsset = dict[4].assets.find(asset => asset.name === facility);
+  }
   
   if (facilityAsset) {
-  handleGenericFacility(facilityAsset, facility);
-} else {
-  // For API-only facilities, just show tooltip without adding to map
-  console.log('Facility coordinates not found, will show tooltip only');
-  setTimeout(() => showGenericTooltip(facility), 2500);
-}
+    handleGenericFacility(facilityAsset, facility);
+  } else {
+    // For API-only facilities, just show tooltip without adding to map
+    console.log('Facility coordinates not found, will show tooltip only');
+    setTimeout(() => showGenericTooltip(facility), 2500);
+  }
 }
 
       // Function to show tooltip for selected facility when loaded via URL
