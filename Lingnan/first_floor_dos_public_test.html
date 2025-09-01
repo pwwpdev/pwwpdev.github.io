@@ -3968,7 +3968,6 @@ function getFacilityHeight(facilityName) {
 }
 
 // Generic tooltip function using API data
-// Generic tooltip function using API data
 function showGenericTooltip(facilityName, showSkeleton = false) {
   const tooltipDiv = document.getElementById("custom-tooltip");
   const contentDiv = document.getElementById("tooltip-content");
@@ -4252,29 +4251,10 @@ this.space.on("click", (event) => {
 }
 
       // Function to show tooltip for selected facility when loaded via URL
-      if (!!facility) {
-        function showFacilityTooltip() {
-          const tooltipDiv = document.getElementById("custom-tooltip");
-          const contentDiv = document.getElementById("tooltip-content");
-
-          if (tooltipDiv && contentDiv) {
-            let content = `
-        <div style="padding: 0; margin: 0; line-height: 1.2;">
-          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px;">${facility}</div>
-          <div style="margin-bottom: 8px; font-size: 14px;">Selected from menu</div>
-          <img src="https://www.wn-int.com/storage/resized/1052/1200x/%E9%A6%99%E6%B8%AF%E5%B6%BA%E5%8D%97%E5%A4%A7%E5%AD%B8%E5%9C%96%E6%9B%B8%E9%A4%A87.jpeg" 
-               style="width: 100px; height: auto; border-radius: 4px; display: block;" />
-        </div>
-      `;
-
-            contentDiv.innerHTML = content;
-            tooltipDiv.style.display = "block";
-          }
-        }
-
-        // Show tooltip after map loads
-        setTimeout(showFacilityTooltip, 1500);
-      }
+if (!!facility) {
+  // Show tooltip after map loads using the centralized function
+  setTimeout(() => showGenericTooltip(facility, true), 1500);
+}
 
       // Create the Space instance with the updated parameters
       spc = new Space(
