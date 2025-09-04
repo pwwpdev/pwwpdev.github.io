@@ -3958,13 +3958,14 @@ function getFacilityHeight(facilityName) {
     "SEN Equipment": 0.1,
     "Self-Pickup Locker": 1.3,
     "Laser Cutter": 1.4,
-    "Books DS777-HJ (1/F Zone C)": 3.0
+    "Books DS777-HJ (1/F Zone C)": 3.0,
+    "Staff Publications": 3.5 
   };
   
   for (const [key, height] of Object.entries(heightMap)) {
     if (facilityName.includes(key)) return height;
   }
-  return 2.4; // default height
+  return 2.5; // default height
 }
 
 // Generic tooltip function using API data
@@ -4096,7 +4097,7 @@ if (!facilityInfo || showSkeleton) {
 
               color: (d) => d.color,
               alpha: 2.2,
-              height: 2.4,
+              height: (d) => d.height || 2.4,
             });
           }
 
