@@ -935,23 +935,23 @@
       }
 
       // Get appropriate height for different facility types
-      function getFacilityHeight(facilityName) {
-        const heightMap = {
-          Lift: 2.4,
-          "Service Counter": 0.3,
-          "Drinking Water": 0.3,
-          "SEN Equipment": 0.1,
-          "Self-Pickup Locker": 1.3,
-          "Laser Cutter": 1.4,
-          Books: 3.0,
-        };
-
-        for (const [key, height] of Object.entries(heightMap)) {
-          if (facilityName.includes(key)) return height;
-        }
-        return 2.4; // default height
-      }
-
+     function getFacilityHeight(facilityName) {
+  const heightMap = {
+ 
+    "Books HM-HM1100 (M/F Zone B)": 2.2,
+    "Individual Study Carrels (M/F Zone C)": 2.2,
+    "Postgraduate Lounge (M/F Zone C)": 2.2,
+    "LU Barn (Makerspace) (M/F Zone A)": 2.2,
+    "3D Printers – LU Barn (Makerspace) (M/F Zone A)": 1.1,
+    "3D Scanner – LU Barn (Makerspace) (M/F Zone A)": 1.1,
+    "Lift (M/F Zone B)": 2.2
+  };
+ 
+  for (const [key, height] of Object.entries(heightMap)) {
+    if (facilityName.includes(key)) return height;
+  }
+  return 2.5; // default height
+}
       // Generic tooltip function using API data with image on right
       // Generic tooltip function using API data
 function showGenericTooltip(facilityName, showSkeleton = false) {
