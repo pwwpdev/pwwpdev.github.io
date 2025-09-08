@@ -6,6 +6,12 @@
     <title>Smplrspace Viewer</title>
     <!-- Load smplr.js and its styles -->
   </head>
+  <style>
+
+   .sc-bBXxYQ.dcmoTP {
+        transform: translateY(-76px) translateX(-40px) !important;}
+  
+  </style>
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
     <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
@@ -40,6 +46,8 @@
       const API_ENDPOINT = isAdmin ? "https://optimus.flowforge.cloud/ats-occupancy" : "https://optimus.flowforge.cloud/ats-occupancy";
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
       const SPACE_ID = "73242c82-a0e9-4c96-8d28-089829ecf3d0";
+      const ROBOT_API_ENDPOINT = "http://tb.powerworkplace.com:1880/get_robot_status";
+      
 
       const UPDATE_FREQUENCY = 60;
 
@@ -1186,6 +1194,7 @@
             },
           ],
         },
+        
         {
           id: "fa9b88ed-8719-4065-ae39-6ee3c4fc7ad4",
           name: "Female Toilet",
@@ -1557,8 +1566,29 @@
               layerType: "polygon",
               mapped: true,
             },
+            
           ],
         },
+
+        {
+  "id": "85b4d0d4-30bb-4032-a6f2-af03f4b5f012",
+  "name": "robot_sphere", 
+  "type": "point",
+  "assets": [
+    {
+      "id": "9996ee25-8a78-489c-92e1-eccd76fc2a1e",
+      "name": "robot",
+      "levelIndex": 0,
+      "position": {
+        "x": 69.832,
+        "z": -42.85,
+        "elevation": 0.01,
+        "levelIndex": 0
+      },
+      "layerType": "point"
+    }
+  ]
+}
       ];
 
       const color_dict = {
@@ -1580,6 +1610,7 @@
           clientToken,
           desks,
           rooms,
+          robots, 
           sensors,
           Notaccessible,
           toiletAreas
@@ -1590,6 +1621,7 @@
           this.rooms = rooms;
           this.desks = desks;
           this.sensors = sensors;
+          this.robots = robots; 
           this.Notaccessible = Notaccessible;
           this.toiletAreas = toiletAreas;
         }
@@ -1622,6 +1654,7 @@
           // remove previous layers if any
           this.space.removeDataLayer("rooms");
           this.space.removeDataLayer("desks");
+          this.space.removeDataLayer("robots");
           this.space.removeDataLayer("Notaccessible");
           this.space.removeDataLayer("femaleToilets");
           this.space.removeDataLayer("maleToilets");
@@ -1630,6 +1663,7 @@
 
           const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
           const isDesksEmpty = !this.desks || this.desks.length === 0;
+          const isRobotsEmpty = !this.robots || this.robots.length === 0; 
           const isNotaccessibleEmpty =
             !this.Notaccessible || this.Notaccessible.length === 0;
           const isToiletAreasEmpty =
@@ -1657,6 +1691,19 @@
               color: (d) => d.color,
             });
           }
+
+       // Add robot layer
+if (!isRobotsEmpty) {
+  this.space.addDataLayer({
+    id: "robots",
+    type: "point",
+    data: this.robots,
+    tooltip: (d) => `Robot - ${d.available} | Status: ${d.runningStatus || 'Unknown'} | Charging: ${d.chargeState ? 'Yes' : 'No'}<br/>Position: X=${d.apiX || 'N/A'}, Y=${d.apiY || 'N/A'}`,
+    color: (d) => d.color || '#808080',
+    diameter: 3,
+    persistentTooltip: true,
+  });
+}
 
           if (!isNotaccessibleEmpty) {
             this.space.addDataLayer({
@@ -1749,6 +1796,7 @@
 
         fetchAll() {
           this.fetchData();
+          this.fetchRobotData(); 
         }
 
         fetchData() {
@@ -1805,10 +1853,71 @@
       }
       
       this.updateDataLayers();
+      this.fetchRobotData(); 
     })
     .catch(error => {
       console.error("Error fetching data:", error);
     });
+}
+
+fetchRobotData() {
+  fetch(ROBOT_API_ENDPOINT)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status === "OK" && data.results) {
+        const robotData = data.results;
+        
+        // Update robot position and status
+        if (this.robots && this.robots.length > 0) {
+          // Store original API coordinates
+          this.robots[0].apiX = robotData.current_pose.x;
+          this.robots[0].apiY = robotData.current_pose.y;
+          
+          // Transform coordinates to fit map bounds
+          const transformedX = this.transformRobotX(robotData.current_pose.x);
+          const transformedZ = this.transformRobotZ(robotData.current_pose.y);
+          
+          this.robots[0].position.x = transformedX;
+          this.robots[0].position.z = transformedZ;
+          this.robots[0].powerPercent = robotData.power_percent;
+          this.robots[0].available = `Power: ${robotData.power_percent}%`;
+          this.robots[0].runningStatus = robotData.running_status;
+          this.robots[0].chargeState = robotData.charge_state;
+          
+          // Update color based on status
+          if (robotData.charge_state) {
+            this.robots[0].color = "#FFA500"; // Orange when charging
+          } else if (robotData.running_status === "idle") {
+            this.robots[0].color = "#00FF00"; // Green when idle
+          } else {
+            this.robots[0].color = "#0066FF"; // Blue when moving
+          }
+        }
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching robot data:", error);
+    });
+}
+
+// Add these methods to the Space class
+transformRobotX(robotX) {
+  // Map directly to canvas width
+  // Assuming your map canvas is roughly 0 to 100 units wide
+  // You can adjust the scale factor to fit your robot's movement area
+  const scale = -40; // Adjust this value to scale robot movement
+  const centerX = 70; // Center point of your map on X axis
+  
+  return centerX + (robotX * scale);
+}
+
+transformRobotZ(robotY) {
+  // Map directly to canvas height  
+  // Assuming your map canvas goes from about -30 to -60 on Z axis
+  const scale = -1; // Negative because Y increases downward typically
+  const centerZ = -35; // Center point of your map on Z axis
+  
+  return centerZ + (robotY * scale);
 }
       }
 
@@ -1854,13 +1963,22 @@
         }),
       ];
 
+      // Initialize robot data
+const robots = dict[6]["assets"].map((robot) => {
+  return {
+    ...robot,
+    available: "Active",
+    color: "#00ff00", 
+  };
+});
+
       // Create the Space instance with the updated parameters
       spc = new Space(
         SPACE_ID,
         CLIENT_ID,
         [...dict[0]["assets"], ...dict[2]["assets"]],
         [],
-        [],
+        dict[6]["assets"],
         Notaccessible,
         toiletAreas
       );
