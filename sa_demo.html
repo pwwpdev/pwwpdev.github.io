@@ -46,7 +46,7 @@
       const API_ENDPOINT = isAdmin ? "https://optimus.flowforge.cloud/ats-occupancy" : "https://optimus.flowforge.cloud/ats-occupancy";
       const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
       const SPACE_ID = "73242c82-a0e9-4c96-8d28-089829ecf3d0";
-      const ROBOT_API_ENDPOINT = "http://tb.powerworkplace.com:1880/get_robot_status";
+      const ROBOT_API_ENDPOINT = "https://optimus.flowforge.cloud/get_robot_status";
       
 
       const UPDATE_FREQUENCY = 60;
@@ -1571,24 +1571,24 @@
         },
 
         {
-  "id": "85b4d0d4-30bb-4032-a6f2-af03f4b5f012",
-  "name": "robot_sphere", 
-  "type": "point",
-  "assets": [
-    {
-      "id": "9996ee25-8a78-489c-92e1-eccd76fc2a1e",
-      "name": "robot",
-      "levelIndex": 0,
-      "position": {
-        "x": 69.832,
-        "z": -42.85,
-        "elevation": 0.01,
-        "levelIndex": 0
-      },
-      "layerType": "point"
-    }
-  ]
-}
+    "id": "85b4d0d4-30bb-4032-a6f2-af03f4b5f012",
+    "name": "robot_sphere",
+    "type": "point",
+    "assets": [
+      {
+        "id": "9996ee25-8a78-489c-92e1-eccd76fc2a1e",
+        "name": "robot",
+        "levelIndex": 0,
+        "position": {
+          "x": 12.352,
+          "z": -60.638,
+          "elevation": 0.01,
+          "levelIndex": 0
+        },
+        "layerType": "point"
+      }
+    ]
+  }
       ];
 
       const color_dict = {
@@ -1905,7 +1905,7 @@ transformRobotX(robotX) {
   // Map directly to canvas width
   // Assuming your map canvas is roughly 0 to 100 units wide
   // You can adjust the scale factor to fit your robot's movement area
-  const scale = -40; // Adjust this value to scale robot movement
+  const scale = 1; // Adjust this value to scale robot movement
   const centerX = 70; // Center point of your map on X axis
   
   return centerX + (robotX * scale);
@@ -1914,8 +1914,8 @@ transformRobotX(robotX) {
 transformRobotZ(robotY) {
   // Map directly to canvas height  
   // Assuming your map canvas goes from about -30 to -60 on Z axis
-  const scale = -1; // Negative because Y increases downward typically
-  const centerZ = -35; // Center point of your map on Z axis
+  const scale = 1; // Negative because Y increases downward typically
+  const centerZ = -90; // Center point of your map on Z axis
   
   return centerZ + (robotY * scale);
 }
