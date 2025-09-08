@@ -1637,8 +1637,8 @@
             allowModeChange: true,
             cameraPlacement: {
               alpha: 1.5737549088615568,
-              beta: 0.7099240223592374,
-              radius: 85.49815361318093,
+              beta: 0.4099240223592374,
+              radius: 185.49815361318093,
               target: {
                 x: 70.43070629934955,
                 y: 1,
@@ -1902,22 +1902,16 @@ fetchRobotData() {
 
 // Add these methods to the Space class
 transformRobotX(robotX) {
-  // Map directly to canvas width
-  // Assuming your map canvas is roughly 0 to 100 units wide
-  // You can adjust the scale factor to fit your robot's movement area
-  const scale = 1; // Adjust this value to scale robot movement
-  const centerX = 70; // Center point of your map on X axis
+ 
   
-  return centerX + (robotX * scale);
+  return robotX;
 }
 
 transformRobotZ(robotY) {
   // Map directly to canvas height  
-  // Assuming your map canvas goes from about -30 to -60 on Z axis
-  const scale = 1; // Negative because Y increases downward typically
-  const centerZ = -90; // Center point of your map on Z axis
+
   
-  return centerZ + (robotY * scale);
+  return robotY;
 }
       }
 
