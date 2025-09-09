@@ -380,7 +380,6 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
 
 function getFacilityHeight(facilityName) {
   const heightMap = {
- 
     "Books HN-HS (3/F Zone A)": 3.0,
     "Books HT-NX (3/F Zone B)": 3.0,
     "Books P-ZA (3/F Zone C)": 3.0,
@@ -399,13 +398,6 @@ function getFacilityHeight(facilityName) {
     if (facilityName.includes(key)) return height;
   }
   return 2.5; // default height
-}
- 
-  
-  for (const [key, height] of Object.entries(heightMap)) {
-    if (facilityName.includes(key)) return height;
-  }
-  return 2.4;
 }
 
 // Generic tooltip function using API data
