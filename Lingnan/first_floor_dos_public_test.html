@@ -435,7 +435,7 @@
       };
 
        const dict = [
-  {
+       {
     "id": "97bb9348-8841-42ea-91f2-f0589f05473c",
     "name": "LRR Desk",
     "type": "furniture",
@@ -6221,6 +6221,82 @@
         "mapped": true
       }
     ]
+  },
+  {
+    "id": "85b4d0d4-30bb-4032-a6f2-af03f4b5f012",
+    "name": "robot_sphere",
+    "type": "point",
+    "assets": [
+      {
+        "id": "9996ee25-8a78-489c-92e1-eccd76fc2a1e",
+        "name": "robot",
+        "levelIndex": 0,
+        "position": {
+          "x": 69.832,
+          "z": -42.85,
+          "elevation": 0.01,
+          "levelIndex": 0
+        },
+        "layerType": "point"
+      },
+      {
+        "id": "6f7bf265-ca20-46f6-9adc-756b7e662370",
+        "name": "robot2",
+        "levelIndex": 0,
+        "position": {
+          "x": 48.47,
+          "z": -43.819,
+          "elevation": 0.01,
+          "levelIndex": 0
+        },
+        "layerType": "point"
+      },
+      {
+        "id": "84a7fd3d-25eb-4c9b-aaf2-0eaf80b495ba",
+        "name": "robot3",
+        "levelIndex": 0,
+        "position": {
+          "x": 104.744,
+          "z": -41.149,
+          "elevation": 0.01,
+          "levelIndex": 0
+        },
+        "layerType": "point"
+      }
+    ]
+  },
+  {
+    "id": "fb483cb8-73ac-44e6-8fb8-1cd1d0b49b4d",
+    "name": "robot_triangle",
+    "type": "polygon",
+    "assets": [
+      {
+        "id": "fdfefddb-3404-4d9c-9e02-b35ec139151b",
+        "name": "id",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 69.537,
+              "z": -41.919,
+              "levelIndex": 0
+            },
+            {
+              "x": 68.635,
+              "z": -43.275,
+              "levelIndex": 0
+            },
+            {
+              "x": 70.473,
+              "z": -43.133,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      }
+    ]
   }
   
 ];
@@ -6675,7 +6751,7 @@ this.space.on("click", (event) => {
         "5a9bbacf-986a-4ec8-ba38-837e646edba8",
       ];
 
-      const Notaccessible = dict[1]["assets"].map((area) => {
+      const Notaccessible = dict[8]["assets"].map((area) => {
         return {
           ...area,
           available: "Not Accessible",
@@ -6697,9 +6773,9 @@ this.space.on("click", (event) => {
 
       if (!!facility) {
   // Check both facilities_list (dict[3]) and facilities_demo (dict[4])
-  let facilityAsset = dict[3].assets.find(asset => asset.name === facility);
+  let facilityAsset = dict[11].assets.find(asset => asset.name === facility);
   if (!facilityAsset) {
-    facilityAsset = dict[4].assets.find(asset => asset.name === facility);
+    facilityAsset = dict[12].assets.find(asset => asset.name === facility);
   }
   
   if (facilityAsset) {
@@ -6721,7 +6797,7 @@ if (!!facility) {
       spc = new Space(
   SPACE_ID,
   CLIENT_ID,
-  [...dict[0]["assets"], ...dict[2]["assets"]],
+  [...dict[0]["assets"], ...dict[4]["assets"]],
   rooms,
   [],
   Notaccessible
