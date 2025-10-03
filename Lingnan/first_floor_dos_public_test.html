@@ -6390,31 +6390,6 @@ function handleGenericFacility(facilityAsset, facilityName) {
   updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
 }
 
-// Function to find facility name by query_id
-function findFacilityByQueryId(queryId) {
-  if (!facilityAPIData) return null;
-  
-  // Search through all levels
-  for (const firstLevel of facilityAPIData) {
-    if (firstLevel.query_id === queryId) {
-      return firstLevel.name;
-    }
-    
-    for (const secondLevel of firstLevel.second_levels || []) {
-      if (secondLevel.query_id === queryId) {
-        return secondLevel.name;
-      }
-      
-      for (const thirdLevel of secondLevel.third_levels || []) {
-        if (thirdLevel.query_id === queryId) {
-          return thirdLevel.name;
-        }
-      }
-    }
-  }
-  return null;
-}
-
 // Extract display logic
 function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   const room = {
@@ -6787,52 +6762,30 @@ this.space.on("click", (event) => {
         };
       });
 
- // Get the current URL
-const currentUrl = window.location.href;
+      // Get the current URL
+      const currentUrl = window.location.href;
 
-// Create a URL object
-const url = new URL(currentUrl);
+      // Create a URL object
+      const url = new URL(currentUrl);
 
-// Use URLSearchParams to get query parameters
-const params = new URLSearchParams(url.search);
+      // Use URLSearchParams to get query parameters
+      const params = new URLSearchParams(url.search);
 
-const facility = params.get("facility");
-const query = params.get("query"); // Add this line
+      const facility = params.get("facility");
 
-if (!!query || !!facility) {
-  // Determine the actual facility name
-  let actualFacilityName = facility;
-  
-  // If query parameter exists, look up the facility name
-  if (query) {
-    actualFacilityName = findFacilityByQueryId(query);
-    if (!actualFacilityName) {
-      console.warn(`No facility found for query_id: ${query}`);
-    }
+      if (!!facility) {
+  // Check both facilities_list (dict[3]) and facilities_demo (dict[4])
+  let facilityAsset = dict[11].assets.find(asset => asset.name === facility);
+  if (!facilityAsset) {
+    facilityAsset = dict[12].assets.find(asset => asset.name === facility);
   }
   
-  if (actualFacilityName) {
-    // Check both facilities_list (dict[11]) and facilities_demo (dict[12])
-    let facilityAsset = dict[11].assets.find(asset => asset.name === actualFacilityName);
-    if (!facilityAsset) {
-      facilityAsset = dict[12].assets.find(asset => asset.name === actualFacilityName);
-    }
-    
-    if (facilityAsset) {
-      handleGenericFacility(facilityAsset, actualFacilityName);
-    } else {
-      // For API-only facilities, just show tooltip without adding to map
-      console.log('Facility coordinates not found, will show tooltip only');
-      setTimeout(() => showGenericTooltip(actualFacilityName), 2500);
-    }
-  }
-}
-
-// Function to show tooltip for selected facility when loaded via URL
-if (!!query || !!facility) {
-  const displayName = query ? findFacilityByQueryId(query) : facility;
-  if (displayName) {
-    setTimeout(() => showGenericTooltip(displayName, true), 2500);
+  if (facilityAsset) {
+    handleGenericFacility(facilityAsset, facility);
+  } else {
+    // For API-only facilities, just show tooltip without adding to map
+    console.log('Facility coordinates not found, will show tooltip only');
+    setTimeout(() => showGenericTooltip(facility), 2500);
   }
 }
 
