@@ -6336,6 +6336,54 @@ async function fetchFacilityData() {
   }
 }
 
+// Function to handle query parameter and find facility by query_id
+async function handleQueryParameter() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryId = urlParams.get('query');
+  
+  if (queryId && facilityAPIData) {
+    console.log('Query ID detected:', queryId);
+    
+    // Search through API data to find matching facility
+    let matchedFacility = null;
+    
+    for (const firstLevel of facilityAPIData) {
+      for (const secondLevel of firstLevel.second_levels || []) {
+        for (const thirdLevel of secondLevel.third_levels || []) {
+          if (thirdLevel.query_id === queryId) {
+            matchedFacility = {
+              name: thirdLevel.name,
+              description: thirdLevel.description,
+              image: thirdLevel.image
+            };
+            console.log('Found matching facility:', matchedFacility);
+            break;
+          }
+        }
+        if (matchedFacility) break;
+      }
+      if (matchedFacility) break;
+    }
+    
+    if (matchedFacility) {
+      // Find the facility asset in dict
+      let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
+      if (!facilityAsset) {
+        facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
+      }
+      
+      if (facilityAsset) {
+        handleGenericFacility(facilityAsset, matchedFacility.name);
+      } else {
+        // If coordinates not found, just show tooltip
+        setTimeout(() => showGenericTooltip(matchedFacility.name, true), 2500);
+      }
+    } else {
+      console.log('No facility found for query_id:', queryId);
+    }
+  }
+}
+
 // Function to find facility info by name
 function findFacilityInfo(facilityName) {
   if (!facilityAPIData) return null;
@@ -6807,15 +6855,7 @@ if (!!facility) {
 
      // delete dict;
 
-      async function wait() {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve();
-          }, 500);
-        });
-      }
-
-      async function start() {
+  async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
@@ -6824,6 +6864,12 @@ if (!!facility) {
   await fetchFacilityData();
   
   spc.initSpace(smplr);
+  
+  // Handle query parameter after space is initialized AND data is loaded
+  setTimeout(() => {
+    handleQueryParameter();
+  }, 1000); // Small delay to ensure everything is ready
+  
   setInterval(() => {
     spc.fetchAll();
   }, UPDATE_FREQUENCY * 1000);
