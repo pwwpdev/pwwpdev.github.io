@@ -6303,17 +6303,17 @@
   
 ];
 
-      const color_dict = {
-        occupied: "#ff3f34",
-        countdown: "#ff3f34",
-        vacant: "#3aa655",
-        free: "#3aa655",
-        unoccupied: "#3aa655",
-        passive_occupied: "#ffbf00",
-        away: "#ffbf00",
-        demo: "#E566FF",
-        unavailable: "#768590",
-      };
+const color_dict = {
+  occupied: "#ff3f34",
+  countdown: "#ff3f34",
+  vacant: "#3aa655",
+  free: "#3aa655",
+  unoccupied: "#3aa655",
+  passive_occupied: "#ffbf00",
+  away: "#ffbf00",
+  demo: "#E566FF",
+  unavailable: "#768590",
+};
 
 async function refreshFacilityData() {
   console.log('Refreshing facility data...');
@@ -6321,7 +6321,7 @@ async function refreshFacilityData() {
   console.log('Facility data refreshed:', facilityAPIData);
 }
 
-      // Fetch facility data from API
+// Fetch facility data from API
 let facilityAPIData = null;
 
 async function fetchFacilityData() {
@@ -6336,6 +6336,7 @@ async function fetchFacilityData() {
   }
 }
 
+// Function to handle query parameter and find facility by query_id
 async function handleQueryParameter() {
   const urlParams = new URLSearchParams(window.location.search);
   const queryId = urlParams.get('query');
@@ -6394,42 +6395,50 @@ async function handleQueryParameter() {
   }
 }
 
-
-
 // Function to find facility info by name
 function findFacilityInfo(facilityName) {
-  if (!facilityAPIData) return null;
+  if (!facilityAPIData) {
+    console.log("No facility API data available");
+    return null;
+  }
+  
+  console.log("Searching for facility:", facilityName);
   
   // Search through all levels
   for (const firstLevel of facilityAPIData) {
     if (firstLevel.name === facilityName) {
+      console.log("Found at first level:", firstLevel);
       return {
-        description: firstLevel.description,
-        image: firstLevel.image,
+        description: firstLevel.description || "Information not available",
+        image: firstLevel.image || "/placeholder-image.png",
         name: firstLevel.name
       };
     }
     
     for (const secondLevel of firstLevel.second_levels || []) {
       if (secondLevel.name === facilityName) {
+        console.log("Found at second level:", secondLevel);
         return {
-          description: secondLevel.description,
-          image: secondLevel.image,
+          description: secondLevel.description || "Information not available",
+          image: secondLevel.image || "/placeholder-image.png",
           name: secondLevel.name
         };
       }
       
       for (const thirdLevel of secondLevel.third_levels || []) {
         if (thirdLevel.name === facilityName) {
+          console.log("Found at third level:", thirdLevel);
           return {
-            description: thirdLevel.description,
-            image: thirdLevel.image,
+            description: thirdLevel.description || "Information not available",
+            image: thirdLevel.image || "/placeholder-image.png",
             name: thirdLevel.name
           };
         }
       }
     }
   }
+  
+  console.log("Facility not found in API data");
   return null;
 }
 
@@ -6473,6 +6482,7 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   };
   
   rooms.push(room);
+  console.log("Room added to array, total rooms:", rooms.length);
   
   // Update map immediately
   if (spc && spc.space) {
@@ -6482,17 +6492,26 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   
   // Set camera after map update
   setTimeout(() => {
-    if (spc && spc.space) {
-      spc.setCameraForFacility && spc.setCameraForFacility(facilityName);
+    if (spc && spc.space && spc.setCameraForFacility) {
+      spc.setCameraForFacility(facilityName);
       console.log("Camera positioned");
     }
   }, 1500);
   
-  // Show tooltip last - with proper delay to ensure data is ready
+  // FIXED: Show tooltip with multiple retry attempts
   setTimeout(() => {
-    console.log("Attempting to show tooltip for:", facilityName);
-    showGenericTooltip(facilityName, !facilityInfo); // Show skeleton if no info
-  }, 2500);
+    console.log("First tooltip attempt for:", facilityName);
+    showGenericTooltip(facilityName, true);
+  }, 2000);
+  
+  // Retry showing tooltip if it didn't appear
+  setTimeout(() => {
+    const tooltipDiv = document.getElementById("custom-tooltip");
+    if (tooltipDiv && tooltipDiv.style.display !== "block") {
+      console.log("Tooltip not visible, retrying...");
+      showGenericTooltip(facilityName, false);
+    }
+  }, 4000);
 }
 
 // Handle special facilities not in facilities_list
@@ -6574,15 +6593,18 @@ function getFacilityHeight(facilityName) {
 
 // Generic tooltip function using API data
 function showGenericTooltip(facilityName, showSkeleton = false) {
+  console.log("showGenericTooltip called for:", facilityName, "showSkeleton:", showSkeleton);
+  
   const tooltipDiv = document.getElementById("custom-tooltip");
   const contentDiv = document.getElementById("tooltip-content");
   
   if (!tooltipDiv || !contentDiv) {
-    console.error("Tooltip elements not found");
+    console.error("Tooltip elements not found in DOM");
     return;
   }
   
   const facilityInfo = findFacilityInfo(facilityName);
+  console.log("Facility info retrieved:", facilityInfo);
   
   // Show skeleton loading if no data available or explicitly requested
   if (!facilityInfo || showSkeleton) {
@@ -6601,23 +6623,33 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
     `;
     contentDiv.innerHTML = content;
     tooltipDiv.style.display = "block";
+    console.log("Tooltip set to display: block (skeleton)");
     
-    // If we have facility info but are showing skeleton (showSkeleton = true), 
-    // show actual data after a brief delay
+    // If we have facility info but are showing skeleton, show actual data after delay
     if (facilityInfo && showSkeleton) {
       setTimeout(() => {
         showGenericTooltip(facilityName, false);
-      }, 800); // Increased delay
+      }, 1000);
     }
     // If no facility info, try to refresh data
     else if (!facilityInfo) {
-      console.log("No facility info found, refreshing data...");
+      console.log("No facility info found, attempting to refresh data...");
       refreshFacilityData().then(() => {
         const updatedInfo = findFacilityInfo(facilityName);
         if (updatedInfo) {
+          console.log("Data refreshed, showing tooltip with data");
           showGenericTooltip(facilityName, false);
         } else {
           console.error("Still no facility info after refresh for:", facilityName);
+          // Show a basic tooltip with just the name
+          const basicContent = `
+            <div style="padding: 0; margin: 0; line-height: 1.2;">
+              <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+              <div style="margin-bottom: 8px; font-size: 14px; color: #666;">Information not available</div>
+            </div>
+          `;
+          contentDiv.innerHTML = basicContent;
+          tooltipDiv.style.display = "block";
         }
       });
     }
@@ -6625,241 +6657,243 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
   }
   
   // Show actual content when data is available
-  const description = facilityInfo.description;
-  const imageUrl = facilityInfo.image;
+  const description = facilityInfo.description || "Information not available";
+  const imageUrl = facilityInfo.image || "/placeholder-image.png";
   
   const content = `
     <div style="padding: 0; margin: 0; line-height: 1.2;">
       <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
       <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
-      <img src="${imageUrl}" 
-           style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
-           onerror="this.style.display='none'" />
+      ${imageUrl !== "/placeholder-image.png" ? `
+        <img src="${imageUrl}" 
+             style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
+             onerror="this.style.display='none'" />
+      ` : ''}
     </div>
   `;
   
   contentDiv.innerHTML = content;
   tooltipDiv.style.display = "block";
-  console.log("Tooltip displayed for:", facilityName);
+  console.log("Tooltip set to display: block (with data)");
+  console.log("Tooltip display style:", tooltipDiv.style.display);
 }
 
-      // smplrspace-script.js
-      class Space {
-        constructor(
-          spaceId,
-          clientToken,
-          desks,
-          rooms,
-          sensors,
-          Notaccessible,
-          toiletAreas
-        ) {
-          this.spaceId = spaceId;
-          this.clientToken = clientToken;
-          this.space = null;
-          this.rooms = rooms;
-          this.desks = desks;
-          this.sensors = sensors;
-          this.Notaccessible = Notaccessible;
-          this.toiletAreas = toiletAreas;
+// smplrspace-script.js
+class Space {
+  constructor(
+    spaceId,
+    clientToken,
+    desks,
+    rooms,
+    sensors,
+    Notaccessible,
+    toiletAreas
+  ) {
+    this.spaceId = spaceId;
+    this.clientToken = clientToken;
+    this.space = null;
+    this.rooms = rooms;
+    this.desks = desks;
+    this.sensors = sensors;
+    this.Notaccessible = Notaccessible;
+    this.toiletAreas = toiletAreas;
+    this._clickHandlerSet = false; // Track if click handler is set
+  }
+
+  initSpace(smplr) {
+    this.space = new smplr.Space({
+      spaceId: this.spaceId,
+      clientToken: this.clientToken,
+      containerId: "smplrspace-container",
+    });
+    this.space.startViewer({
+      preview: false,
+      allowModeChange: true,
+      disableCameraRotation: true,
+      loadingMessage: "Loading...",
+      cameraPlacement: {
+        alpha: 1.5737549088615568,
+        beta: 0.7099240223592374,
+        radius: 185.49815361318093,
+        target: { x: 70.43070629934955, y: 1, z: -48.22815466523894 },
+      },
+      onReady: () => this.fetchAll(),
+      onError: (error) => console.error("Could not start viewer", error),
+    });
+  }
+
+  updateDataLayers() {
+    // remove previous layers if any
+    this.space.removeDataLayer("rooms");
+    this.space.removeDataLayer("desks");
+    this.space.removeDataLayer("Notaccessible");
+
+    const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
+    const isDesksEmpty = !this.desks || this.desks.length === 0;
+    const isNotaccessibleEmpty =
+      !this.Notaccessible || this.Notaccessible.length === 0;
+
+    if (!isRoomsEmpty) {
+      // add new layers
+      this.space.addDataLayer({
+        id: "rooms",
+        type: "polygon",
+        data: this.rooms,
+        color: (d) => d.color,
+        alpha: 2.2,
+        height: (d) => d.height || 2.4,
+      });
+    }
+
+    if (!isDesksEmpty) {
+      this.space.addDataLayer({
+        id: "desks",
+        type: "furniture",
+        data: this.desks,
+        color: (d) => d.color,
+      });
+    }
+
+    if (!isNotaccessibleEmpty) {
+      this.space.addDataLayer({
+        id: "Notaccessible",
+        type: "polygon",
+        data: this.Notaccessible,
+        color: (d) => d.color,
+        alpha: 2.6,
+        height: (d) => d.height,
+      });
+    }
+    
+    // FIXED: Only set up click handlers if space is ready and handlers aren't already set
+    if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
+      console.log("Setting up click handlers");
+      this.space.on("click", (event) => {
+        if (event.data && event.data.name) {
+          console.log("Click detected on:", event.data.name);
+          showGenericTooltip(event.data.name, true);
         }
-
-        initSpace(smplr) {
-          this.space = new smplr.Space({
-            spaceId: this.spaceId,
-            clientToken: this.clientToken,
-            containerId: "smplrspace-container",
-          });
-          this.space.startViewer({
-            preview: false,
-            allowModeChange: true,
-            disableCameraRotation: true,
-            loadingMessage: "Loading...",
-            cameraPlacement: {
-              alpha: 1.5737549088615568,
-              beta: 0.7099240223592374,
-              radius: 185.49815361318093,
-              target: { x: 70.43070629934955, y: 1, z: -48.22815466523894 },
-            },
-            onReady: () => this.fetchAll(),
-            onError: (error) => console.error("Could not start viewer", error),
-          });
-        }
-
-        updateDataLayers() {
-          // remove previous layers if any
-          this.space.removeDataLayer("rooms");
-          this.space.removeDataLayer("desks");
-          this.space.removeDataLayer("Notaccessible");
-
-          const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
-          const isDesksEmpty = !this.desks || this.desks.length === 0;
-          const isNotaccessibleEmpty =
-            !this.Notaccessible || this.Notaccessible.length === 0;
-          const isToiletAreasEmpty =
-            !this.toiletAreas || this.toiletAreas.length === 0;
-
-          if (!isRoomsEmpty) {
-            // add new layers
-            this.space.addDataLayer({
-              id: "rooms",
-              type: "polygon",
-              data: this.rooms,
-
-              color: (d) => d.color,
-              alpha: 2.2,
-              height: (d) => d.height || 2.4,
-            });
-          }
-
-          if (!isDesksEmpty) {
-            this.space.addDataLayer({
-              id: "desks",
-              type: "furniture",
-              data: this.desks,
-              color: (d) => d.color,
-            });
-          }
-
-          if (!isNotaccessibleEmpty) {
-            this.space.addDataLayer({
-              id: "Notaccessible",
-              type: "polygon",
-              data: this.Notaccessible,
-              color: (d) => d.color,
-              alpha: 2.6,
-              height: (d) => d.height,
-            });
-          }
-          // Add click handlers for custom tooltip
-this.space.on("click", (event) => {
-  if (event.data) {
-    const tooltipDiv = document.getElementById("custom-tooltip");
-    const contentDiv = document.getElementById("tooltip-content");
-
-    if (event.data.name && tooltipDiv && contentDiv) {
-      showGenericTooltip(event.data.name, true); // Use the centralized function with skeleton loading
+      });
+      this._clickHandlerSet = true;
     }
   }
-});
-        }
-        updateMapForFacility() {
-          this.updateDataLayers();
+  
+  updateMapForFacility() {
+    this.updateDataLayers();
+  }
+
+  // Update the fetchAll() method in Space class
+  fetchAll() {
+    this.fetchData();
+    // ADDED: Handle query parameter after data is fetched
+    setTimeout(() => {
+      handleQueryParameter();
+    }, 1000);
+  }
+
+  fetchData() {
+    fetch(API_ENDPOINT)
+      .then((res) => res.json())
+      .then((data) => {
+        let occupancy = {};
+        for (let i = 0; i < data.length; i++) {
+          let value = data[i];
+          let loc = value.area;
+          let timestamp = value.timestamp;
+          let available = value.occupancy;
+
+          let color = color_dict.hasOwnProperty(available)
+            ? color_dict[available]
+            : "#ffa500";
+
+          if (!occupancy.hasOwnProperty(loc)) {
+            occupancy[loc] = {
+              timestamp: timestamp,
+              available: available,
+              occupancy: value.occupancy,
+              color: color,
+            };
+          } else if (occupancy[loc].timestamp < timestamp) {
+            occupancy[loc] = {
+              timestamp: timestamp,
+              available: available,
+              occupancy: value.occupancy,
+              color: color,
+            };
+          }
         }
 
+        for (let key in occupancy) {
+          if (
+            occupancy.hasOwnProperty(key) &&
+            desk_filter.hasOwnProperty(key)
+          ) {
+            const jsonKey = desk_filter[key];
+            const _index = desk_index[jsonKey];
 
-       // Update the fetchAll() method in Space class
-fetchAll() {
-  this.fetchData();
-  // ADDED: Handle query parameter after data is fetched
-  setTimeout(() => {
-    handleQueryParameter();
-  }, 1000);
+            this.desks[_index]["available"] = occupancy[key]["available"];
+            this.desks[_index]["color"] = occupancy[key]["color"];
+          } else if (
+            occupancy.hasOwnProperty(key) &&
+            room_filter.hasOwnProperty(key)
+          ) {
+            const jsonKey = room_filter[key];
+            const _index = room_index[jsonKey];
+
+            if (this.rooms && this.rooms[_index]) {
+              this.rooms[_index]["available"] =
+                occupancy[key]["available"];
+              this.rooms[_index]["numberOfPeople"] =
+                occupancy[key]["numberOfPeople"];
+              this.rooms[_index]["color"] = occupancy[key]["color"];
+            }
+          } else if (
+            occupancy.hasOwnProperty(key) &&
+            color_overlay_filter.hasOwnProperty(key)
+          ) {
+            const jsonKey = color_overlay_filter[key];
+            const _index = color_overlay_index[jsonKey];
+
+            if (this.Notaccessible && this.Notaccessible[_index]) {
+              this.Notaccessible[_index]["available"] =
+                occupancy[key]["available"];
+              this.Notaccessible[_index]["color"] =
+                occupancy[key]["color"];
+            }
+          }
+        }
+        this.updateDataLayers();
+      });
+  }
 }
 
-        fetchData() {
-          fetch(API_ENDPOINT)
-            .then((res) => res.json())
-            .then((data) => {
-              let occupancy = {};
-              for (let i = 0; i < data.length; i++) {
-                let value = data[i];
-                let loc = value.area;
-                let timestamp = value.timestamp;
-                let available = value.occupancy;
+const customHeightIds = [
+  "031bae15-7140-44c3-b06a-eb777de0ee23",
+  "5a9bbacf-986a-4ec8-ba38-837e646edba8",
+];
 
-                let color = color_dict.hasOwnProperty(available)
-                  ? color_dict[available]
-                  : "#ffa500";
+const Notaccessible = dict[8]["assets"].map((area) => {
+  return {
+    ...area,
+    available: "Not Accessible",
+    color: color_dict["unavailable"],
+    height: customHeightIds.includes(area.id) ? 3.0 : 1.0,
+  };
+});
 
-                if (!occupancy.hasOwnProperty(loc)) {
-                  occupancy[loc] = {
-                    timestamp: timestamp,
-                    available: available,
-                    occupancy: value.occupancy,
-                    color: color,
-                  };
-                } else if (occupancy[loc].timestamp < timestamp) {
-                  occupancy[loc] = {
-                    timestamp: timestamp,
-                    available: available,
-                    occupancy: value.occupancy,
-                    color: color,
-                  };
-                }
-              }
+// Get the current URL
+const currentUrl = window.location.href;
 
-              for (let key in occupancy) {
-                if (
-                  occupancy.hasOwnProperty(key) &&
-                  desk_filter.hasOwnProperty(key)
-                ) {
-                  const jsonKey = desk_filter[key];
-                  const _index = desk_index[jsonKey];
+// Create a URL object
+const url = new URL(currentUrl);
 
-                  this.desks[_index]["available"] = occupancy[key]["available"];
-                  this.desks[_index]["color"] = occupancy[key]["color"];
-                } else if (
-                  occupancy.hasOwnProperty(key) &&
-                  room_filter.hasOwnProperty(key)
-                ) {
-                  const jsonKey = room_filter[key];
-                  const _index = room_index[jsonKey];
+// Use URLSearchParams to get query parameters
+const params = new URLSearchParams(url.search);
 
-                  if (this.rooms && this.rooms[_index]) {
-                    this.rooms[_index]["available"] =
-                      occupancy[key]["available"];
-                    this.rooms[_index]["numberOfPeople"] =
-                      occupancy[key]["numberOfPeople"];
-                    this.rooms[_index]["color"] = occupancy[key]["color"];
-                  }
-                } else if (
-                  occupancy.hasOwnProperty(key) &&
-                  color_overlay_filter.hasOwnProperty(key)
-                ) {
-                  const jsonKey = color_overlay_filter[key];
-                  const _index = color_overlay_index[jsonKey];
+const facility = params.get("facility");
 
-                  if (this.Notaccessible && this.Notaccessible[_index]) {
-                    this.Notaccessible[_index]["available"] =
-                      occupancy[key]["available"];
-                    this.Notaccessible[_index]["color"] =
-                      occupancy[key]["color"];
-                  }
-                }
-              }
-              this.updateDataLayers();
-            });
-        }
-      }
-
-      const customHeightIds = [
-        "031bae15-7140-44c3-b06a-eb777de0ee23",
-        "5a9bbacf-986a-4ec8-ba38-837e646edba8",
-      ];
-
-      const Notaccessible = dict[8]["assets"].map((area) => {
-        return {
-          ...area,
-          available: "Not Accessible",
-          color: color_dict["unavailable"],
-          height: customHeightIds.includes(area.id) ? 3.0 : 1.0,
-        };
-      });
-
-      // Get the current URL
-      const currentUrl = window.location.href;
-
-      // Create a URL object
-      const url = new URL(currentUrl);
-
-      // Use URLSearchParams to get query parameters
-      const params = new URLSearchParams(url.search);
-
-      const facility = params.get("facility");
-
-      if (!!facility) {
-  // Check both facilities_list (dict[3]) and facilities_demo (dict[4])
+if (!!facility) {
+  // Check both facilities_list (dict[11]) and facilities_demo (dict[12])
   let facilityAsset = dict[11].assets.find(asset => asset.name === facility);
   if (!facilityAsset) {
     facilityAsset = dict[12].assets.find(asset => asset.name === facility);
@@ -6870,18 +6904,18 @@ fetchAll() {
   } else {
     // For API-only facilities, just show tooltip without adding to map
     console.log('Facility coordinates not found, will show tooltip only');
-    setTimeout(() => showGenericTooltip(facility), 2500);
+    setTimeout(() => showGenericTooltip(facility, true), 2500);
   }
 }
 
-      // Function to show tooltip for selected facility when loaded via URL
+// Function to show tooltip for selected facility when loaded via URL
 if (!!facility) {
   // Show tooltip after map loads using the centralized function
   setTimeout(() => showGenericTooltip(facility, true), 1500);
 }
 
-      // Create the Space instance with the updated parameters
-      spc = new Space(
+// Create the Space instance with the updated parameters
+spc = new Space(
   SPACE_ID,
   CLIENT_ID,
   [...dict[0]["assets"], ...dict[4]["assets"]],
@@ -6890,17 +6924,15 @@ if (!!facility) {
   Notaccessible
 );
 
-     // delete dict;
+async function wait() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 500);
+  });
+}
 
-      async function wait() {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve();
-          }, 500);
-        });
-      }
-
-   async function start() {
+async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
@@ -6918,14 +6950,14 @@ if (!!facility) {
   setTimeout(() => {
     console.log("Calling handleQueryParameter...");
     handleQueryParameter();
-  }, 3100); 
+  }, 3500); // Increased delay to ensure map is fully loaded
   
   setInterval(() => {
     spc.fetchAll();
   }, UPDATE_FREQUENCY * 1000);
 }
 
-      start();
+start();
     </script>
   </body>
 </html>
