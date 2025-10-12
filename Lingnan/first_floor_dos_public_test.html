@@ -6409,7 +6409,7 @@ function findFacilityInfo(facilityName) {
     if (firstLevel.name === facilityName) {
       console.log("Found at first level:", firstLevel);
       return {
-        description: firstLevel.description || "Information not available",
+        description: firstLevel.description || "",
         image: firstLevel.image || "/placeholder-image.png",
         name: firstLevel.name
       };
