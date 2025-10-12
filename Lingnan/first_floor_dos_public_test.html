@@ -6340,8 +6340,11 @@ async function handleQueryParameter() {
   const urlParams = new URLSearchParams(window.location.search);
   const queryId = urlParams.get('query');
   
+  console.log("handleQueryParameter called with queryId:", queryId);
+  
   if (queryId && facilityAPIData) {
     console.log('Query ID detected:', queryId);
+    console.log('Facility API Data available:', facilityAPIData ? 'Yes' : 'No');
     
     // Search through API data to find matching facility
     let matchedFacility = null;
@@ -6373,17 +6376,21 @@ async function handleQueryParameter() {
       }
       
       if (facilityAsset) {
-        // FIXED: Properly handle facility with delay to ensure map is loaded
+        console.log("Facility asset found, calling handleGenericFacility");
         setTimeout(() => {
           handleGenericFacility(facilityAsset, matchedFacility.name);
-        }, 2000); // Give map time to load
+        }, 2000);
       } else {
-        // If coordinates not found, just show tooltip after map loads
-        setTimeout(() => showGenericTooltip(matchedFacility.name, true), 2500);
+        console.log("No facility asset found, showing tooltip only");
+        setTimeout(() => showGenericTooltip(matchedFacility.name, true), 3000);
       }
     } else {
       console.log('No facility found for query_id:', queryId);
     }
+  } else if (queryId && !facilityAPIData) {
+    console.log('Query ID present but no facility data yet, waiting...');
+    // Wait for data to load
+    setTimeout(() => handleQueryParameter(), 1000);
   }
 }
 
@@ -6428,13 +6435,17 @@ function findFacilityInfo(facilityName) {
 
 // Generic facility handler
 function handleGenericFacility(facilityAsset, facilityName) {
-  let facilityInfo = findFacilityInfo(facilityName);
+  console.log("handleGenericFacility called for:", facilityName);
   
-  // If facility not found, try refreshing data first
+  let facilityInfo = findFacilityInfo(facilityName);
+  console.log("Initial facility info:", facilityInfo);
+  
+  // If facility not found, refresh data first
   if (!facilityInfo) {
     console.log('Facility not found, refreshing data...');
     refreshFacilityData().then(() => {
       facilityInfo = findFacilityInfo(facilityName);
+      console.log("Facility info after refresh:", facilityInfo);
       updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
     });
     return;
@@ -6445,6 +6456,9 @@ function handleGenericFacility(facilityAsset, facilityName) {
 
 // Extract display logic
 function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
+  console.log("updateFacilityDisplay called for:", facilityName);
+  console.log("Facility info:", facilityInfo);
+  
   const room = {
     id: facilityAsset.id,
     name: facilityAsset.name,
@@ -6460,20 +6474,25 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   
   rooms.push(room);
   
-  // FIXED: Update map immediately
+  // Update map immediately
   if (spc && spc.space) {
     spc.updateMapForFacility();
+    console.log("Map updated");
   }
   
-  // FIXED: Set camera after map update
+  // Set camera after map update
   setTimeout(() => {
     if (spc && spc.space) {
       spc.setCameraForFacility && spc.setCameraForFacility(facilityName);
+      console.log("Camera positioned");
     }
   }, 1500);
   
-  // FIXED: Show tooltip last
-  setTimeout(() => showGenericTooltip(facilityName, true), 2000);
+  // Show tooltip last - with proper delay to ensure data is ready
+  setTimeout(() => {
+    console.log("Attempting to show tooltip for:", facilityName);
+    showGenericTooltip(facilityName, !facilityInfo); // Show skeleton if no info
+  }, 2500);
 }
 
 // Handle special facilities not in facilities_list
@@ -6558,63 +6577,70 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
   const tooltipDiv = document.getElementById("custom-tooltip");
   const contentDiv = document.getElementById("tooltip-content");
   
-  if (tooltipDiv && contentDiv) {
-    const facilityInfo = findFacilityInfo(facilityName);
-    
-   // Show skeleton loading if no data available or explicitly requested
-if (!facilityInfo || showSkeleton) {
-  const content = `
-    <div style="padding: 0; margin: 0; line-height: 1.2;">
-      <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
-      <div style="margin-bottom: 8px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
-      <div style="width: 120px; height: 80px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; display: block;"></div>
-    </div>
-    <style>
-      @keyframes loading {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-      }
-    </style>
-  `;
-  contentDiv.innerHTML = content;
-  tooltipDiv.style.display = "block";
+  if (!tooltipDiv || !contentDiv) {
+    console.error("Tooltip elements not found");
+    return;
+  }
   
-  // If we have facility info but are showing skeleton (showSkeleton = true), 
-  // show actual data after a brief delay
-  if (facilityInfo && showSkeleton) {
-    setTimeout(() => {
-      showGenericTooltip(facilityName, false);
-    }, 500);
-  }
-  // If no facility info, try to refresh data
-  else if (!facilityInfo) {
-    refreshFacilityData().then(() => {
-      const updatedInfo = findFacilityInfo(facilityName);
-      if (updatedInfo) {
-        showGenericTooltip(facilityName, false);
-      }
-    });
-  }
-  return;
-}
-    
-    // Show actual content when data is available
-    const description = facilityInfo.description;
-    const imageUrl = facilityInfo.image;
-    
+  const facilityInfo = findFacilityInfo(facilityName);
+  
+  // Show skeleton loading if no data available or explicitly requested
+  if (!facilityInfo || showSkeleton) {
     const content = `
       <div style="padding: 0; margin: 0; line-height: 1.2;">
         <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
-        <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
-        <img src="${imageUrl}" 
-             style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
-             onerror="this.style.display='none'" />
+        <div style="margin-bottom: 8px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
+        <div style="width: 120px; height: 80px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; display: block;"></div>
       </div>
+      <style>
+        @keyframes loading {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      </style>
     `;
-    
     contentDiv.innerHTML = content;
     tooltipDiv.style.display = "block";
+    
+    // If we have facility info but are showing skeleton (showSkeleton = true), 
+    // show actual data after a brief delay
+    if (facilityInfo && showSkeleton) {
+      setTimeout(() => {
+        showGenericTooltip(facilityName, false);
+      }, 800); // Increased delay
+    }
+    // If no facility info, try to refresh data
+    else if (!facilityInfo) {
+      console.log("No facility info found, refreshing data...");
+      refreshFacilityData().then(() => {
+        const updatedInfo = findFacilityInfo(facilityName);
+        if (updatedInfo) {
+          showGenericTooltip(facilityName, false);
+        } else {
+          console.error("Still no facility info after refresh for:", facilityName);
+        }
+      });
+    }
+    return;
   }
+  
+  // Show actual content when data is available
+  const description = facilityInfo.description;
+  const imageUrl = facilityInfo.image;
+  
+  const content = `
+    <div style="padding: 0; margin: 0; line-height: 1.2;">
+      <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+      <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
+      <img src="${imageUrl}" 
+           style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
+           onerror="this.style.display='none'" />
+    </div>
+  `;
+  
+  contentDiv.innerHTML = content;
+  tooltipDiv.style.display = "block";
+  console.log("Tooltip displayed for:", facilityName);
 }
 
       // smplrspace-script.js
@@ -6874,20 +6900,25 @@ if (!!facility) {
         });
       }
 
-      async function start() {
+   async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
   
-  // Fetch facility data first
+  console.log("Starting initialization...");
+  
+  // Fetch facility data first and wait for it
   await fetchFacilityData();
+  console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
   
   spc.initSpace(smplr);
+  console.log("Space initialized");
   
-  // FIXED: Handle query parameter after everything is initialized
+  // Handle query parameter after everything is initialized
   setTimeout(() => {
+    console.log("Calling handleQueryParameter...");
     handleQueryParameter();
-  }, 3000); // Increased delay to ensure map is fully loaded
+  }, 3100); 
   
   setInterval(() => {
     spc.fetchAll();
