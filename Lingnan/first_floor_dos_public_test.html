@@ -6336,7 +6336,6 @@ async function fetchFacilityData() {
   }
 }
 
-// Function to handle query parameter and find facility by query_id
 async function handleQueryParameter() {
   const urlParams = new URLSearchParams(window.location.search);
   const queryId = urlParams.get('query');
@@ -6354,7 +6353,8 @@ async function handleQueryParameter() {
             matchedFacility = {
               name: thirdLevel.name,
               description: thirdLevel.description,
-              image: thirdLevel.image
+              image: thirdLevel.image,
+              query_id: thirdLevel.query_id
             };
             console.log('Found matching facility:', matchedFacility);
             break;
@@ -6373,9 +6373,12 @@ async function handleQueryParameter() {
       }
       
       if (facilityAsset) {
-        handleGenericFacility(facilityAsset, matchedFacility.name);
+        // FIXED: Properly handle facility with delay to ensure map is loaded
+        setTimeout(() => {
+          handleGenericFacility(facilityAsset, matchedFacility.name);
+        }, 2000); // Give map time to load
       } else {
-        // If coordinates not found, just show tooltip
+        // If coordinates not found, just show tooltip after map loads
         setTimeout(() => showGenericTooltip(matchedFacility.name, true), 2500);
       }
     } else {
@@ -6383,6 +6386,8 @@ async function handleQueryParameter() {
     }
   }
 }
+
+
 
 // Function to find facility info by name
 function findFacilityInfo(facilityName) {
@@ -6455,20 +6460,21 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   
   rooms.push(room);
   
-  setTimeout(() => {
-    if (spc && spc.space) {
-      spc.updateMapForFacility();
-    }
-  }, 2000);
+  // FIXED: Update map immediately
+  if (spc && spc.space) {
+    spc.updateMapForFacility();
+  }
   
+  // FIXED: Set camera after map update
   setTimeout(() => {
     if (spc && spc.space) {
       spc.setCameraForFacility && spc.setCameraForFacility(facilityName);
     }
-  }, 3000);
+  }, 1500);
   
-  setTimeout(() => showGenericTooltip(facilityName, true), 1000); // Show skeleton immediately
-  }
+  // FIXED: Show tooltip last
+  setTimeout(() => showGenericTooltip(facilityName, true), 2000);
+}
 
 // Handle special facilities not in facilities_list
 function handleSpecialFacility(facility) {
@@ -6716,9 +6722,14 @@ this.space.on("click", (event) => {
         }
 
 
-        fetchAll() {
-          this.fetchData();
-        }
+       // Update the fetchAll() method in Space class
+fetchAll() {
+  this.fetchData();
+  // ADDED: Handle query parameter after data is fetched
+  setTimeout(() => {
+    handleQueryParameter();
+  }, 1000);
+}
 
         fetchData() {
           fetch(API_ENDPOINT)
@@ -6855,7 +6866,15 @@ if (!!facility) {
 
      // delete dict;
 
-  async function start() {
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
@@ -6865,10 +6884,10 @@ if (!!facility) {
   
   spc.initSpace(smplr);
   
-  // Handle query parameter after space is initialized AND data is loaded
+  // FIXED: Handle query parameter after everything is initialized
   setTimeout(() => {
     handleQueryParameter();
-  }, 1000); // Small delay to ensure everything is ready
+  }, 3000); // Increased delay to ensure map is fully loaded
   
   setInterval(() => {
     spc.fetchAll();
