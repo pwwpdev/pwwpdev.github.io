@@ -6336,7 +6336,7 @@ async function fetchFacilityData() {
   }
 }
 
-// Function to handle query parameter and find facility by query_id
+// Replace the existing handleQueryParameter function with this:
 async function handleQueryParameter() {
   const urlParams = new URLSearchParams(window.location.search);
   const queryId = urlParams.get('query');
@@ -6351,7 +6351,29 @@ async function handleQueryParameter() {
     let matchedFacility = null;
     
     for (const firstLevel of facilityAPIData) {
+      // Check if first level matches
+      if (firstLevel.query_id === queryId) {
+        matchedFacility = {
+          name: firstLevel.name,
+          description: firstLevel.description,
+          image: firstLevel.image,
+          query_id: firstLevel.query_id
+        };
+        break;
+      }
+      
       for (const secondLevel of firstLevel.second_levels || []) {
+        // Check if second level matches
+        if (secondLevel.query_id === queryId) {
+          matchedFacility = {
+            name: secondLevel.name,
+            description: secondLevel.description,
+            image: secondLevel.image,
+            query_id: secondLevel.query_id
+          };
+          break;
+        }
+        
         for (const thirdLevel of secondLevel.third_levels || []) {
           if (thirdLevel.query_id === queryId) {
             matchedFacility = {
@@ -6370,7 +6392,7 @@ async function handleQueryParameter() {
     }
     
     if (matchedFacility) {
-      // Find the facility asset in dict
+      // Try to find the facility asset in dict
       let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
       if (!facilityAsset) {
         facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
@@ -6382,8 +6404,16 @@ async function handleQueryParameter() {
           handleGenericFacility(facilityAsset, matchedFacility.name);
         }, 2000);
       } else {
-        console.log("No facility asset found, showing tooltip only");
-        setTimeout(() => showGenericTooltip(matchedFacility.name, true), 3000);
+        // Facility exists in API but not in visual map - just show tooltip
+        console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+        setTimeout(() => {
+          showGenericTooltip(matchedFacility.name, true);
+          // Set camera to a default position or facility-specific position if available
+          if (spc && spc.space) {
+            // You might want to set a default camera position here
+            console.log("Setting default camera view");
+          }
+        }, 2000);
       }
     } else {
       console.log('No facility found for query_id:', queryId);
@@ -6549,7 +6579,7 @@ function getFacilityHeight(facilityName) {
     "Category III Multimedia – Ask at Service Counter (1/F Zone A)": 1.1,
     "Staff Publications (1/F Zone B)": 3.0,
     "Chiang Chen Information Commons (1/F Zone A)": 3.0,
-    "Computer Room 2 (1/F Zone B)": 3.0,
+    "Computer Room 2(1/F Zone B)": 3.0,
     "SEN Workstation 1 (1/F Zone B)": 1.1,
     "SEN Workstation 2 (1/F Zone C)": 1.1,
     "Bloomberg Terminal – Database Workstation (1/F Zone B)": 1.1,
