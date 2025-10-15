@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Second Floor Smplrspace Viewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+    body,
+    html {
+      height: 100vh !important;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    #wrapper,
+    #smplrspace-container {
+      height: 100vh !important;
+    }
+
+    #mini-map-container {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 360px;
+  padding: 4px 4px 0px 4px;
+  background: rgba(216, 216, 216, 0.956);
+  backdrop-filter: blur(10px);
+  border-left: 0.5px solid #d4d4d4;
+  border-bottom: 0.5px solid #d4d4d4;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  overflow: hidden;
+}
+
+#map-wrapper {
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  overflow: hidden;
+}
+
+#mini-map {
+  width: 100%;
+  transform-origin: center;
+  transition: transform 0.2s ease;
+  cursor: move;
+}
+
+.map-controls {
+  position: absolute;
+  bottom: 6px;
+  right: 2px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  z-index: 11;
+}
+
+.control-btn {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn:hover {
+  background: #f5f5f5;
+}
+
+@media (max-width: 768px) {
+  #mini-map-container {
+    width: 210px;
+  }
+  #map-wrapper {
+    height: fit-content;
+  }
+
+   #legend-container {
+    display: none !important;
+  }
+  
+  .control-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+    border-radius: 2px;
+  }
+  .map-controls {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  #mini-map-container {
+    width: 140px;
+  }
+  #map-wrapper {
+    height: fit-content;
+  }
+  .control-btn {
+    width: 12px;
+    height: 12px;
+    font-size: 8px;
+    border-radius: 2px;
+  }
+}
+button[title="Hide annotations"] {
+  display: none !important;
+}
+
+  </style>
+  </head>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+   
+
+    <div id="wrapper">
+        <div id="smplrspace-container"></div>
+        <div
+          id="custom-tooltip"
+          style="
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: 1px solid #ccc;
+            font-family: 'Inter', sans-serif;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            max-width: 300px;
+          "
+        >
+          <div id="tooltip-content"></div>
+        </div>
+      </div>
+  
+      <!-- Combined Legend Box -->
+    <div id="legend-container" style="
+    position: absolute;
+    bottom: 0px;
+    left: 54px;
+    background: rgba(219, 218, 218, 0.492);
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-size: 12px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    min-width: 100px;
+  ">
+    <div style="padding: 5px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+      Default View
+    </div>
+    <div style="padding: 5px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+      Zoom IN
+    </div>
+    <div style="padding: 5px 4px; text-align: center; border-bottom: 1px solid #ccc; margin-bottom: 4px;">
+      Zoom OUT
+    </div>
+    <div style="padding: 5px 4px; text-align: center;">
+      Switch 2D/3D 
+    </div>
+  </div>
+
+    <div id="mini-map-container">
+        <div id="map-wrapper">
+          <img id="mini-map" src="mini_2f.png" alt="Mini Map" />
+        </div>
+      </div>
+
+    <script>
+      // Replace with your second floor specific values
+      const API_ENDPOINT =
+        "https://optimusc.flowfuse.cloud/lingnan-library-dos";
+
+      // Replace with your second floor client and space IDs
+      const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
+      const SPACE_ID = "spc_vyvqclk6";
+
+      const UPDATE_FREQUENCY = 60;
+
+      // Keep toilet indices
+      const toilet_index = {
+        "2F-FT1": 0,
+        "2F-FT2": 1,
+        "2F-MT1": 2,
+        "2F-MT2": 3,
+      };
+
+      const toilet_filter = {
+        "2F-FT1": "2F-FT1",
+        "2F-FT2": "2F-FT2",
+        "2F-MT1": "2F-MT1",
+        "2F-MT2": "2F-MT2",
+      };
+
+      // Keep non-accessible area index
+      const non_accessible_area_index = {
+        1: 0,
+      };
+
+      const non_accessible_area_filter = {
+        NonAssessibleArea: "1",
+      };
+
+      const rooms = [];
+
+      const color_dict = {
+        occupied: "#ff3f34",
+        countdown: "#ff3f34",
+        vacant: "#3aa655",
+        free: "#3aa655",
+        unoccupied: "#3aa655",
+        passive_occupied: "#ffbf00",
+        away: "#ffbf00",
+        demo: "#6888be",
+        unavailable: "#949494",
+        restricted: "#768590",
+      };
+
+      async function refreshFacilityData() {
+  console.log('Refreshing facility data...');
+  await fetchFacilityData();
+  console.log('Facility data refreshed:', facilityAPIData);
+}
+
+// Fetch facility data from API
+let facilityAPIData = null;
+
+async function fetchFacilityData() {
+  try {
+    const response = await fetch('https://njs-01.optimuslab.space/library_facilities/');
+    const data = await response.json();
+    facilityAPIData = data.library_facilities;
+    console.log('Facility data loaded:', facilityAPIData);
+  } catch (error) {
+    console.error('Failed to fetch facility data:', error);
+    facilityAPIData = [];
+  }
+}
+
+
+
+// Function to find facility info by name
+function findFacilityInfo(facilityName) {
+  if (!facilityAPIData) return null;
+  
+  // Search through all levels
+  for (const firstLevel of facilityAPIData) {
+    if (firstLevel.name === facilityName) {
+      return {
+        description: firstLevel.description,
+        image: firstLevel.image,
+        name: firstLevel.name
+      };
+    }// Replace the existing handleQueryParameter function with this:
+async function handleQueryParameter() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryId = urlParams.get('query');
+  
+  console.log("handleQueryParameter called with queryId:", queryId);
+  
+  if (queryId && facilityAPIData) {
+    console.log('Query ID detected:', queryId);
+    console.log('Facility API Data available:', facilityAPIData ? 'Yes' : 'No');
+    
+    // Search through API data to find matching facility
+    let matchedFacility = null;
+    
+    for (const firstLevel of facilityAPIData) {
+      // Check if first level matches
+      if (firstLevel.query_id === queryId) {
+        matchedFacility = {
+          name: firstLevel.name,
+          description: firstLevel.description,
+          image: firstLevel.image,
+          query_id: firstLevel.query_id
+        };
+        break;
+      }
+      
+      for (const secondLevel of firstLevel.second_levels || []) {
+        // Check if second level matches
+        if (secondLevel.query_id === queryId) {
+          matchedFacility = {
+            name: secondLevel.name,
+            description: secondLevel.description,
+            image: secondLevel.image,
+            query_id: secondLevel.query_id
+          };
+          break;
+        }
+        
+        for (const thirdLevel of secondLevel.third_levels || []) {
+          if (thirdLevel.query_id === queryId) {
+            matchedFacility = {
+              name: thirdLevel.name,
+              description: thirdLevel.description,
+              image: thirdLevel.image,
+              query_id: thirdLevel.query_id
+            };
+            console.log('Found matching facility:', matchedFacility);
+            break;
+          }
+        }
+        if (matchedFacility) break;
+      }
+      if (matchedFacility) break;
+    }
+    
+    if (matchedFacility) {
+      // Try to find the facility asset in dict
+      let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
+      if (!facilityAsset) {
+        facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
+      }
+      
+      if (facilityAsset) {
+        console.log("Facility asset found, calling handleGenericFacility");
+        setTimeout(() => {
+          handleGenericFacility(facilityAsset, matchedFacility.name);
+        }, 2000);
+      } else {
+        // Facility exists in API but not in visual map - just show tooltip
+        console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+        setTimeout(() => {
+          showGenericTooltip(matchedFacility.name, true);
+          // Set camera to a default position or facility-specific position if available
+          if (spc && spc.space) {
+            // You might want to set a default camera position here
+            console.log("Setting default camera view");
+          }
+        }, 2000);
+      }
+    } else {
+      console.log('No facility found for query_id:', queryId);
+    }
+  } else if (queryId && !facilityAPIData) {
+    console.log('Query ID present but no facility data yet, waiting...');
+    // Wait for data to load
+    setTimeout(() => handleQueryParameter(), 1000);
+  }
+}
+    
+    for (const secondLevel of firstLevel.second_levels || []) {
+      if (secondLevel.name === facilityName) {
+        return {
+          description: secondLevel.description,
+          image: secondLevel.image,
+          name: secondLevel.name
+        };
+      }
+      
+      for (const thirdLevel of secondLevel.third_levels || []) {
+        if (thirdLevel.name === facilityName) {
+          return {
+            description: thirdLevel.description,
+            image: thirdLevel.image,
+            name: thirdLevel.name
+          };
+        }
+      }
+    }
+  }
+  return null;
+}
+
+// Generic facility handler
+function handleGenericFacility(facilityAsset, facilityName) {
+  let facilityInfo = findFacilityInfo(facilityName);
+  
+  if (!facilityInfo) {
+    console.log('Facility not found, refreshing data...');
+    refreshFacilityData().then(() => {
+      facilityInfo = findFacilityInfo(facilityName);
+      updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+    });
+    return;
+  }
+  
+  updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+}
+
+// Extract display logic
+function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
+  console.log("updateFacilityDisplay called for:", facilityName);  // NEW LOG
+  console.log("Facility info:", facilityInfo);  // NEW LOG
+  
+  const room = {
+    id: facilityAsset.id,
+    name: facilityAsset.name,
+    levelIndex: facilityAsset.levelIndex,
+    coordinates: facilityAsset.coordinates,
+    layerType: facilityAsset.layerType,
+    mapped: facilityAsset.mapped,
+    height: getFacilityHeight(facilityName),
+    color: "#E566FF",
+    available: "Available",
+    description: facilityInfo?.description || "Available for use"
+  };
+  
+  rooms.push(room);
+  console.log("Room added to array, total rooms:", rooms.length);  // NEW LOG
+  
+  // Update map immediately - CHANGED: Removed setTimeout, made immediate
+  if (spc && spc.space) {
+    spc.updateMapForFacility();
+    console.log("Map updated");  // NEW LOG
+  }
+  
+  // Set camera after map update - CHANGED: Reduced timeout from 3000 to 1500
+  setTimeout(() => {
+    if (spc && spc.space && spc.setCameraForFacility) {
+      spc.setCameraForFacility(facilityName);
+      console.log("Camera positioned");  // NEW LOG
+    }
+  }, 1500);  // CHANGED: Was 3000, now 1500
+  
+  // FIXED: Show tooltip with multiple retry attempts - CHANGED: Increased from 1000 to 2000
+  setTimeout(() => {
+    console.log("First tooltip attempt for:", facilityName);  // NEW LOG
+    showGenericTooltip(facilityName, true);
+  }, 2000);  // CHANGED: Was 1000, now 2000
+  
+  // NEW: Retry showing tooltip if it didn't appear - COMPLETELY NEW BLOCK
+  setTimeout(() => {
+    const tooltipDiv = document.getElementById("custom-tooltip");
+    if (tooltipDiv && tooltipDiv.style.display !== "block") {
+      console.log("Tooltip not visible, retrying...");
+      showGenericTooltip(facilityName, false);
+    }
+  }, 4000);
+}
+
+
+
+// Get appropriate height for different facility types
+function getFacilityHeight(facilityName) {
+  const heightMap = {
+ 
+    "Books HM1101-HN (2/F Zone B)": 3.0,
+    "Current Journals (2/F Zone A)": 3.0,
+    "Bound Journals (2/F Zone A)": 3.0,
+    "Language Examinations & Learning Resources [LANG] (2/F Zone C)": 3.0,
+    "Lingnan University Archives (2/F Zone A)": 3.0,
+    "Multimedia (2/F Zone C)": 3.0,
+    "Current Issues (2/F Zone B)": 3.0,
+    "Back Issues (2/F Zone A)": 3.0,
+    "References A-HM (2/F Zone A)": 3.0,
+    "References HN-Z (2/F Zone C)": 3.0,
+    "Lee Hak Kan Multimedia and Language Learning Centre – MLLC (2/F Zone C)": 3.0,
+    "21, 23 (2/F Zone C)": 1.1,
+    "22BW (2/F Zone A)": 1.1,
+    "Group Study Room 10 – 11 (2/F Zone B)": 3.0,
+    "Chang Han-tsiu Reading Room (2/F Zone A)": 3.0,
+    "Lee Hak Kan Multimedia and Language Learning Centre – MLLC (2/F Zone C)": 3.0,
+    "Mini Theatre (2/F Zone B)": 3.0,
+    "2/F (2/F Zone A)": 0.5,
+    "2/F Male & Female ( Zone C)": 3.0,
+    "Lift (2/F Zone B)": 3.0
+  };
+ 
+  for (const [key, height] of Object.entries(heightMap)) {
+    if (facilityName.includes(key)) return height;
+  }
+  return 2.5; // default height
+}
+
+// Generic tooltip function using API data with image on right
+function showGenericTooltip(facilityName, showSkeleton = false) {
+  console.log("showGenericTooltip called for:", facilityName, "showSkeleton:", showSkeleton);  // NEW LOG
+  
+  const tooltipDiv = document.getElementById("custom-tooltip");
+  const contentDiv = document.getElementById("tooltip-content");
+  
+  // NEW: Error checking with logging
+  if (!tooltipDiv || !contentDiv) {
+    console.error("Tooltip elements not found in DOM");  // NEW ERROR LOG
+    return;
+  }
+  
+  const facilityInfo = findFacilityInfo(facilityName);
+  console.log("Facility info retrieved:", facilityInfo);  // NEW LOG
+  
+  // Show skeleton loading if no data available or explicitly requested
+  if (!facilityInfo || showSkeleton) {
+    const content = `
+      <div style="padding: 0; margin: 0; line-height: 1.2;">
+        <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+        <div style="margin-bottom: 8px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
+        <div style="width: 120px; height: 80px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; display: block;"></div>
+      </div>
+      <style>
+        @keyframes loading {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      </style>
+    `;
+    contentDiv.innerHTML = content;
+    tooltipDiv.style.display = "block";
+    console.log("Tooltip set to display: block (skeleton)");  // NEW LOG
+    
+    // If we have facility info but are showing skeleton, show actual data after delay
+    if (facilityInfo && showSkeleton) {
+      setTimeout(() => {
+        showGenericTooltip(facilityName, false);
+      }, 1000);  // CHANGED: Was 500, now 1000
+    }
+    // If no facility info, try to refresh data
+    else if (!facilityInfo) {
+      console.log("No facility info found, attempting to refresh data...");  // NEW LOG
+      refreshFacilityData().then(() => {
+        const updatedInfo = findFacilityInfo(facilityName);
+        if (updatedInfo) {
+          console.log("Data refreshed, showing tooltip with data");  // NEW LOG
+          showGenericTooltip(facilityName, false);
+        } else {
+          // NEW: Fallback basic tooltip if still no data
+          console.error("Still no facility info after refresh for:", facilityName);  // NEW ERROR LOG
+          // Show a basic tooltip with just the name
+          const basicContent = `
+            <div style="padding: 0; margin: 0; line-height: 1.2;">
+              <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+              <div style="margin-bottom: 8px; font-size: 14px; color: #666;">-</div>
+            </div>
+          `;
+          contentDiv.innerHTML = basicContent;
+          tooltipDiv.style.display = "block";
+        }
+      });
+    }
+    return;
+  }
+  
+  // Show actual content when data is available
+  const description = facilityInfo.description || "";  // CHANGED: Added default ""
+  const imageUrl = facilityInfo.image || "/placeholder-image.png";  // CHANGED: Added default
+  
+  // CHANGED: Conditional image rendering
+  const content = `
+    <div style="padding: 0; margin: 0; line-height: 1.2;">
+      <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+      <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
+      ${imageUrl !== "/placeholder-image.png" ? `
+        <img src="${imageUrl}" 
+             style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
+             onerror="this.style.display='none'" />
+      ` : ''}
+    </div>
+  `;
+  
+  contentDiv.innerHTML = content;
+  tooltipDiv.style.display = "block";
+  console.log("Tooltip set to display: block (with data)");  // NEW LOG
+  console.log("Tooltip display style:", tooltipDiv.style.display);  // NEW LOG
+}
+
+      // Define the assets for the second floor - keep only what's needed
+      const dict = [
+      {
+    "id": "93b14a37-7e7b-4747-bbc5-c2f5f18735d7",
+    "name": "NonAssessibleArea",
+    "type": "polygon",
+    "assets": []
+  },
+  {
+    "id": "83510d18-ceb2-4bec-9d23-cd9b59cf250c",
+    "name": "FemaleToilet",
+    "type": "polygon",
+    "assets": [
+      {
+        "id": "424a1af4-39d2-4151-b29b-f9f18cffbf5b",
+        "name": "2F-FT1",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 55.279,
+              "z": -35.055,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.317,
+              "z": -37.932,
+              "levelIndex": 0
+            },
+            {
+              "x": 59.832,
+              "z": -37.924,
+              "levelIndex": 0
+            },
+            {
+              "x": 59.907,
+              "z": -35.024,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      }
+    ]
+  },
+  {
+    "id": "bca7d0da-c371-4f2c-bc50-86d3446428cc",
+    "name": "MaleToilet",
+    "type": "polygon",
+    "assets": [
+      {
+        "id": "a9dcd490-f664-4f93-9cbe-43fc75be9c9c",
+        "name": "2F-MT1",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 59.828,
+              "z": -35.01,
+              "levelIndex": 0
+            },
+            {
+              "x": 59.894,
+              "z": -37.925,
+              "levelIndex": 0
+            },
+            {
+              "x": 65.406,
+              "z": -37.872,
+              "levelIndex": 0
+            },
+            {
+              "x": 65.227,
+              "z": -35.154,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      }
+    ]
+  },
+  {
+    "id": "151f6d04-df83-4bc6-8525-aa0bf2ff6290",
+    "name": "BookShelves",
+    "type": "furniture",
+    "assets": [
+      {
+        "id": "1727459a-e8cc-4263-8bbc-2def247d5285",
+        "name": "2A01",
+        "furnitureId": "c55bbbeb-3b46-416a-a0db-72da7a02c088",
+        "layerType": "furniture"
+      },
+      {
+        "id": "60accb8b-e47c-4d4f-b6ef-5a37d4a413a1",
+        "name": "2A02",
+        "furnitureId": "786e3c28-b5fc-4c22-a8c7-77140c8e05da",
+        "layerType": "furniture"
+      },
+      {
+        "id": "2b5a2bf9-7bd3-4ae0-8872-ff4ca0b026e9",
+        "name": "2A03",
+        "furnitureId": "324cb7c4-9bed-4d69-872b-a555490cca1a",
+        "layerType": "furniture"
+      },
+      {
+        "id": "0068d637-9ed9-4297-b4c4-3ef1589d8bee",
+        "name": "2A04",
+        "furnitureId": "cae6debd-4d18-4fc8-a4d2-e51fc7e56c2b",
+        "layerType": "furniture"
+      },
+      {
+        "id": "fbaeaa0d-cb98-4678-a2e8-752234e4989b",
+        "name": "2A05",
+        "furnitureId": "f8561d0d-a792-4291-976c-cd97420c9fb3",
+        "layerType": "furniture"
+      },
+      {
+        "id": "a248058a-d1b7-4260-9181-c6b8a662a91d",
+        "name": "2A06",
+        "furnitureId": "ac652397-6719-4761-82c8-41cd6feda332",
+        "layerType": "furniture"
+      },
+      {
+        "id": "3bcc8aeb-b7ea-4d0d-b125-140e47d27c47",
+        "name": "2A07",
+        "furnitureId": "94860a18-4475-4d98-9171-b72638dcf712",
+        "layerType": "furniture"
+      },
+      {
+        "id": "e260d647-69c9-4d22-873f-e9a56381e836",
+        "name": "2A08",
+        "furnitureId": "6cb338b0-3cd9-413d-af3f-e38b6469809c",
+        "layerType": "furniture"
+      },
+      {
+        "id": "50a90140-ba34-4c64-b39a-33d60bc7a4d3",
+        "name": "2A09",
+        "furnitureId": "917cd55f-143a-46b9-931a-668e2c516aac",
+        "layerType": "furniture"
+      },
+      {
+        "id": "4115810e-573f-4c66-91fd-74ed0186ae09",
+        "name": "2A10",
+        "furnitureId": "3a7974f2-15a0-4c62-b3c3-40361aa43c16",
+        "layerType": "furniture"
+      },
+      {
+        "id": "02adc9df-0fd7-485b-ac1d-f06e672079e7",
+        "name": "2A11",
+        "furnitureId": "96e21748-6676-46db-ab9d-6c7b1f92200c",
+        "layerType": "furniture"
+      },
+      {
+        "id": "26102806-3235-4c08-9bc1-2632cad41e1e",
+        "name": "2A12",
+        "furnitureId": "9f31aafd-20f2-4866-8433-bc4b3baf51f0",
+        "layerType": "furniture"
+      },
+      {
+        "id": "020c961b-4e35-4c23-bda1-044efb59ac05",
+        "name": "2A13",
+        "furnitureId": "67e72ce6-c7ae-495e-a118-abb105a7e536",
+        "layerType": "furniture"
+      },
+      {
+        "id": "3e466842-9de8-49c3-b020-e6ec3a0fded5",
+        "name": "2A14",
+        "furnitureId": "fc91e751-f7b3-4856-92cd-89ddbcba1c02",
+        "layerType": "furniture"
+      },
+      {
+        "id": "b00235d4-d5a3-4bdb-9ee1-d481fcfac7e0",
+        "name": "2A15",
+        "furnitureId": "872efea0-72f9-4f09-9e81-88ba15c8271e",
+        "layerType": "furniture"
+      },
+      {
+        "id": "339d7ec5-8a3e-47a6-a27c-ecb75791c428",
+        "name": "2A16",
+        "furnitureId": "960c01a1-7ae3-45c2-9eda-3023b6442fa2",
+        "layerType": "furniture"
+      },
+      {
+        "id": "0cc0920b-f058-4aa9-81aa-fc52fd995317",
+        "name": "2B01",
+        "furnitureId": "92a9b2ac-cdfa-479f-8dda-6635d58bf1ba",
+        "layerType": "furniture"
+      },
+      {
+        "id": "6b29764c-ec9c-4c2e-9fbd-f2e5aba99ed1",
+        "name": "2B02",
+        "furnitureId": "b2766e86-0806-4007-8ade-23aa0c6f506d",
+        "layerType": "furniture"
+      },
+      {
+        "id": "3999a195-727f-4c0d-97d8-c18a91eb950a",
+        "name": "2B03",
+        "furnitureId": "2418b769-ef4d-4477-ae6e-0ca4de40149f",
+        "layerType": "furniture"
+      },
+      {
+        "id": "ec949863-6901-4c9c-b81b-2746fff018c5",
+        "name": "2C01",
+        "furnitureId": "145e5cc3-397e-4033-8e31-ece819adacae",
+        "layerType": "furniture"
+      },
+      {
+        "id": "1d015d63-1ceb-4687-a73e-5a1fb6f6611f",
+        "name": "2C02",
+        "furnitureId": "0cfea22c-3348-48a1-8594-71c13f39bf1b",
+        "layerType": "furniture"
+      },
+      {
+        "id": "8cfaa9f7-0f23-4700-9a57-70272590ecec",
+        "name": "2C03",
+        "furnitureId": "74064f90-d461-41c6-8028-227d1d00e141",
+        "layerType": "furniture"
+      },
+      {
+        "id": "c7b2de7d-0c7f-470b-b9b6-d6e076e0d0e1",
+        "name": "2C04",
+        "furnitureId": "9fab116b-2659-4d02-81e4-bc73a85e7ba2",
+        "layerType": "furniture"
+      },
+      {
+        "id": "4e3187fb-c4f9-4be3-a599-9276615d23ef",
+        "name": "2C05",
+        "furnitureId": "3ef34bab-a2cb-4f02-b4a0-1965d7397a3c",
+        "layerType": "furniture"
+      },
+      {
+        "id": "e63233e1-c9aa-40fe-8eb1-f9840763dbad",
+        "name": "2C06",
+        "furnitureId": "2a11f3db-70ca-4c30-9f3a-4405bbfb17f0",
+        "layerType": "furniture"
+      },
+      {
+        "id": "e90f59a3-46fd-48b9-857d-11271ab512f9",
+        "name": "2C07",
+        "furnitureId": "9d6357e7-38e5-4cb3-ac37-49030cec0e8a",
+        "layerType": "furniture"
+      },
+      {
+        "id": "d7a94605-10d4-4185-b4c3-90f5834f67a1",
+        "name": "2C08",
+        "furnitureId": "2458dc8d-a511-45b9-a7e4-4725910e0e11",
+        "layerType": "furniture"
+      },
+      {
+        "id": "0b3184e4-2c23-4b50-9cc8-bdcb2b2b0f0b",
+        "name": "2C09",
+        "furnitureId": "12a84d00-67fa-429e-8894-a9eec7482196",
+        "layerType": "furniture"
+      },
+      {
+        "id": "94b5b0fe-701c-4604-ac8d-c3e53a45966d",
+        "name": "2C10",
+        "furnitureId": "b000fe3e-e354-4868-a6e6-f282d8be9d50",
+        "layerType": "furniture"
+      },
+      {
+        "id": "cba708b6-0814-4d78-96a9-c48d0e7b922d",
+        "name": "2C11",
+        "furnitureId": "9e5e5f47-682c-41bf-b817-8cd2c0933c55",
+        "layerType": "furniture"
+      },
+      {
+        "id": "5120890d-86e5-48fd-b0c4-58ff014a5312",
+        "name": "2C12",
+        "furnitureId": "7956beae-3335-4ca2-88d1-f75ea4ab5c43",
+        "layerType": "furniture"
+      },
+      {
+        "id": "3908f14b-c6a7-4f0c-8b6d-d705c6f0e69e",
+        "name": "2C13",
+        "furnitureId": "3ca8bbe4-015b-4ab3-ad9b-0168ad010552",
+        "layerType": "furniture"
+      },
+      {
+        "id": "a53fce80-8e8e-4d41-bbf1-4cc12013f483",
+        "name": "2C14",
+        "furnitureId": "b5666417-21ef-4fec-99c0-9c492a633074",
+        "layerType": "furniture"
+      },
+      {
+        "id": "733e7731-094c-48d9-899a-1d25f5dfd75a",
+        "name": "2C15",
+        "furnitureId": "27e78ede-8a5c-45f9-b1b0-4f79aa47b9ba",
+        "layerType": "furniture"
+      },
+      {
+        "id": "d859b6e8-343a-4adc-9b94-f5ed0fa256f3",
+        "name": "2A17",
+        "furnitureId": "8a029e32-5149-42ce-a809-444f883efbf8",
+        "layerType": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "cfdac053-2660-4602-9276-a1de71676bad",
+    "name": "facilities_list",
+    "type": "polygon",
+    "assets": [
+      {
+        "id": "02797255-289a-43af-b6c8-e0fff9d48905",
+        "name": "Books HM1101-HN (2/F Zone B)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 18.971,
+              "z": -46.597,
+              "levelIndex": 0
+            },
+            {
+              "x": 19.004,
+              "z": -45.807,
+              "levelIndex": 0
+            },
+            {
+              "x": 24.321,
+              "z": -45.843,
+              "levelIndex": 0
+            },
+            {
+              "x": 24.262,
+              "z": -37.246,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.304,
+              "z": -37.274,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.323,
+              "z": -36.239,
+              "levelIndex": 0
+            },
+            {
+              "x": 24.269,
+              "z": -36.268,
+              "levelIndex": 0
+            },
+            {
+              "x": 24.346,
+              "z": -45.852,
+              "levelIndex": 0
+            },
+            {
+              "x": 34.454,
+              "z": -45.807,
+              "levelIndex": 0
+            },
+            {
+              "x": 34.42,
+              "z": -46.557,
+              "levelIndex": 0
+            },
+            {
+              "x": 19.946,
+              "z": -46.58,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "265a2bb7-1628-49f3-8fd5-d03aa7e139fa",
+        "name": "Current Journals (2/F Zone A)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 14.843,
+              "z": -54.043,
+              "levelIndex": 0
+            },
+            {
+              "x": 14.404,
+              "z": -54.056,
+              "levelIndex": 0
+            },
+            {
+              "x": 14.429,
+              "z": -47.267,
+              "levelIndex": 0
+            },
+            {
+              "x": 14.792,
+              "z": -47.237,
+              "levelIndex": 0
+            },
+            {
+              "x": 13.239,
+              "z": -44.159,
+              "levelIndex": 0
+            },
+            {
+              "x": 13.268,
+              "z": -44.505,
+              "levelIndex": 0
+            },
+            {
+              "x": 8.358,
+              "z": -44.5,
+              "levelIndex": 0
+            },
+            {
+              "x": 8.36,
+              "z": -43.83,
+              "levelIndex": 0
+            },
+            {
+              "x": 13.226,
+              "z": -43.864,
+              "levelIndex": 0
+            },
+            {
+              "x": 13.261,
+              "z": -44.158,
+              "levelIndex": 0
+            },
+            {
+              "x": 14.821,
+              "z": -47.253,
+              "levelIndex": 0
+            },
+            {
+              "x": 14.996,
+              "z": -47.273,
+              "levelIndex": 0
+            },
+            {
+              "x": 15.036,
+              "z": -54.05,
+              "levelIndex": 0
+            },
+            {
+              "x": 15.036,
+              "z": -54.033,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "d2f045f3-5d74-4811-840e-58cdb20c91ae",
+        "name": "Bound Journals (2/F Zone A)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 6.256,
+              "z": -25.547,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.282,
+              "z": -34.978,
+              "levelIndex": 0
+            },
+            {
+              "x": 16.589,
+              "z": -34.968,
+              "levelIndex": 0
+            },
+            {
+              "x": 16.487,
+              "z": -25.483,
+              "levelIndex": 0
+            },
+            {
+              "x": 16.474,
+              "z": -25.49,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.268,
+              "z": -25.511,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "35fd4b2c-5f00-4560-bfaf-c918f36751f0",
+        "name": "Language Examinations & Learning Resources [LANG] (2/F Zone C)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 44.584,
+              "z": -25.691,
+              "levelIndex": 0
+            },
+            {
+              "x": 46.535,
+              "z": -25.681,
+              "levelIndex": 0
+            },
+            {
+              "x": 46.575,
+              "z": -31.836,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.595,
+              "z": -31.802,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.527,
+              "z": -25.621,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.629,
+              "z": -25.798,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "f32c8fce-dad0-45f0-ab92-62b629eb672b",
+        "name": "Lingnan University Archives (2/F Zone A)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": -2.637,
+              "z": -56.219,
+              "levelIndex": 0
+            },
+            {
+              "x": -2.626,
+              "z": -48.357,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.409,
+              "z": -48.384,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.343,
+              "z": -56.253,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "d3654080-7c4b-414c-a75c-d0b976cc52e2",
+        "name": "Multimedia (2/F Zone C)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 46.569,
+              "z": -25.581,
+              "levelIndex": 0
+            },
+            {
+              "x": 46.652,
+              "z": -31.883,
+              "levelIndex": 0
+            },
+            {
+              "x": 54.701,
+              "z": -31.96,
+              "levelIndex": 0
+            },
+            {
+              "x": 54.673,
+              "z": -34.991,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.137,
+              "z": -34.983,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.214,
+              "z": -25.615,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "2cb77f88-3f4a-4608-b5ac-e7555a12bd4b",
+        "name": "Current Issues (2/F Zone B)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 24.277,
+              "z": -36.262,
+              "levelIndex": 0
+            },
+            {
+              "x": 24.28,
+              "z": -37.232,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.272,
+              "z": -37.226,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.3,
+              "z": -36.24,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "e9b6409b-2421-476b-92f3-5e622123437a",
+        "name": "Back Issues (2/F Zone A)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 8.39,
+              "z": -43.826,
+              "levelIndex": 0
+            },
+            {
+              "x": 8.371,
+              "z": -44.469,
+              "levelIndex": 0
+            },
+            {
+              "x": 13.309,
+              "z": -44.503,
+              "levelIndex": 0
+            },
+            {
+              "x": 13.26,
+              "z": -43.894,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "fd861d3b-b124-4a55-882a-248a319c6a04",
+        "name": "References A-HM (2/F Zone A)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 15.946,
+              "z": -48.348,
+              "levelIndex": 0
+            },
+            {
+              "x": 16.688,
+              "z": -48.349,
+              "levelIndex": 0
+            },
+            {
+              "x": 16.698,
+              "z": -54.043,
+              "levelIndex": 0
+            },
+            {
+              "x": 15.921,
+              "z": -54.017,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "2983a1dc-8b11-4bec-bb97-b1ff214b6337",
+        "name": "References HN-Z (2/F Zone C)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 44.361,
+              "z": -47.756,
+              "levelIndex": 0
+            },
+            {
+              "x": 45.213,
+              "z": -47.773,
+              "levelIndex": 0
+            },
+            {
+              "x": 45.188,
+              "z": -53.515,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.329,
+              "z": -53.489,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "ba53551e-4c19-4a9e-9d88-55cb97d08781",
+        "name": "Lee Hak Kan Multimedia and Language Learning Centre - MLLC (2/F Zone C)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 47.056,
+              "z": -33.064,
+              "levelIndex": 0
+            },
+            {
+              "x": 53.388,
+              "z": -32.991,
+              "levelIndex": 0
+            },
+            {
+              "x": 53.337,
+              "z": -37.651,
+              "levelIndex": 0
+            },
+            {
+              "x": 54.952,
+              "z": -38.348,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.251,
+              "z": -39.211,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.31,
+              "z": -45.868,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.243,
+              "z": -54.449,
+              "levelIndex": 0
+            },
+            {
+              "x": 53.831,
+              "z": -54.453,
+              "levelIndex": 0
+            },
+            {
+              "x": 53.879,
+              "z": -51.355,
+              "levelIndex": 0
+            },
+            {
+              "x": 50.923,
+              "z": -52.039,
+              "levelIndex": 0
+            },
+            {
+              "x": 50.904,
+              "z": -53.281,
+              "levelIndex": 0
+            },
+            {
+              "x": 47.272,
+              "z": -53.379,
+              "levelIndex": 0
+            },
+            {
+              "x": 47.334,
+              "z": -48.576,
+              "levelIndex": 0
+            },
+            {
+              "x": 50.961,
+              "z": -48.511,
+              "levelIndex": 0
+            },
+            {
+              "x": 50.917,
+              "z": -52.021,
+              "levelIndex": 0
+            },
+            {
+              "x": 53.877,
+              "z": -51.34,
+              "levelIndex": 0
+            },
+            {
+              "x": 53.888,
+              "z": -46.297,
+              "levelIndex": 0
+            },
+            {
+              "x": 54.607,
+              "z": -46.316,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.268,
+              "z": -46.317,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.246,
+              "z": -39.211,
+              "levelIndex": 0
+            },
+            {
+              "x": 54.934,
+              "z": -38.346,
+              "levelIndex": 0
+            },
+            {
+              "x": 54.945,
+              "z": -38.345,
+              "levelIndex": 0
+            },
+            {
+              "x": 54.181,
+              "z": -37.992,
+              "levelIndex": 0
+            },
+            {
+              "x": 54.178,
+              "z": -37.99,
+              "levelIndex": 0
+            },
+            {
+              "x": 53.339,
+              "z": -37.658,
+              "levelIndex": 0
+            },
+            {
+              "x": 47.038,
+              "z": -37.607,
+              "levelIndex": 0
+            },
+            {
+              "x": 47.02,
+              "z": -37.243,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "d0bc7111-7fdb-41b2-99ce-6434721407bc",
+        "name": "21, 23 (2/F Zone C)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 44.732,
+              "z": -35.895,
+              "levelIndex": 0
+            },
+            {
+              "x": 45.773,
+              "z": -35.872,
+              "levelIndex": 0
+            },
+            {
+              "x": 45.796,
+              "z": -34.474,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.757,
+              "z": -34.463,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "7d29c189-455f-4ac9-927b-75264829d3fe",
+        "name": "22BW (2/F Zone A)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 6.469,
+              "z": -43.433,
+              "levelIndex": 0
+            },
+            {
+              "x": 7.603,
+              "z": -43.458,
+              "levelIndex": 0
+            },
+            {
+              "x": 7.615,
+              "z": -42.071,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.474,
+              "z": -42.091,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "0a491f46-ea57-4674-b494-8a2ecb513adf",
+        "name": "Group Study Room 10 - 11 (2/F Zone B)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 16.503,
+              "z": -40.08,
+              "levelIndex": 0
+            },
+            {
+              "x": 16.527,
+              "z": -34.431,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.57,
+              "z": -34.314,
+              "levelIndex": 0
+            },
+            {
+              "x": 38.814,
+              "z": -34.364,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.563,
+              "z": -34.342,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.609,
+              "z": -39.962,
+              "levelIndex": 0
+            },
+            {
+              "x": 37.862,
+              "z": -37.178,
+              "levelIndex": 0
+            },
+            {
+              "x": 37.91,
+              "z": -34.374,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.311,
+              "z": -34.311,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.338,
+              "z": -37.048,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "6adfc182-439f-41c2-8789-361fdba793cd",
+        "name": "Chang Han-tsiu Reading Room (2/F Zone A)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 7.589,
+              "z": -36.227,
+              "levelIndex": 0
+            },
+            {
+              "x": 14.244,
+              "z": -36.231,
+              "levelIndex": 0
+            },
+            {
+              "x": 14.235,
+              "z": -59.153,
+              "levelIndex": 0
+            },
+            {
+              "x": 12.415,
+              "z": -60.53,
+              "levelIndex": 0
+            },
+            {
+              "x": 7.489,
+              "z": -60.64,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "e0d95117-64aa-428d-8bde-d331fa064d54",
+        "name": "Lee Hak Kan Multimedia and Language Learning Centre - MLLC (2/F Zone C)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 55.319,
+              "z": -32.485,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.633,
+              "z": -32.344,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.763,
+              "z": -58.305,
+              "levelIndex": 0
+            },
+            {
+              "x": 51.279,
+              "z": -62.231,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.27,
+              "z": -62.182,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "a92937ea-f520-4045-b98a-edb1dc3be071",
+        "name": "Mini Theatre (2/F Zone B)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 23.231,
+              "z": -34.404,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.23,
+              "z": -37.195,
+              "levelIndex": 0
+            },
+            {
+              "x": 16.509,
+              "z": -39.941,
+              "levelIndex": 0
+            },
+            {
+              "x": 16.513,
+              "z": -42.436,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.972,
+              "z": -42.42,
+              "levelIndex": 0
+            },
+            {
+              "x": 23.895,
+              "z": -45.763,
+              "levelIndex": 0
+            },
+            {
+              "x": 37.489,
+              "z": -45.881,
+              "levelIndex": 0
+            },
+            {
+              "x": 37.444,
+              "z": -42.471,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.618,
+              "z": -42.488,
+              "levelIndex": 0
+            },
+            {
+              "x": 44.602,
+              "z": -39.925,
+              "levelIndex": 0
+            },
+            {
+              "x": 37.855,
+              "z": -37.09,
+              "levelIndex": 0
+            },
+            {
+              "x": 37.905,
+              "z": -34.412,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "f738d6e8-1f42-4be7-8bd8-2398ebbb4d49",
+        "name": "2/F (2/F Zone A)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 6.392,
+              "z": -36.915,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.647,
+              "z": -36.989,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.639,
+              "z": -36.312,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.399,
+              "z": -36.326,
+              "levelIndex": 0
+            },
+            {
+              "x": 6.392,
+              "z": -36.321,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "80339a7e-458a-4b8d-96a5-8dc106e59c28",
+        "name": "2/F Male & Female (Zone C)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 55.314,
+              "z": -35.036,
+              "levelIndex": 0
+            },
+            {
+              "x": 55.33,
+              "z": -37.93,
+              "levelIndex": 0
+            },
+            {
+              "x": 65.323,
+              "z": -37.957,
+              "levelIndex": 0
+            },
+            {
+              "x": 65.345,
+              "z": -35,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      },
+      {
+        "id": "af0a79b4-e8d5-4362-891a-818391977191",
+        "name": "Lift (2/F Zone B)",
+        "levelIndex": 0,
+        "coordinates": [
+          [
+            {
+              "x": 38.093,
+              "z": -45.815,
+              "levelIndex": 0
+            },
+            {
+              "x": 38.019,
+              "z": -48.876,
+              "levelIndex": 0
+            },
+            {
+              "x": 42.247,
+              "z": -48.881,
+              "levelIndex": 0
+            },
+            {
+              "x": 42.229,
+              "z": -45.899,
+              "levelIndex": 0
+            }
+          ]
+        ],
+        "layerType": "polygon",
+        "mapped": true
+      }
+    ]
+  }
+];
+
+      // Space class to handle the Smplrspace viewer and data
+      class Space {
+        constructor(spaceId, clientToken, toilets, nonAccessibleArea, rooms) {
+          this.spaceId = spaceId;
+          this.clientToken = clientToken;
+          this.space = null;
+          this.toilets = toilets;
+          this.nonAccessibleArea = nonAccessibleArea;
+          this.rooms = rooms;
+          this._clickHandlerSet = false;
+
+        }
+
+        initSpace(smplr) {
+  this.space = new smplr.Space({
+    spaceId: this.spaceId,
+    clientToken: this.clientToken,
+    containerId: "smplrspace-container",
+  });
+  this.space.startViewer({
+    preview: false,
+    allowModeChange: true,
+    disableCameraRotation: true,
+     loadingMessage: "Loading...",
+    cameraPlacement: {
+      alpha: -1.5722224976673886,
+      beta: 0.22438049962679768,
+      radius: 151.566640313453746,
+      target: {
+        x: 30.2418383712391,
+        y: 14,
+        z: -48.20580854095632,
+      },
+    },
+    onReady: () => {
+      this.updateDataLayers();
+      // Check for facility parameter after space is ready
+      const params = new URLSearchParams(window.location.search);
+      const facility = params.get("facility");
+      if (facility && this.rooms && this.rooms.length > 0) {
+        // Focus camera on the facility if it exists
+        const facilityRoom = this.rooms.find(r => r.name === facility);
+        if (facilityRoom && facilityRoom.coordinates) {
+          // Calculate center of facility for camera positioning
+          // You may need to adjust these values based on your space
+          this.space.setCameraPlacement({
+            alpha: -1.5722224976673886,
+            beta: 0.22438049962679768,
+            radius: 80, // Zoom in closer
+            target: {
+              x: facilityRoom.coordinates[0][0].x,
+              y: 14,
+              z: facilityRoom.coordinates[0][0].z,
+            },
+          });
+        }
+      }
+    },
+    onError: (error) => console.error("Could not start viewer", error),
+  });
+}
+
+        updateDataLayers() {
+  // Remove previous layers if any
+  this.space.removeDataLayer("toilets");
+  this.space.removeDataLayer("nonAccessibleArea");
+  this.space.removeDataLayer("rooms");
+
+  const isToiletsEmpty = !this.toilets || this.toilets.length === 0;
+  const isNonAccessibleAreaEmpty = !this.nonAccessibleArea || this.nonAccessibleArea.length === 0;
+  const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
+
+  if (!isToiletsEmpty) {
+    this.space.addDataLayer({
+      id: "toilets",
+      type: "polygon",
+      data: this.toilets,
+      tooltip: (d) => {
+        const isFemale = d.name.includes("FT");
+        return `${isFemale ? "Female Toilet" : "Male Toilet"}`;
+      },
+      color: (d) => d.color || "#AED6F1",
+      alpha: 4.9,
+      height: 1.0,
+    });
+  }
+
+  if (!isNonAccessibleAreaEmpty) {
+    this.space.addDataLayer({
+      id: "nonAccessibleArea",
+      type: "polygon",
+      data: this.nonAccessibleArea,
+      tooltip: (d) => "Not Accessible",
+      color: (d) => d.color || color_dict.restricted,
+      alpha: 2.2,
+      height: 1.0,
+    });
+  }
+
+  if (!isRoomsEmpty) {
+    this.space.addDataLayer({
+      id: "rooms",
+      type: "polygon",
+      data: this.rooms,
+      color: (d) => d.color,
+      alpha: 2.2,
+      height: (d) => d.height || 2.4,
+    });
+  }
+
+  // Add click handlers for custom tooltip
+// FIXED: Only set up click handlers if space is ready and handlers aren't already set
+if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
+  console.log("Setting up click handlers");
+  this.space.on("click", (event) => {
+    if (event.data && event.data.name) {
+      console.log("Click detected on:", event.data.name);
+      showGenericTooltip(event.data.name, true);
+    }
+  });
+  this._clickHandlerSet = true;
+}
+}
+
+updateMapForFacility() {
+  this.updateDataLayers();
+}
+      }
+
+      const toilet_assets = [];
+
+      // Initialize non-accessible area with red color
+      const nonAccessibleArea_assets = dict[0]["assets"].map((area) => {
+        return {
+          ...area,
+          available: "restricted",
+          color: color_dict["restricted"],
+        };
+      });
+
+      // Create the Space instance
+      let spc = new Space(
+        SPACE_ID,
+        CLIENT_ID,
+        toilet_assets,
+        nonAccessibleArea_assets, rooms
+      );
+
+      // delete dict;
+
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      async function start() {
+  while (typeof smplr === "undefined") {
+    await wait();
+  }
+  
+  console.log("Starting initialization...");
+  
+  // Fetch facility data first and wait for it
+  await fetchFacilityData();
+  console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
+  
+  spc.initSpace(smplr);
+  console.log("Space initialized");
+  
+  // Handle query parameter after everything is initialized
+  setTimeout(() => {
+    console.log("Calling handleQueryParameter...");
+    handleQueryParameter();
+  }, 3500);
+  
+}
+      start();
+    </script>
+
+  </body>
+</html>
