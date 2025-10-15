@@ -320,13 +320,13 @@ async function handleQueryParameter() {
     console.log("Facility asset found, calling handleGenericFacility");
     setTimeout(() => {
       handleGenericFacility(facilityAsset, matchedFacility.name);
-    }, 2000);
+    }, 1500);
   } else {
     // Facility exists in API but not in visual map - just show tooltip
     console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
     setTimeout(() => {
       showGenericTooltip(matchedFacility.name, true);
-    }, 2000);
+    }, 1500);
   }
 } else {
       console.log('No facility found for query_id:', queryId);
@@ -429,11 +429,11 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
     }
   }, 1500);  // CHANGED: Was 3000, now 1500
   
-  // FIXED: Show tooltip with multiple retry attempts - CHANGED: Increased from 1000 to 2000
+  // FIXED: Show tooltip with multiple retry attempts - CHANGED: Increased from 1000 to 1500
   setTimeout(() => {
     console.log("First tooltip attempt for:", facilityName);  // NEW LOG
     showGenericTooltip(facilityName, true);
-  }, 2000);  // CHANGED: Was 1000, now 2000
+  }, 1500);  // CHANGED: Was 1000, now 1500
   
   // NEW: Retry showing tooltip if it didn't appear - COMPLETELY NEW BLOCK
   setTimeout(() => {
