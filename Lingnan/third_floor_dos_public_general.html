@@ -358,30 +358,22 @@ async function handleQueryParameter() {
     }
     
     if (matchedFacility) {
-      // Try to find the facility asset in dict
-      let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
-      if (!facilityAsset) {
-        facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
-      }
-      
-      if (facilityAsset) {
-        console.log("Facility asset found, calling handleGenericFacility");
-        setTimeout(() => {
-          handleGenericFacility(facilityAsset, matchedFacility.name);
-        }, 2000);
-      } else {
-        // Facility exists in API but not in visual map - just show tooltip
-        console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
-        setTimeout(() => {
-          showGenericTooltip(matchedFacility.name, true);
-          // Set camera to a default position or facility-specific position if available
-          if (spc && spc.space) {
-            // You might want to set a default camera position here
-            console.log("Setting default camera view");
-          }
-        }, 2000);
-      }
-    } else {
+  // Try to find the facility asset in facilities_list
+  let facilityAsset = facilities_list.assets.find(asset => asset.name === matchedFacility.name);
+  
+  if (facilityAsset) {
+    console.log("Facility asset found, calling handleGenericFacility");
+    setTimeout(() => {
+      handleGenericFacility(facilityAsset, matchedFacility.name);
+    }, 2000);
+  } else {
+    // Facility exists in API but not in visual map - just show tooltip
+    console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+    setTimeout(() => {
+      showGenericTooltip(matchedFacility.name, true);
+    }, 2000);
+  }
+}else {
       console.log('No facility found for query_id:', queryId);
     }
   } else if (queryId && !facilityAPIData) {
