@@ -6553,7 +6553,7 @@ function handleSpecialFacility(facility) {
 function getFacilityHeight(facilityName) {
   const heightMap = {
     "Service Counter (1/F Zone A)": 1.1,
-    "Books A-DS776 (1/F Zone A)": 3.2,
+    "Books A-DS776 (1/F Zone A)": 3.1,
     "Books DS777-HJ (1/F Zone C)": 3.0,
     "Course Reserves (1/F Zone A) ": 3.0,
     "Good Reads, New Arrivals (1/F Zone B)": 3.0,
@@ -6689,6 +6689,55 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
   console.log("Tooltip set to display: block (with data)");
   console.log("Tooltip display style:", tooltipDiv.style.display);
 }
+// Function to calculate center point of a polygon
+function getPolygonCenter(coordinates) {
+  if (!coordinates || !coordinates[0] || coordinates[0].length === 0) {
+    return null;
+  }
+  
+  const points = coordinates[0];
+  let sumX = 0;
+  let sumZ = 0;
+  
+  for (const point of points) {
+    sumX += point.x;
+    sumZ += point.z;
+  }
+  
+  return {
+    x: sumX / points.length,
+    z: sumZ / points.length,
+    levelIndex: points[0].levelIndex || 0,
+    elevation: 1.5 // Height above ground
+  };
+}
+
+// Prepare icon data for specific facilities
+function prepareIconData() {
+  const iconFacilities = [
+    "Bloomberg Terminal – Database Workstation (1/F Zone B)",
+    "13 (1/F Zone A)"
+  ];
+  
+  const iconData = [];
+  
+  // Search in facilities_list (dict[11])
+  dict[11].assets.forEach(asset => {
+    if (iconFacilities.includes(asset.name)) {
+      const center = getPolygonCenter(asset.coordinates);
+      if (center) {
+        iconData.push({
+          id: asset.id,
+          name: asset.name,
+          position: center
+        });
+      }
+    }
+  });
+  
+  console.log("Icon data prepared:", iconData);
+  return iconData;
+}
 
 // smplrspace-script.js
 class Space {
@@ -6739,6 +6788,7 @@ class Space {
     this.space.removeDataLayer("rooms");
     this.space.removeDataLayer("desks");
     this.space.removeDataLayer("Notaccessible");
+    this.space.removeDataLayer("icons"); 
 
     const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
     const isDesksEmpty = !this.desks || this.desks.length === 0;
@@ -6752,7 +6802,7 @@ class Space {
         type: "polygon",
         data: this.rooms,
         color: (d) => d.color,
-        alpha: 0.6,
+        alpha: 1.2,
         height: (d) => d.height || 2.4,
       });
     }
@@ -6776,6 +6826,22 @@ class Space {
         height: (d) => d.height,
       });
     }
+
+    const iconData = prepareIconData();
+  if (iconData.length > 0) {
+    this.space.addDataLayer({
+      id: "icons",
+      type: "icon",
+      data: iconData,
+      icon: {
+        url: "./icon.png", 
+        width: 512,  // Adjust based on your actual icon dimensions
+        height: 512  // Adjust based on your actual icon dimensions
+      },
+      width: 1.5, // Icon width in meters (adjust as needed)
+  
+    });
+  }
     
     // FIXED: Only set up click handlers if space is ready and handlers aren't already set
     if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
