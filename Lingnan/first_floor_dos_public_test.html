@@ -6314,7 +6314,6 @@ async function fetchFacilityData() {
   }
 }
 
-// Replace the existing handleQueryParameter function with this:
 async function handleQueryParameter() {
   const urlParams = new URLSearchParams(window.location.search);
   const queryId = urlParams.get('query');
@@ -6370,25 +6369,39 @@ async function handleQueryParameter() {
     }
     
     if (matchedFacility) {
-      // Try to find the facility asset in dict
-      let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
-      if (!facilityAsset) {
-        facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
+      // Try to find ALL facility assets with the same name
+      const matchingAssets = [];
+      
+      // Search in dict[11]
+      if (dict[11] && dict[11].assets) {
+        dict[11].assets.forEach(asset => {
+          if (asset.name === matchedFacility.name) {
+            matchingAssets.push(asset);
+          }
+        });
       }
       
-      if (facilityAsset) {
-        console.log("Facility asset found, calling handleGenericFacility");
+      // Search in dict[12]
+      if (dict[12] && dict[12].assets) {
+        dict[12].assets.forEach(asset => {
+          if (asset.name === matchedFacility.name) {
+            matchingAssets.push(asset);
+          }
+        });
+      }
+      
+      if (matchingAssets.length > 0) {
+        console.log(`Found ${matchingAssets.length} facility assets, calling handleGenericFacility`);
         setTimeout(() => {
-          handleGenericFacility(facilityAsset, matchedFacility.name);
+          handleGenericFacility(matchingAssets[0], matchedFacility.name);
         }, 2000);
       } else {
         // Facility exists in API but not in visual map - just show tooltip
-        console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+        console.log("No facility assets found, showing tooltip only for:", matchedFacility.name);
         setTimeout(() => {
           showGenericTooltip(matchedFacility.name, true);
           // Set camera to a default position or facility-specific position if available
           if (spc && spc.space) {
-            // You might want to set a default camera position here
             console.log("Setting default camera view");
           }
         }, 2000);
@@ -6450,9 +6463,32 @@ function findFacilityInfo(facilityName) {
   return null;
 }
 
-// Generic facility handler
+// Generic facility handler - modified to handle multiple facilities with same name
 function handleGenericFacility(facilityAsset, facilityName) {
   console.log("handleGenericFacility called for:", facilityName);
+  
+  // Find ALL assets with the same name
+  const matchingAssets = [];
+  
+  // Search in dict[11] (facilities_list)
+  if (dict[11] && dict[11].assets) {
+    dict[11].assets.forEach(asset => {
+      if (asset.name === facilityName) {
+        matchingAssets.push(asset);
+      }
+    });
+  }
+  
+  // Search in dict[12] (facilities_demo) 
+  if (dict[12] && dict[12].assets) {
+    dict[12].assets.forEach(asset => {
+      if (asset.name === facilityName) {
+        matchingAssets.push(asset);
+      }
+    });
+  }
+  
+  console.log(`Found ${matchingAssets.length} matching assets for:`, facilityName);
   
   let facilityInfo = findFacilityInfo(facilityName);
   console.log("Initial facility info:", facilityInfo);
@@ -6463,12 +6499,72 @@ function handleGenericFacility(facilityAsset, facilityName) {
     refreshFacilityData().then(() => {
       facilityInfo = findFacilityInfo(facilityName);
       console.log("Facility info after refresh:", facilityInfo);
-      updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+      updateMultipleFacilityDisplays(matchingAssets, facilityName, facilityInfo);
     });
     return;
   }
   
-  updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+  updateMultipleFacilityDisplays(matchingAssets, facilityName, facilityInfo);
+}
+
+// New function to handle multiple facilities
+function updateMultipleFacilityDisplays(facilityAssets, facilityName, facilityInfo) {
+  console.log("updateMultipleFacilityDisplays called for:", facilityName);
+  console.log("Number of assets to highlight:", facilityAssets.length);
+  console.log("Facility info:", facilityInfo);
+  
+  // Clear previous highlights for this facility type
+  rooms = rooms.filter(room => room.name !== facilityName);
+  
+  // Add all matching facilities to rooms array
+  facilityAssets.forEach((asset, index) => {
+    const room = {
+      id: asset.id,
+      name: asset.name,
+      levelIndex: asset.levelIndex,
+      coordinates: asset.coordinates,
+      layerType: asset.layerType,
+      mapped: asset.mapped,
+      height: getFacilityHeight(facilityName),
+      color: "#E566FF",
+      available: "Available",
+      description: facilityInfo?.description || "Available for use"
+    };
+    
+    rooms.push(room);
+    console.log(`Added room ${index + 1} of ${facilityAssets.length}`);
+  });
+  
+  console.log("Total rooms after adding:", rooms.length);
+  
+  // Update map immediately
+  if (spc && spc.space) {
+    spc.updateMapForFacility();
+    console.log("Map updated with all matching facilities");
+  }
+  
+  // Set camera to show all highlighted areas (focus on the first one)
+  setTimeout(() => {
+    if (spc && spc.space && spc.setCameraForFacility) {
+      spc.setCameraForFacility(facilityName);
+      console.log("Camera positioned");
+    }
+  }, 1500);
+  
+  // Show tooltip
+  setTimeout(() => {
+    console.log("First tooltip attempt for:", facilityName);
+    showGenericTooltip(facilityName, true);
+  }, 2000);
+  
+  // Retry showing tooltip if it didn't appear
+  setTimeout(() => {
+    const tooltipDiv = document.getElementById("custom-tooltip");
+    if (tooltipDiv && tooltipDiv.style.display !== "block") {
+      console.log("Tooltip not visible, retrying...");
+      showGenericTooltip(facilityName, false);
+    }
+  }, 4000);
 }
 
 // Extract display logic
