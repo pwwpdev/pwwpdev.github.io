@@ -6796,8 +6796,10 @@ class Space {
       });
     }
 
-    // Add this after the Notaccessible layer
-if (facilityName === "13 (1/F Zone A)") {
+   // Add icon layer if "13 (1/F Zone A)" is in the rooms array
+const has13Facility = this.rooms && this.rooms.some(room => room.name === "13 (1/F Zone A)");
+
+if (has13Facility) {
   this.space.addDataLayer({
     id: "facility-icon",
     type: "icon",
@@ -6812,7 +6814,7 @@ if (facilityName === "13 (1/F Zone A)") {
       }
     }],
     icon: {
-      url: "./icon.png",  
+      url: "./icon.png",  // Make sure this path is correct
       width: 180,
       height: 180
     },
