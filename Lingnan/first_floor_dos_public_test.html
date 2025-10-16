@@ -6463,11 +6463,10 @@ function findFacilityInfo(facilityName) {
   return null;
 }
 
-// Generic facility handler - modified to handle multiple facilities with same name
 function handleGenericFacility(facilityAsset, facilityName) {
   console.log("handleGenericFacility called for:", facilityName);
   
-  // Find ALL assets with the same name
+  // Find ALL assets with the same name (ignore facilityAsset parameter)
   const matchingAssets = [];
   
   // Search in dict[11] (facilities_list)
@@ -6489,6 +6488,13 @@ function handleGenericFacility(facilityAsset, facilityName) {
   }
   
   console.log(`Found ${matchingAssets.length} matching assets for:`, facilityName);
+  
+  if (matchingAssets.length === 0) {
+    console.log("No matching assets found in visual data");
+    // Still try to show tooltip
+    showGenericTooltip(facilityName, true);
+    return;
+  }
   
   let facilityInfo = findFacilityInfo(facilityName);
   console.log("Initial facility info:", facilityInfo);
@@ -6997,14 +7003,21 @@ const params = new URLSearchParams(url.search);
 const facility = params.get("facility");
 
 if (!!facility) {
-  // Check both facilities_list (dict[11]) and facilities_demo (dict[12])
-  let facilityAsset = dict[11].assets.find(asset => asset.name === facility);
-  if (!facilityAsset) {
-    facilityAsset = dict[12].assets.find(asset => asset.name === facility);
+  // Don't find a single asset, just call handleGenericFacility with the facility name
+  // The function will find ALL matching assets internally
+  
+  // Check if at least one asset exists with this name
+  let assetExists = false;
+  if (dict[11] && dict[11].assets) {
+    assetExists = dict[11].assets.some(asset => asset.name === facility);
+  }
+  if (!assetExists && dict[12] && dict[12].assets) {
+    assetExists = dict[12].assets.some(asset => asset.name === facility);
   }
   
-  if (facilityAsset) {
-    handleGenericFacility(facilityAsset, facility);
+  if (assetExists) {
+    // Pass null as first parameter since handleGenericFacility will find all assets itself
+    handleGenericFacility(null, facility);
   } else {
     // For API-only facilities, just show tooltip without adding to map
     console.log('Facility coordinates not found, will show tooltip only');
