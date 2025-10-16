@@ -6800,7 +6800,6 @@ class Space {
 const has13Facility = this.rooms && this.rooms.some(room => room.name === "13 (1/F Zone A)");
 
 console.log("Checking for 13 facility...");
-console.log("Rooms array:", this.rooms);
 console.log("Has 13 facility:", has13Facility);
 
 if (has13Facility) {
@@ -6814,17 +6813,17 @@ if (has13Facility) {
         levelIndex: 0,
         position: {
           x: 89.59,
-          z: -37.906,
-          elevation: 1.5,
+          z: -36.0,  // Moved NORTH (reduced z value) - above the polygon
+          elevation: 2.0,  // Increased elevation
           levelIndex: 0
         }
       }],
       icon: {
-        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjhXy9CNPvI5Z6WSfAtVF99NgNx-esQNlsQA&s",
-        width: 64,
-        height: 64
+        url: "https://raw.githubusercontent.com/smplrspace/smplr-loader/main/examples/assets/pin-orange.png",
+        width: 128,  // Made bigger
+        height: 128
       },
-      width: 0.5
+      width: 1.0  // Made bigger
     });
     console.log("Icon layer added successfully!");
   } catch (error) {
