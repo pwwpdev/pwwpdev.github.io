@@ -6212,9 +6212,9 @@
       "name": "13 Icon",
       "levelIndex": 0,
       "position": {
-        "x": 102.59,  // Center of the polygon
-        "z": -39.906,
-        "elevation": 4.5,  // Raised above ground
+        "x": 89.59,  // Center of the polygon
+        "z": -37.906,
+        "elevation": 1.5,  // Raised above ground
         "levelIndex": 0
       },
       "layerType": "point"
@@ -6796,30 +6796,40 @@ class Space {
       });
     }
 
-   // Add icon layer if "13 (1/F Zone A)" is in the rooms array
+// Add icon layer if "13 (1/F Zone A)" is in the rooms array
 const has13Facility = this.rooms && this.rooms.some(room => room.name === "13 (1/F Zone A)");
 
+console.log("Checking for 13 facility...");
+console.log("Rooms array:", this.rooms);
+console.log("Has 13 facility:", has13Facility);
+
 if (has13Facility) {
-  this.space.addDataLayer({
-    id: "facility-icon",
-    type: "icon",
-    data: [{
-      id: "icon-13",
-      levelIndex: 0,
-      position: {
-        x: 89.59,
-        z: -37.906,
-        elevation: 1.5,
-        levelIndex: 0
-      }
-    }],
-    icon: {
-      url: "./icon.png",  // Make sure this path is correct
-      width: 280,
-      height: 280
-    },
-    width: 2.5
-  });
+  console.log("Adding icon layer for 13 (1/F Zone A)");
+  try {
+    this.space.addDataLayer({
+      id: "facility-icon",
+      type: "icon",
+      data: [{
+        id: "icon-13",
+        levelIndex: 0,
+        position: {
+          x: 89.59,
+          z: -37.906,
+          elevation: 1.5,
+          levelIndex: 0
+        }
+      }],
+      icon: {
+        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjhXy9CNPvI5Z6WSfAtVF99NgNx-esQNlsQA&s",
+        width: 64,
+        height: 64
+      },
+      width: 0.5
+    });
+    console.log("Icon layer added successfully!");
+  } catch (error) {
+    console.error("Error adding icon layer:", error);
+  }
 }
     
     // FIXED: Only set up click handlers if space is ready and handlers aren't already set
