@@ -6799,33 +6799,61 @@ class Space {
 // Add icon layer if "13 (1/F Zone A)" is in the rooms array
 const has13Facility = this.rooms && this.rooms.some(room => room.name === "13 (1/F Zone A)");
 
-console.log("Checking for 13 facility...");
+// Add icon layer if "Bloomberg Terminal - Database Workstation (1/F Zone B)" is in the rooms array
+const hasBloombergFacility = this.rooms && this.rooms.some(room => room.name === "Bloomberg Terminal - Database Workstation (1/F Zone B)");
+
+console.log("Checking for facilities...");
 console.log("Has 13 facility:", has13Facility);
+console.log("Has Bloomberg facility:", hasBloombergFacility);
+
+// Array to hold all icon data
+const iconData = [];
 
 if (has13Facility) {
-  console.log("Adding icon layer for 13 (1/F Zone A)");
+  console.log("Adding icon for 13 (1/F Zone A)");
+  iconData.push({
+    id: "icon-13",
+    levelIndex: 0,
+    position: {
+      x: 89.59,
+      z: -41.0,  // Above the polygon
+      elevation: 2.0,
+      levelIndex: 0
+    }
+  });
+}
+
+if (hasBloombergFacility) {
+  console.log("Adding icon for Bloomberg Terminal");
+  // Bloomberg coordinates: x: 84.476 to 86.152, z: -61.964 to -60.881
+  // Center: x ≈ 85.3, z ≈ -61.4
+  iconData.push({
+    id: "icon-bloomberg",
+    levelIndex: 0,
+    position: {
+      x: 85.3,
+      z: -62.0,  // Above (north of) the polygon
+      elevation: 7.0,
+      levelIndex: 0
+    }
+  });
+}
+
+// Add the icon layer if there's any icon data
+if (iconData.length > 0) {
   try {
     this.space.addDataLayer({
       id: "facility-icon",
       type: "icon",
-      data: [{
-        id: "icon-13",
-        levelIndex: 0,
-        position: {
-          x: 89.59,
-          z: -35.0,  // Moved NORTH (reduced z value) - above the polygon
-          elevation: 2.0,  // Increased elevation
-          levelIndex: 0
-        }
-      }],
+      data: iconData,
       icon: {
         url: "./icon.png",
-        width: 512,  // Made bigger
+        width: 512,
         height: 512
       },
-      width: 3.0  // Made bigger
+      width: 3.0  
     });
-    console.log("Icon layer added successfully!");
+    console.log("Icon layer(s) added successfully!");
   } catch (error) {
     console.error("Error adding icon layer:", error);
   }
