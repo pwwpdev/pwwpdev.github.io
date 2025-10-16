@@ -3957,7 +3957,7 @@
       },
       {
         "id": "adbe21f3-e422-40b1-9ee8-6de4a9dd9eda",
-        "name": "Category III Multimedia – Ask at Service Counter (1/F Zone A)",
+        "name": "Category III Multimedia - Ask at Service Counter (1/F Zone A)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4173,7 +4173,7 @@
       },
       {
         "id": "34591980-9858-4f69-9fd3-564efa471f47",
-        "name": "Bloomberg Terminal – Database Workstation (1/F Zone B)",
+        "name": "Bloomberg Terminal - Database Workstation (1/F Zone B)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4333,7 +4333,7 @@
       },
       {
         "id": "189f3c16-af29-4cef-983e-e0db9211b145",
-        "name": "Individual Study Rooms 1 – 7 (1/F Zone C)",
+        "name": "Individual Study Rooms 1 - 7 (1/F Zone C)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4410,7 +4410,7 @@
       },
       {
         "id": "73f476ff-8e30-48e8-a0c9-21e0e1cbf642",
-        "name": "Individual Study Rooms 9 – 11 (1/F Zone A)",
+        "name": "Individual Study Rooms 9 - 11 (1/F Zone A)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4441,7 +4441,7 @@
       },
       {
         "id": "d99d78b8-e98f-4833-a312-9eae30281a5d",
-        "name": "Group Study Rooms 1 – 4 (1/F Zone C)",
+        "name": "Group Study Rooms 1 - 4 (1/F Zone C)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4503,7 +4503,7 @@
       },
       {
         "id": "f56a0186-a08c-49a5-8121-7bb306d70875",
-        "name": "Group Study Rooms 8 – 9 (1/F Zone A)",
+        "name": "Group Study Rooms 8 - 9 (1/F Zone A)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -5043,7 +5043,7 @@
       },
       {
         "id": "64ad1506-1d62-4522-9c9d-6a98e6776221",
-        "name": "1/F Unisex – Available during Overnight Study Period (Zone B)",
+        "name": "1/F Unisex - Available during Overnight Study Period (Zone B)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -5300,7 +5300,7 @@
       },
       {
         "id": "d67f0a01-4e82-4706-b206-1c1fc6f711a5",
-        "name": "SEN Equipment – Service Counter (1/F Zone B)",
+        "name": "SEN Equipment - Service Counter (1/F Zone B)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -5331,7 +5331,7 @@
       },
       {
         "id": "7e0c30e3-6098-49bd-8a4f-207d916590c6",
-        "name": "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)",
+        "name": "Laser Cutter / Engraver - LU Barn (Makerspace) Maker Room (1/F Zone A)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -6203,6 +6203,25 @@
     ]
   },
   {
+  "id": "icon-layer-13",
+  "name": "Icon for 13",
+  "type": "point",
+  "assets": [
+    {
+      "id": "icon-13-point",
+      "name": "13 Icon",
+      "levelIndex": 0,
+      "position": {
+        "x": 89.59,  // Center of the polygon
+        "z": -37.906,
+        "elevation": 1.5,  // Raised above ground
+        "levelIndex": 0
+      },
+      "layerType": "point"
+    }
+  ]
+},
+  {
     "id": "85b4d0d4-30bb-4032-a6f2-af03f4b5f012",
     "name": "robot_sphere",
     "type": "point",
@@ -6553,7 +6572,7 @@ function handleSpecialFacility(facility) {
 function getFacilityHeight(facilityName) {
   const heightMap = {
     "Service Counter (1/F Zone A)": 1.1,
-    "Books A-DS776 (1/F Zone A)": 3.2,
+    "Books A-DS776 (1/F Zone A)": 3.1,
     "Books DS777-HJ (1/F Zone C)": 3.0,
     "Course Reserves (1/F Zone A) ": 3.0,
     "Good Reads, New Arrivals (1/F Zone B)": 3.0,
@@ -6776,6 +6795,30 @@ class Space {
         height: (d) => d.height,
       });
     }
+
+    // Add this after the Notaccessible layer
+if (facilityName === "13 (1/F Zone A)") {
+  this.space.addDataLayer({
+    id: "facility-icon",
+    type: "icon",
+    data: [{
+      id: "icon-13",
+      levelIndex: 0,
+      position: {
+        x: 89.59,
+        z: -37.906,
+        elevation: 1.5,
+        levelIndex: 0
+      }
+    }],
+    icon: {
+      url: "./icon.png",  
+      width: 180,
+      height: 180
+    },
+    width: 1.5
+  });
+}
     
     // FIXED: Only set up click handlers if space is ready and handlers aren't already set
     if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
