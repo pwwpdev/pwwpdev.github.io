@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Smplrspace Viewer</title>
+    <!-- Load smplr.js and its styles -->
+    <style>
+      body,
+      html {
+        height: 100vh !important;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+      #wrapper,
+      #smplrspace-container {
+        height: 100vh !important;
+      }
+      button[title="Hide annotations"] {
+        display: none !important;
+      }
+      #mini-map-container {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        width: 360px;
+        padding: 4px 4px 0px 4px;
+        background: rgba(216, 216, 216, 0.956);
+        backdrop-filter: blur(10px);
+        border-left: 0.5px solid #d4d4d4;
+        border-bottom: 0.5px solid #d4d4d4;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        overflow: hidden;
+      }
+
+      #map-wrapper {
+        position: relative;
+        width: 100%;
+        height: fit-content;
+        overflow: hidden;
+      }
+
+      #mini-map {
+        width: 100%;
+        transform-origin: center;
+        transition: transform 0.2s ease;
+        cursor: move;
+      }
+
+      .map-controls {
+        position: absolute;
+        bottom: 6px;
+        right: 2px;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        z-index: 11;
+      }
+
+      .control-btn {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border: none;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        user-select: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .control-btn:hover {
+        background: #f5f5f5;
+      }
+
+      @media (max-width: 768px) {
+        #mini-map-container {
+          width: 210px;
+        }
+        #map-wrapper {
+          height: fit-content;
+        }
+        .control-btn {
+          width: 18px;
+          height: 18px;
+          font-size: 14px;
+          border-radius: 2px;
+        }
+        .map-controls {
+          gap: 6px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        #mini-map-container {
+          width: 140px;
+        }
+        #map-wrapper {
+          height: fit-content;
+        }
+        .control-btn {
+          width: 12px;
+          height: 12px;
+          font-size: 8px;
+          border-radius: 2px;
+        }
+      }
+
+      .text-size {
+        font-size: 14px;
+      }
+      .strong-text {
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://app.smplrspace.com/lib/smplr.js"></script>
+    <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+
+    <div id="wrapper">
+      <div id="smplrspace-container"></div>
+    </div>
+
+    <!-- Combined Legend Box -->
+    <div
+      id="legend-container"
+      style="
+        position: absolute;
+        bottom: 2px;
+        left: 54px;
+        background: rgba(219, 218, 218, 0.492);
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        font-size: 12px;
+        font-weight: 500;
+        color: #333;
+        min-width: 100px;
+      "
+    >
+      <div
+        style="
+          padding: 6px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Default View
+      </div>
+      <div
+        style="
+          padding: 6px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Zoom IN
+      </div>
+      <div
+        style="
+          padding: 6px 4px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 2px;
+        "
+      >
+        Zoom OUT
+      </div>
+      <div style="padding: 6px 4px 4px 4px; text-align: center">
+        Switch 2D/3D
+      </div>
+    </div>
+    <div id="mini-map-container">
+      <div id="map-wrapper">
+        <img id="mini-map" src="MFC.png" alt="Mini Map" />
+      </div>
+    </div>
+
+    <div
+      id="custom-tooltip"
+      style="
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: none;
+        min-width: 380px;
+      "
+    >
+      <div id="tooltip-content"></div>
+    </div>
+
+    <script>
+      const API_ENDPOINT =
+        "https://optimusc.flowfuse.cloud/lingnan-library-dos";
+
+      const CLIENT_ID = "pub_45cf413215bd43f79621e0b28f8a815b";
+      const SPACE_ID = "90660c93-a72f-4412-ba81-07605f95d720";
+
+      const UPDATE_FREQUENCY = 60;
+
+      const rooms = [];
+
+      const desk_index = {
+        "MFC-S01": 0,
+        "MFC-S02": 1,
+        "MFC-S03": 2,
+        "MFC-S04": 3,
+        "MFC-S05": 4,
+        "MFC-S06": 5,
+        "MFC-S07": 6,
+        "MFC-S08": 7,
+        "MFC-S09": 8,
+        "MFC-S10": 9,
+        "MFC-S11": 10,
+        "MFC-S12": 11,
+        "MFC-S13": 12,
+        "MFC-S14": 13,
+        "MFC-S15": 14,
+        "MFC-S16": 15,
+        "MFC-S17": 16,
+        "MFC-S18": 17,
+        "MFC-S19": 18,
+        "MFC-S20": 19,
+        "MFC-S21": 20,
+        "MFC-S22": 21,
+        "MFC-S23": 22,
+        "MFC-S24": 23,
+      };
+
+      const desk_filter = {
+        "MFC-S01": "MFC-S01",
+        "MFC-S02": "MFC-S02",
+        "MFC-S03": "MFC-S03",
+        "MFC-S04": "MFC-S04",
+        "MFC-S05": "MFC-S05",
+        "MFC-S06": "MFC-S06",
+        "MFC-S07": "MFC-S07",
+        "MFC-S08": "MFC-S08",
+        "MFC-S09": "MFC-S09",
+        "MFC-S10": "MFC-S10",
+        "MFC-S11": "MFC-S11",
+        "MFC-S12": "MFC-S12",
+        "MFC-S13": "MFC-S13",
+        "MFC-S14": "MFC-S14",
+        "MFC-S15": "MFC-S15",
+        "MFC-S16": "MFC-S16",
+        "MFC-S17": "MFC-S17",
+        "MFC-S18": "MFC-S18",
+        "MFC-S19": "MFC-S19",
+        "MFC-S20": "MFC-S20",
+        "MFC-S21": "MFC-S21",
+        "MFC-S22": "MFC-S22",
+        "MFC-S23": "MFC-S23",
+        "MFC-S24": "MFC-S24",
+      };
+
+      const room_index = {};
+
+      const room_filter = {};
+
+      const dict = [
+        {
+          id: "5e8cb421-84e1-4fb7-94c9-129a006df20d",
+          name: "MFC Desk",
+          type: "furniture",
+          assets: [
+            {
+              id: "1bd8a743-f4d8-4079-acb0-e7339ae418fb",
+              name: "MFC-S01",
+              furnitureId: "9e94d03e-0574-4f88-b87b-0e0a76d41596",
+              layerType: "furniture",
+            },
+            {
+              id: "759c480e-508d-4d12-a6ca-ad0f0c1d3380",
+              name: "MFC-S02",
+              furnitureId: "9cd7cac9-d2f4-4ca4-827e-897013e1cb82",
+              layerType: "furniture",
+            },
+            {
+              id: "054b08b7-4b07-4ddb-8231-d061fa2e457a",
+              name: "MFC-S03",
+              furnitureId: "f3abd963-33bb-4c63-8bbc-b77b3a3ddc6f",
+              layerType: "furniture",
+            },
+            {
+              id: "5d686c58-7f25-4e29-a74f-ab5ade38e037",
+              name: "MFC-S04",
+              furnitureId: "7025d4af-76ac-4380-a231-c6c43cb28d58",
+              layerType: "furniture",
+            },
+            {
+              id: "79066529-fc71-42ab-9cac-778365a57e16",
+              name: "MFC-S05",
+              furnitureId: "3ca2cbf3-b658-49b1-aef3-2bd73814ac48",
+              layerType: "furniture",
+            },
+            {
+              id: "f6012e82-5852-4ad0-b2d9-e21ae1efc332",
+              name: "MFC-S06",
+              furnitureId: "9325601f-da54-4059-a3c6-1751e2c44cf7",
+              layerType: "furniture",
+            },
+            {
+              id: "37df3b0e-faa5-4cae-acf9-6a7a4b5dbab1",
+              name: "MFC-S07",
+              furnitureId: "22260b0b-caf4-4426-972f-ffad804b4a8e",
+              layerType: "furniture",
+            },
+            {
+              id: "711b3da0-d9dd-4b37-ba59-f392b42f4d44",
+              name: "MFC-S08",
+              furnitureId: "89b84e6f-18b5-4970-aed6-0b63cb28e341",
+              layerType: "furniture",
+            },
+            {
+              id: "09719f5f-b239-4244-8d29-1089e2639cb0",
+              name: "MFC-S09",
+              furnitureId: "6ccb1aff-bfee-4f4f-bc27-9ab0a4855189",
+              layerType: "furniture",
+            },
+            {
+              id: "857c8c7f-6f02-406b-b141-121a75ab3431",
+              name: "MFC-S10",
+              furnitureId: "575c7d03-2991-4516-b6a7-8b208727d13c",
+              layerType: "furniture",
+            },
+            {
+              id: "fccaeca3-d046-4474-832f-ec6c5921296b",
+              name: "MFC-S11",
+              furnitureId: "843b69fe-c8ff-466f-b836-eddd2b3cdfab",
+              layerType: "furniture",
+            },
+            {
+              id: "e87ac7ef-5c25-4941-8a2d-01e18095b7ae",
+              name: "MFC-S12",
+              furnitureId: "19dcce8f-1906-4c63-9f53-5d99a91bdcce",
+              layerType: "furniture",
+            },
+            {
+              id: "a22bbdc0-20a6-4d85-82c9-608a4a3f905e",
+              name: "MFC-S13",
+              furnitureId: "37ef1b64-c38e-44f4-ade4-5ec091d2c832",
+              layerType: "furniture",
+            },
+            {
+              id: "d5cf7f9d-c9f4-4d0c-afcb-c3f48fe32e1b",
+              name: "MFC-S14",
+              furnitureId: "828cec73-8fc2-4b75-8559-b04b3261b71c",
+              layerType: "furniture",
+            },
+            {
+              id: "dc274444-fe93-4f2e-86c1-1b3d25d38c6f",
+              name: "MFC-S15",
+              furnitureId: "ba006da6-4073-4765-8a88-911b8526218f",
+              layerType: "furniture",
+            },
+            {
+              id: "20c7ace3-b73e-4d4a-9450-232b5e49a013",
+              name: "MFC-S16",
+              furnitureId: "bae70c05-5bfc-4bda-a3bb-fd24cdd2dd22",
+              layerType: "furniture",
+            },
+            {
+              id: "e2e96048-7a99-4b0e-a8af-e5e6b1e0fdac",
+              name: "MFC-S17",
+              furnitureId: "2516bb31-7cc7-4ebc-8819-410a7b7e4f20",
+              layerType: "furniture",
+            },
+            {
+              id: "f8a45ad1-e4f2-4a0a-b224-ba29a84b1ea4",
+              name: "MFC-S18",
+              furnitureId: "c6d0bc09-d94a-436b-a2cf-98f52ccdacd9",
+              layerType: "furniture",
+            },
+            {
+              id: "fd5425ad-fb8d-4ae5-9c53-1412fa3ccbb7",
+              name: "MFC-S19",
+              furnitureId: "3cd17fe0-fb96-4ddb-aa45-36a209e546b5",
+              layerType: "furniture",
+            },
+            {
+              id: "26e05b1d-9ed1-4046-be83-84958cab7edd",
+              name: "MFC-S20",
+              furnitureId: "35379626-ffa6-48f6-adbd-9d2dd74773dd",
+              layerType: "furniture",
+            },
+            {
+              id: "a05b2a11-2bea-45a1-964d-805b391eae13",
+              name: "MFC-S21",
+              furnitureId: "a1608bd7-18a8-4cf6-864d-c0ab4bde0a75",
+              layerType: "furniture",
+            },
+            {
+              id: "9ee687cf-c83f-4c93-9b5a-b8185e0f6ce2",
+              name: "MFC-S22",
+              furnitureId: "ed592b0c-453f-4d24-9fdc-8cc5a8a01126",
+              layerType: "furniture",
+            },
+            {
+              id: "872cf542-e0d8-4581-8c0f-94166081fb81",
+              name: "MFC-S23",
+              furnitureId: "7b716bfe-b405-437f-83fa-89e5934dca98",
+              layerType: "furniture",
+            },
+            {
+              id: "7a7299b7-59e7-406d-8ad7-bce16348c467",
+              name: "MFC-S24",
+              furnitureId: "c33e4eb6-4cef-4582-a0fb-c7bcfdacff6d",
+              layerType: "furniture",
+            },
+          ],
+        },
+        {
+          id: "84b01b17-5bb9-4dbd-ad11-c004b3eb39db",
+          name: "book_shelves",
+          type: "furniture",
+          assets: [
+            {
+              id: "5af64fff-72ef-46c1-aa42-2e551759bf4f",
+              name: "MB01-1",
+              furnitureId: "7068007e-0efa-40b5-b97e-4144f57f548c",
+              layerType: "furniture",
+            },
+            {
+              id: "62986218-97c6-42ab-93c9-6787198585d5",
+              name: "MB01-2",
+              furnitureId: "591aff36-d1b3-428c-a511-f68f0d2f9210",
+              layerType: "furniture",
+            },
+            {
+              id: "6716d2d3-7a86-47d6-a90c-dcd06a5dfc81",
+              name: "MB01-3",
+              furnitureId: "ff16d96b-032f-41ff-9136-7b2e58a75ced",
+              layerType: "furniture",
+            },
+            {
+              id: "3b7fc10e-56df-4775-b07b-2db77736634f",
+              name: "MB01-4",
+              furnitureId: "3623b243-0909-4912-bbe2-f24e6ec29dbd",
+              layerType: "furniture",
+            },
+            {
+              id: "0b69cf5e-7771-4d33-9db1-bf3515a1f2c6",
+              name: "MB01-5",
+              furnitureId: "40a3f430-a836-4142-bebc-40d625dabf54",
+              layerType: "furniture",
+            },
+            {
+              id: "633bccc7-aa4c-4e89-87f8-ca970737e5a7",
+              name: "MB01-6",
+              furnitureId: "00febfa8-359a-418d-9d09-2e0fe20f223c",
+              layerType: "furniture",
+            },
+            {
+              id: "e9aa253a-19ce-4593-a8b5-ba7df944ef80",
+              name: "MB02",
+              furnitureId: "07c32ab6-a292-4cf0-b1a5-a42a1876ae7b",
+              layerType: "furniture",
+            },
+            {
+              id: "39367f92-7070-40ff-b2fb-76290121a58a",
+              name: "MB03-1",
+              furnitureId: "60cdef41-30d6-4418-b96a-373be5a03566",
+              layerType: "furniture",
+            },
+            {
+              id: "6ea4c053-062c-4d46-96cd-6065f03fecec",
+              name: "MB03-2",
+              furnitureId: "44b546c6-a491-4ef7-bda5-2db33e4f40ce",
+              layerType: "furniture",
+            },
+            {
+              id: "4c220b44-5a35-48b4-9828-4f8aef8b0f1e",
+              name: "MB03-3",
+              furnitureId: "4e042ea5-5a64-4d7c-a5ba-dab6b1c1e3dc",
+              layerType: "furniture",
+            },
+            {
+              id: "d43a5efa-e527-4836-ae9d-796c4e316e5d",
+              name: "MB03-4",
+              furnitureId: "af05ba4c-24de-42b9-b7a7-23321b486243",
+              layerType: "furniture",
+            },
+            {
+              id: "7fafd700-1bea-4c9e-9dc6-6d0a8e64d7bd",
+              name: "MB03-5",
+              furnitureId: "d31d70d7-949d-4655-9a19-85c52e0266a8",
+              layerType: "furniture",
+            },
+            {
+              id: "a34dd976-9138-460c-9689-8c5b2e935dd8",
+              name: "MB03-6",
+              furnitureId: "3b4215c8-4c0d-42f9-9ee2-f10577c955a5",
+              layerType: "furniture",
+            },
+          ],
+        },
+        {
+          id: "826d48a7-4fb1-4abb-876a-c24be82d903c",
+          name: "facilities_list",
+          type: "polygon",
+          assets: [
+            {
+              id: "bd97755b-98b2-4343-a8b6-2ef399cecc7c",
+              name: "Books HM-HM1100 (M/F Zone B)",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 81.439,
+                    z: -50.007,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 82.27,
+                    z: -49.984,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 82.245,
+                    z: -57.152,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 75.392,
+                    z: -57.164,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 75.376,
+                    z: -57.447,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 64.142,
+                    z: -57.431,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 64.135,
+                    z: -56.867,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 63.364,
+                    z: -56.877,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 63.357,
+                    z: -57.235,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 57.408,
+                    z: -57.248,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 57.441,
+                    z: -50.081,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 58.193,
+                    z: -50.107,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 58.204,
+                    z: -56.348,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 81.488,
+                    z: -56.314,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "c64cd11d-e67f-40b2-9ebc-800e5568dcd5",
+              name: "Postgraduate Lounge (M/F Zone C)",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 31.203,
+                    z: -46.243,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 31.211,
+                    z: -40.333,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 20.029,
+                    z: -40.374,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 20.035,
+                    z: -46.255,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "dbb606d1-e3b1-409c-93b0-a75700091327",
+              name: "LU Barn (Makerspace) (M/F Zone A)",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 109.643,
+                    z: -30.361,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 109.618,
+                    z: -36.708,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 103.108,
+                    z: -36.675,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 102.548,
+                    z: -36.657,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 101.514,
+                    z: -36.647,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 101.537,
+                    z: -36.935,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.157,
+                    z: -36.924,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.23,
+                    z: -32.97,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.724,
+                    z: -32.942,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.694,
+                    z: -30.805,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.917,
+                    z: -30.829,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 99.955,
+                    z: -30.101,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 109.299,
+                    z: -30.039,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 109.302,
+                    z: -30.282,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 109.308,
+                    z: -30.399,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "6bc75b14-db99-4744-aa61-b5ca6d397e7f",
+              name: "3D Printers – LU Barn (Makerspace) (M/F Zone A)",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 106.114,
+                    z: -30.809,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 106.129,
+                    z: -30.208,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 104.434,
+                    z: -30.2,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 104.438,
+                    z: -30.818,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "a481c3e3-c322-4fbf-82ab-b2c5ff86bdcb",
+              name: "3D Scanner – LU Barn (Makerspace) (M/F Zone A)",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 102.439,
+                    z: -30.915,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 102.457,
+                    z: -30.187,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 103.243,
+                    z: -30.193,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 103.27,
+                    z: -30.908,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+            {
+              id: "cbfb0928-b64c-443f-8714-f4cfebdf0d1a",
+              name: "Lift (M/F Zone B)",
+              levelIndex: 0,
+              coordinates: [
+                [
+                  {
+                    x: 63.125,
+                    z: -47.417,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 63.108,
+                    z: -44.893,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 60.43,
+                    z: -44.882,
+                    levelIndex: 0,
+                  },
+                  {
+                    x: 60.497,
+                    z: -47.416,
+                    levelIndex: 0,
+                  },
+                ],
+              ],
+              layerType: "polygon",
+              mapped: true,
+            },
+          ],
+        },
+      ];
+
+      const color_dict = {
+        occupied: "#ff3f34",
+        countdown: "#ff3f34",
+        vacant: "#3aa655",
+        free: "#3aa655",
+        unoccupied: "#3aa655",
+        passive_occupied: "#ffbf00",
+        away: "#ffbf00",
+        demo: "#E566FF",
+        unavailable: "#768590",
+      };
+
+      async function refreshFacilityData() {
+        console.log("Refreshing facility data...");
+        await fetchFacilityData();
+        console.log("Facility data refreshed:", facilityAPIData);
+      }
+
+      // Fetch facility data from API
+      let facilityAPIData = null;
+
+      async function fetchFacilityData() {
+        try {
+          const response = await fetch(
+            "https://facility-search-dot-optimus-lnu.df.r.appspot.com/library_facilities"
+          );
+          const data = await response.json();
+          facilityAPIData = data.library_facilities;
+          console.log("Facility data loaded:", facilityAPIData);
+        } catch (error) {
+          console.error("Failed to fetch facility data:", error);
+          facilityAPIData = [];
+        }
+      }
+
+      // Replace the existing handleQueryParameter function with this:
+async function handleQueryParameter() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryId = urlParams.get('query');
+  
+  console.log("handleQueryParameter called with queryId:", queryId);
+  
+  if (queryId && facilityAPIData) {
+    console.log('Query ID detected:', queryId);
+    console.log('Facility API Data available:', facilityAPIData ? 'Yes' : 'No');
+    
+    // Search through API data to find matching facility
+    let matchedFacility = null;
+    
+    for (const firstLevel of facilityAPIData) {
+      // Check if first level matches
+      if (firstLevel.query_id === queryId) {
+        matchedFacility = {
+          name: firstLevel.name,
+          description: firstLevel.description,
+          image: firstLevel.image,
+          query_id: firstLevel.query_id
+        };
+        break;
+      }
+      
+      for (const secondLevel of firstLevel.second_levels || []) {
+        // Check if second level matches
+        if (secondLevel.query_id === queryId) {
+          matchedFacility = {
+            name: secondLevel.name,
+            description: secondLevel.description,
+            image: secondLevel.image,
+            query_id: secondLevel.query_id
+          };
+          break;
+        }
+        
+        for (const thirdLevel of secondLevel.third_levels || []) {
+          if (thirdLevel.query_id === queryId) {
+            matchedFacility = {
+              name: thirdLevel.name,
+              description: thirdLevel.description,
+              image: thirdLevel.image,
+              query_id: thirdLevel.query_id
+            };
+            console.log('Found matching facility:', matchedFacility);
+            break;
+          }
+        }
+        if (matchedFacility) break;
+      }
+      if (matchedFacility) break;
+    }
+    
+    if (matchedFacility) {
+      // Try to find the facility asset in dict
+      let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
+      if (!facilityAsset) {
+        facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
+      }
+      
+      if (facilityAsset) {
+        console.log("Facility asset found, calling handleGenericFacility");
+        setTimeout(() => {
+          handleGenericFacility(facilityAsset, matchedFacility.name);
+        }, 2000);
+      } else {
+        // Facility exists in API but not in visual map - just show tooltip
+        console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+        setTimeout(() => {
+          showGenericTooltip(matchedFacility.name, true);
+          // Set camera to a default position or facility-specific position if available
+          if (spc && spc.space) {
+            // You might want to set a default camera position here
+            console.log("Setting default camera view");
+          }
+        }, 2000);
+      }
+    } else {
+      console.log('No facility found for query_id:', queryId);
+    }
+  } else if (queryId && !facilityAPIData) {
+    console.log('Query ID present but no facility data yet, waiting...');
+    // Wait for data to load
+    setTimeout(() => handleQueryParameter(), 1000);
+  }
+}
+
+      // Function to find facility info by name
+      function findFacilityInfo(facilityName) {
+        if (!facilityAPIData) return null;
+
+        // Search through all levels
+        for (const firstLevel of facilityAPIData) {
+          if (firstLevel.name === facilityName) {
+            return {
+              description: firstLevel.description,
+              image: firstLevel.image,
+              name: firstLevel.name,
+            };
+          }
+
+          for (const secondLevel of firstLevel.second_levels || []) {
+            if (secondLevel.name === facilityName) {
+              return {
+                description: secondLevel.description,
+                image: secondLevel.image,
+                name: secondLevel.name,
+              };
+            }
+
+            for (const thirdLevel of secondLevel.third_levels || []) {
+              if (thirdLevel.name === facilityName) {
+                return {
+                  description: thirdLevel.description,
+                  image: thirdLevel.image,
+                  name: thirdLevel.name,
+                };
+              }
+            }
+          }
+        }
+        return null;
+      }
+
+     // Generic facility handler
+function handleGenericFacility(facilityAsset, facilityName) {
+  let facilityInfo = findFacilityInfo(facilityName);
+  
+  if (!facilityInfo) {
+    console.log('Facility not found, refreshing data...');
+    refreshFacilityData().then(() => {
+      facilityInfo = findFacilityInfo(facilityName);
+      updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+    });
+    return;
+  }
+  
+  updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+}
+
+// Extract display logic
+function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
+  console.log("updateFacilityDisplay called for:", facilityName);  // NEW LOG
+  console.log("Facility info:", facilityInfo);  // NEW LOG
+  
+  const room = {
+    id: facilityAsset.id,
+    name: facilityAsset.name,
+    levelIndex: facilityAsset.levelIndex,
+    coordinates: facilityAsset.coordinates,
+    layerType: facilityAsset.layerType,
+    mapped: facilityAsset.mapped,
+    height: getFacilityHeight(facilityName),
+    color: "#E566FF",
+    available: "Available",
+    description: facilityInfo?.description || "Available for use"
+  };
+  
+  rooms.push(room);
+  console.log("Room added to array, total rooms:", rooms.length);  // NEW LOG
+  
+  // Update map immediately - CHANGED: Removed setTimeout, made immediate
+  if (spc && spc.space) {
+    spc.updateMapForFacility();
+    console.log("Map updated");  // NEW LOG
+  }
+  
+  // Set camera after map update - CHANGED: Reduced timeout from 3000 to 1500
+  setTimeout(() => {
+    if (spc && spc.space && spc.setCameraForFacility) {
+      spc.setCameraForFacility(facilityName);
+      console.log("Camera positioned");  // NEW LOG
+    }
+  }, 1500);  // CHANGED: Was 3000, now 1500
+  
+  // FIXED: Show tooltip with multiple retry attempts - CHANGED: Increased from 1000 to 1500
+  setTimeout(() => {
+    console.log("First tooltip attempt for:", facilityName);  // NEW LOG
+    showGenericTooltip(facilityName, true);
+  }, 1500);  // CHANGED: Was 1000, now 1500
+  
+  // NEW: Retry showing tooltip if it didn't appear - COMPLETELY NEW BLOCK
+  setTimeout(() => {
+    const tooltipDiv = document.getElementById("custom-tooltip");
+    if (tooltipDiv && tooltipDiv.style.display !== "block") {
+      console.log("Tooltip not visible, retrying...");
+      showGenericTooltip(facilityName, false);
+    }
+  }, 4000);
+}
+
+      // Get appropriate height for different facility types
+      function getFacilityHeight(facilityName) {
+        const heightMap = {
+          Lift: 2.4,
+          "Service Counter": 0.3,
+          "Drinking Water": 0.3,
+          "SEN Equipment": 0.1,
+          "Self-Pickup Locker": 1.3,
+          "Laser Cutter": 1.4,
+          Books: 3.0,
+        };
+
+        for (const [key, height] of Object.entries(heightMap)) {
+          if (facilityName.includes(key)) return height;
+        }
+        return 2.4; // default height
+      }
+
+      // Generic tooltip function using API data with image on right
+      // Generic tooltip function using API data
+function showGenericTooltip(facilityName, showSkeleton = false) {
+  const tooltipDiv = document.getElementById("custom-tooltip");
+  const contentDiv = document.getElementById("tooltip-content");
+  
+  if (tooltipDiv && contentDiv) {
+    const facilityInfo = findFacilityInfo(facilityName);
+    
+    // Show skeleton loading if no data available or explicitly requested
+    if (!facilityInfo || showSkeleton) {
+      const content = `
+        <div style="padding: 0; margin: 0; line-height: 1.2;">
+          <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+          <div style="margin-bottom: 8px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
+          <div style="width: 120px; height: 80px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; display: block;"></div>
+        </div>
+        <style>
+          @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+        </style>
+      `;
+      contentDiv.innerHTML = content;
+      tooltipDiv.style.display = "block";
+      
+      // If we have facility info but are showing skeleton (showSkeleton = true), 
+      // show actual data after a brief delay
+      if (facilityInfo && showSkeleton) {
+        setTimeout(() => {
+          showGenericTooltip(facilityName, false);
+        }, 500);
+      }
+      // If no facility info, try to refresh data
+      else if (!facilityInfo) {
+        refreshFacilityData().then(() => {
+          const updatedInfo = findFacilityInfo(facilityName);
+          if (updatedInfo) {
+            showGenericTooltip(facilityName, false);
+          }
+        });
+      }
+      return;
+    }
+    
+    // Show actual content when data is available
+    const description = facilityInfo.description;
+    const imageUrl = facilityInfo.image;
+    
+    const content = `
+      <div style="padding: 0; margin: 0; line-height: 1.2;">
+        <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+        <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
+        <img src="${imageUrl}" 
+             style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
+             onerror="this.style.display='none'" />
+      </div>
+    `;
+    
+    contentDiv.innerHTML = content;
+    tooltipDiv.style.display = "block";
+  }
+}
+
+      // Get the current URL
+      const currentUrl = window.location.href;
+
+      // Create a URL object
+      const url = new URL(currentUrl);
+
+      // Use URLSearchParams to get query parameters
+      const params = new URLSearchParams(url.search);
+
+      const facility = params.get("facility");
+
+      if (!!facility) {
+        // First check hardcoded facilities
+        const facilitiesData = dict[2]; // facilities_list
+        let facilityAsset = facilitiesData.assets.find(
+          (asset) => asset.name === facility
+        );
+
+        if (facilityAsset) {
+          handleGenericFacility(facilityAsset, facility);
+        } else {
+          // For API-only facilities, just show tooltip without adding to map
+          console.log("Facility coordinates not found, will show tooltip only");
+          setTimeout(() => showGenericTooltip(facility), 2500);
+        }
+      }
+
+      class Space {
+        constructor(spaceId, clientToken, desks, rooms, sensors) {
+          this.spaceId = spaceId;
+          this.clientToken = clientToken;
+          this.space = null;
+          this.rooms = rooms;
+          this.desks = desks;
+          this.sensors = sensors;
+          this._clickHandlerSet = false;
+        }
+
+        initSpace(smplr) {
+          this.space = new smplr.Space({
+            spaceId: this.spaceId,
+            clientToken: this.clientToken,
+            containerId: "smplrspace-container",
+          });
+          this.space.startViewer({
+            preview: false,
+            allowModeChange: true,
+            disableCameraRotation: true,
+            loadingMessage: "Loading...",
+            cameraPlacement: {
+              alpha: 1.5642931020318165,
+              beta: 0.5615178132728119,
+              radius: 
+              20.190416908872134,
+              target: {
+                x: 44.64910054283883,
+                y: 0,
+                z: -49.63054124348335,
+              },
+            },
+            onReady: () => this.fetchAll(),
+            onError: (error) => console.error("Could not start viewer", error),
+          });
+        }
+
+        updateDataLayers() {
+          // remove previous layers if any
+          this.space.removeDataLayer("rooms");
+          this.space.removeDataLayer("desks");
+
+          const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
+          const isDesksEmpty = Object.keys(this.desks).length === 0;
+
+          if (!isRoomsEmpty) {
+            // add new layers
+            this.space.addDataLayer({
+              id: "rooms",
+              type: "polygon",
+              data: this.rooms,
+              tooltip: (d) => `${d.name} - ${d.available}`,
+              color: (d) => d.color,
+              alpha: 0.7,
+              height: 2.9,
+            });
+          }
+
+          if (!isDesksEmpty) {
+            this.space.addDataLayer({
+              id: "desks",
+              type: "furniture",
+              data: this.desks,
+              tooltip: (d) => `${d.name} - ${d.available}`,
+              color: (d) => d.color,
+            });
+          }
+          // FIXED: Only set up click handlers if space is ready and handlers aren't already set
+if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
+  console.log("Setting up click handlers");
+  this.space.on("click", (event) => {
+    if (event.data && event.data.name) {
+      console.log("Click detected on:", event.data.name);
+      showGenericTooltip(event.data.name, true);
+    }
+  });
+  this._clickHandlerSet = true;
+}
+        }
+
+        updateMapForFacility() {
+          this.updateDataLayers();
+        }
+
+        fetchAll() {
+  this.fetchData();
+  // ADDED: Handle query parameter after data is fetched
+  setTimeout(() => {
+    handleQueryParameter();
+  }, 1000);
+}
+        fetchData() {
+          fetch(API_ENDPOINT)
+            .then((res) => res.json())
+            .then((data) => {
+              let occupancy = {};
+              for (let i = 0; i < data.length; i++) {
+                let value = data[i];
+                let loc = value.area;
+                let timestamp = value.timestamp;
+                let available = value.occupancy;
+
+                let color = color_dict.hasOwnProperty(available)
+                  ? color_dict[available]
+                  : "#ffffff";
+
+                if (!occupancy.hasOwnProperty(loc)) {
+                  occupancy[loc] = {
+                    timestamp: timestamp,
+                    available: available,
+                    occupancy: value.occupancy,
+                    color: color,
+                  };
+                } else if (occupancy[loc].timestamp < timestamp) {
+                  occupancy[loc] = {
+                    timestamp: timestamp,
+                    available: available,
+                    occupancy: value.occupancy,
+                    color: color,
+                  };
+                }
+              }
+
+              for (let key in occupancy) {
+                if (
+                  occupancy.hasOwnProperty(key) &&
+                  desk_filter.hasOwnProperty(key)
+                ) {
+                  //
+                  const jsonKey = desk_filter[key];
+                  const _index = desk_index[jsonKey];
+
+                  console.log("updated " + jsonKey);
+                  console.log(occupancy[key]);
+                  this.desks[_index]["available"] = occupancy[key]["available"];
+                  this.desks[_index]["color"] = occupancy[key]["color"];
+                  console.log(this.desks[0][_index]);
+                } else if (
+                  occupancy.hasOwnProperty(key) &&
+                  room_filter.hasOwnProperty(key)
+                ) {
+                  //
+                  const jsonKey = room_filter[key];
+                  const _index = room_index[jsonKey];
+
+                  this.rooms[_index]["available"] = occupancy[key]["available"];
+                  this.rooms[_index]["numberOfPeople"] =
+                    occupancy[key]["numberOfPeople"];
+                  this.rooms[_index]["color"] = occupancy[key]["color"];
+                }
+              }
+              this.updateDataLayers();
+            });
+        }
+      }
+
+      spc = new Space(SPACE_ID, CLIENT_ID, dict[0]["assets"], rooms, []);
+
+      // delete dict;
+
+      async function wait() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 500);
+        });
+      }
+
+      async function start() {
+  while (typeof smplr === "undefined") {
+    await wait();
+  }
+  
+  console.log("Starting initialization...");
+  
+  // Fetch facility data first and wait for it
+  await fetchFacilityData();
+  console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
+  
+  spc.initSpace(smplr);
+  console.log("Space initialized");
+  
+  // Handle query parameter after everything is initialized
+  setTimeout(() => {
+    console.log("Calling handleQueryParameter...");
+    handleQueryParameter();
+  }, 3500); // Increased delay to ensure map is fully loaded
+  
+  setInterval(() => {
+    spc.fetchAll();
+  }, UPDATE_FREQUENCY * 1000);
+}
+
+      start();
+    </script>
+  </body>
+</html>
