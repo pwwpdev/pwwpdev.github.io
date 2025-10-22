@@ -6531,7 +6531,7 @@ async function handleQueryParameter() {
       console.log("Facility asset found, calling handleGenericFacility");
       setTimeout(() => {
         handleGenericFacility(facilityAsset, matchedFacility.name);
-      }, 2000);
+      }, 800);
     } else {
       // Facility exists in API but not in visual map - just show tooltip
       console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
@@ -6540,7 +6540,7 @@ async function handleQueryParameter() {
         if (spc && spc.space) {
           console.log("Setting default camera view");
         }
-      }, 2000);
+      }, 800);
     }
   } else {
     console.log("Facility belongs to different floor, skipping HTML handling");
@@ -6656,13 +6656,13 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
       spc.setCameraForFacility(facilityName);
       console.log("Camera positioned");
     }
-  }, 1500);
+  }, 600);
   
   // FIXED: Show tooltip with multiple retry attempts
   setTimeout(() => {
     console.log("First tooltip attempt for:", facilityName);
     showGenericTooltip(facilityName, true);
-  }, 2000);
+  }, 800);
   
   // Retry showing tooltip if it didn't appear
   setTimeout(() => {
@@ -6671,7 +6671,7 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
       console.log("Tooltip not visible, retrying...");
       showGenericTooltip(facilityName, false);
     }
-  }, 4000);
+  }, 1500);
 }
 
 // Handle special facilities not in facilities_list
@@ -6948,7 +6948,7 @@ class Space {
     // ADDED: Handle query parameter after data is fetched
     setTimeout(() => {
       handleQueryParameter();
-    }, 1000);
+    }, 600);
   }
 
   fetchData() {
@@ -7064,14 +7064,14 @@ if (!!facility) {
   } else {
     // For API-only facilities, just show tooltip without adding to map
     console.log('Facility coordinates not found, will show tooltip only');
-    setTimeout(() => showGenericTooltip(facility, true), 2500);
+    setTimeout(() => showGenericTooltip(facility, true), 800);
   }
 }
 
 // Function to show tooltip for selected facility when loaded via URL
 if (!!facility) {
   // Show tooltip after map loads using the centralized function
-  setTimeout(() => showGenericTooltip(facility, true), 1500);
+  setTimeout(() => showGenericTooltip(facility, true), 600);
 }
 
 // Create the Space instance with the updated parameters
@@ -7110,7 +7110,7 @@ async function start() {
   setTimeout(() => {
     console.log("Calling handleQueryParameter...");
     handleQueryParameter();
-  }, 3500); // Increased delay to ensure map is fully loaded
+  }, 2000); // Increased delay to ensure map is fully loaded
   
   setInterval(() => {
     spc.fetchAll();
