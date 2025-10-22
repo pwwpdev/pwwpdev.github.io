@@ -992,7 +992,7 @@ async function handleQueryParameter() {
         console.log("Facility asset found, calling handleGenericFacility");
         setTimeout(() => {
           handleGenericFacility(facilityAsset, matchedFacility.name);
-        }, 2000);
+        }, 800);
       } else {
         // Facility exists in API but not in visual map - just show tooltip
         console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
@@ -1003,7 +1003,7 @@ async function handleQueryParameter() {
             // You might want to set a default camera position here
             console.log("Setting default camera view");
           }
-        }, 2000);
+        }, 600);
       }
     } else {
       console.log('No facility found for query_id:', queryId);
@@ -1115,33 +1115,18 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   setTimeout(() => {
     console.log("First tooltip attempt for:", facilityName);  // NEW LOG
     showGenericTooltip(facilityName, true);
-  }, 2000); 
+  }, 1000); 
   setTimeout(() => {
     const tooltipDiv = document.getElementById("custom-tooltip");
     if (tooltipDiv && tooltipDiv.style.display !== "block") {
       console.log("Tooltip not visible, retrying...");
       showGenericTooltip(facilityName, false);
     }
-  }, 4000);
+  }, 2200);
 }
 
-// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  const heightMap = {
- 
-    "Books HM-HM1100 (M/F Zone B)": 2.2,
-    "Individual Study Carrels (M/F Zone C)": 2.2,
-    "Postgraduate Lounge (M/F Zone C)": 2.2,
-    "LU Barn (Makerspace) (M/F Zone A)": 2.2,
-    "3D Printers – LU Barn (Makerspace) (M/F Zone A)": 1.1,
-    "3D Scanner – LU Barn (Makerspace) (M/F Zone A)": 1.1,
-    "Lift (M/F Zone B)": 2.2
-  };
- 
-  for (const [key, height] of Object.entries(heightMap)) {
-    if (facilityName.includes(key)) return height;
-  }
-  return 2.5; // default height
+  return 3.1; 
 }
 
 // Generic tooltip function using API data
@@ -1183,7 +1168,7 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
     if (facilityInfo && showSkeleton) {
       setTimeout(() => {
         showGenericTooltip(facilityName, false);
-      }, 1000);  // CHANGED: Was 500, now 1000
+      }, 1000);  
     }
     // If no facility info, try to refresh data
     else if (!facilityInfo) {
@@ -1255,7 +1240,7 @@ if (!!facility) {
   } else {
     // For API-only facilities, just show tooltip without adding to map
     console.log('Facility coordinates not found, will show tooltip only');
-    setTimeout(() => showGenericTooltip(facility), 2500);
+    setTimeout(() => showGenericTooltip(facility), 2300);
   }
 }
 
