@@ -6346,6 +6346,117 @@ async function fetchFacilityData() {
   }
 }
 
+// Helper function to get current floor from URL path
+function getCurrentFloorFromURL() {
+  const path = window.location.pathname;
+  if (path.includes('/m-floor')) return 'M/F';
+  if (path.includes('/second-floor')) return '2/F';
+  if (path.includes('/third-floor')) return '3/F';
+  return '1/F'; // default
+}
+
+// Helper function to determine facility floor (mirrors TSX logic)
+function getFacilityFloorHTML(facilityName) {
+    const floorMappings = {
+      "1/F": [
+        "Service Counter (1/F Zone A)",
+        "Books A-DS776 (1/F Zone A)",
+        "Books DS777-HJ (1/F Zone C)",
+        "Course Reserves (1/F Zone A)",
+        "Good Reads, New Arrivals (1/F Zone B)",
+        "High Use Books (1/F Zone B)",
+        "Category III Multimedia - Ask at Service Counter (1/F Zone A)",
+        "Staff Publications (1/F Zone B)",
+        "Chiang Chen Information Commons (1/F Zone A)",
+        "Computer Room 2 (1/F Zone B)",
+        "SEN Workstation 1 (1/F Zone B)",
+        "SEN Workstation 2 (1/F Zone C)",
+        "Bloomberg Terminal - Database Workstation (1/F Zone B)",
+        "LSEG Workspace (1/F Zone B)",
+        "WIND Terminal (1/F Zone B)",
+        "11-13 (1/F Zone A)",
+        "14-16BW (1/F Zone B)",
+        "Individual Study Rooms 1 - 7 (1/F Zone C)",
+        "Individual Study Rooms 8 (1/F Zone C)",
+        "Individual Study Rooms 9 - 11 (1/F Zone A)",
+        "Group Study Rooms 1 - 4 (1/F Zone C)",
+        "Group Study Room 5 (1/F Zone C)",
+        "Group Study Rooms 8 - 9 (1/F Zone A)",
+        "Late Reading Room (1/F Zone B)",
+        "Postgraduate Research Carrels (1/F Zone B)",
+        "Individual Study Carrels (1/F Zone A)",
+        "Individual Study Carrels (1/F Zone C)",
+        "Activity Room (1/F Zone A)",
+        "Café (1/F Zone A)",
+        "Computer Rooms 1 & 2 (1/F Zone B)",
+        "1/F (1/F Zone B)",
+        "1/F Male & Female (Zone A)",
+        "1/F Male & Female (Zone C)",
+        "1/F Unisex - Available during Overnight Study Period (Zone B)",
+        "1/F Accessible Toilets (Zone A)",
+        "1/F Accessible Toilets (Zone C)",
+        "Book Drop (1/F Zone B)",
+        "Book Sterilizer (1/F Zone B)",
+        "Self-Checkout Machine (1/F Zone A & Zone B)",
+        "Self-Pickup Locker (1/F Zone B)",
+        "SEN Equipment - Service Counter (1/F Zone B)",
+        "Laser Cutter / Engraver - LU Barn (Makerspace) Maker Room (1/F Zone A)",
+        "Lift (1/F Zone B)"
+      ],
+      "M/F": [
+        "Books HM-HM1100 (M/F Zone B)",
+        "Individual Study Carrels (M/F Zone C)",
+        "Postgraduate Lounge (M/F Zone C)",
+        "LU Barn (Makerspace) (M/F Zone A)",
+        "3D Printers - LU Barn (Makerspace) (M/F Zone A)",
+        "3D Scanner - LU Barn (Makerspace) (M/F Zone A)",
+        "Lift (M/F Zone B)"
+      ],
+      "2/F": [
+        "Books HM1101-HN (2/F Zone B)",
+        "Current Journals (2/F Zone A)",
+        "Bound Journals (2/F Zone A)",
+        "Language Examinations & Learning Resources [LANG] (2/F Zone C)",
+        "Lingnan University Archives (2/F Zone A)",
+        "Multimedia (2/F Zone C)",
+        "Current Issues (2/F Zone B)",
+        "Back Issues (2/F Zone A)",
+        "References A-HM (2/F Zone A)",
+        "References HN-Z (2/F Zone C)",
+        "Lee Hak Kan Multimedia and Language Learning Centre - MLLC (2/F Zone C)",
+        "21, 23 (2/F Zone C)",
+        "22BW (2/F Zone A)",
+        "Group Study Room 10 - 11 (2/F Zone B)",
+        "Chang Han-tsiu Reading Room (2/F Zone A)",
+        "Mini Theatre (2/F Zone B)",
+        "2/F (2/F Zone A)",
+        "2/F Male & Female (Zone C)",
+        "Lift (2/F Zone B)"
+      ],
+      "3/F": [
+        "Books HN-HS (3/F Zone A)",
+        "Books HT-NX (3/F Zone B)",
+        "Books P-ZA (3/F Zone C)",
+        "Large Books [LBK], Extra Large Books [XLBK] (3/F Zone A)",
+        "31BW (3/F Zone B)",
+        "Multi-Purpose Room 1 (3/F Zone C)",
+        "Multi-Purpose Room 2 (3/F Zone A)",
+        "3/F (3/F Zone A)",
+        "3/F (3/F Zone C)",
+        "3/F Male & Female (Zone A & Zone C)",
+        "3/F Accessible Toilets (Zone C)",
+        "Lift (3/F Zone B)"
+      ]
+    };
+  
+  for (const [floor, facilities] of Object.entries(floorMappings)) {
+    if (facilities.includes(facilityName)) {
+      return floor;
+    }
+  }
+  return null;
+}
+
 // Replace the existing handleQueryParameter function with this:
 async function handleQueryParameter() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -6402,29 +6513,38 @@ async function handleQueryParameter() {
     }
     
     if (matchedFacility) {
-      // Try to find the facility asset in dict
-      let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
-      if (!facilityAsset) {
-        facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
-      }
-      
-      if (facilityAsset) {
-        console.log("Facility asset found, calling handleGenericFacility");
-        setTimeout(() => {
-          handleGenericFacility(facilityAsset, matchedFacility.name);
-        }, 2000);
-      } else {
-        // Facility exists in API but not in visual map - just show tooltip
-        console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
-        setTimeout(() => {
-          showGenericTooltip(matchedFacility.name, true);
-          // Set camera to a default position or facility-specific position if available
-          if (spc && spc.space) {
-            // You might want to set a default camera position here
-            console.log("Setting default camera view");
-          }
-        }, 2000);
-      }
+  // Check if facility belongs to this floor using getFacilityFloor logic
+  const facilityFloor = getFacilityFloorHTML(matchedFacility.name);
+  const currentFloorFromURL = getCurrentFloorFromURL();
+  
+  console.log("Facility floor:", facilityFloor, "Current floor:", currentFloorFromURL);
+  
+  // Only handle facility if it belongs to current floor
+  if (facilityFloor === currentFloorFromURL) {
+    // Try to find the facility asset in dict
+    let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
+    if (!facilityAsset) {
+      facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
+    }
+    
+    if (facilityAsset) {
+      console.log("Facility asset found, calling handleGenericFacility");
+      setTimeout(() => {
+        handleGenericFacility(facilityAsset, matchedFacility.name);
+      }, 2000);
+    } else {
+      // Facility exists in API but not in visual map - just show tooltip
+      console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+      setTimeout(() => {
+        showGenericTooltip(matchedFacility.name, true);
+        if (spc && spc.space) {
+          console.log("Setting default camera view");
+        }
+      }, 2000);
+    }
+  } else {
+    console.log("Facility belongs to different floor, skipping HTML handling");
+  }
     } else {
       console.log('No facility found for query_id:', queryId);
     }
