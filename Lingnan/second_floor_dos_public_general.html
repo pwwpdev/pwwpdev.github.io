@@ -346,13 +346,13 @@ async function handleQueryParameter() {
     console.log("Facility asset found, calling handleGenericFacility");
     setTimeout(() => {
       handleGenericFacility(facilityAsset, matchedFacility.name);
-    }, 1500);
+    }, 800);
   } else {
     // Facility exists in API but not in visual map - just show tooltip
     console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
     setTimeout(() => {
       showGenericTooltip(matchedFacility.name, true);
-    }, 1500);
+    }, 600);
   }
 } else {
       console.log('No facility found for query_id:', queryId);
@@ -453,13 +453,13 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
       spc.setCameraForFacility(facilityName);
       console.log("Camera positioned");  // NEW LOG
     }
-  }, 1500);  // CHANGED: Was 3000, now 1500
+  }, 800);  // CHANGED: Was 3000, now 1500
   
   // FIXED: Show tooltip with multiple retry attempts - CHANGED: Increased from 1000 to 1500
   setTimeout(() => {
     console.log("First tooltip attempt for:", facilityName);  // NEW LOG
     showGenericTooltip(facilityName, true);
-  }, 1500);  // CHANGED: Was 1000, now 1500
+  }, 800);  // CHANGED: Was 1000, now 1500
   
   // NEW: Retry showing tooltip if it didn't appear - COMPLETELY NEW BLOCK
   setTimeout(() => {
@@ -468,41 +468,13 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
       console.log("Tooltip not visible, retrying...");
       showGenericTooltip(facilityName, false);
     }
-  }, 4000);
+  }, 2400);
 }
 
 
 
-// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  const heightMap = {
- 
-    "Books HM1101-HN (2/F Zone B)": 3.0,
-    "Current Journals (2/F Zone A)": 3.0,
-    "Bound Journals (2/F Zone A)": 3.0,
-    "Language Examinations & Learning Resources [LANG] (2/F Zone C)": 3.0,
-    "Lingnan University Archives (2/F Zone A)": 3.0,
-    "Multimedia (2/F Zone C)": 3.0,
-    "Current Issues (2/F Zone B)": 3.0,
-    "Back Issues (2/F Zone A)": 3.0,
-    "References A-HM (2/F Zone A)": 3.0,
-    "References HN-Z (2/F Zone C)": 3.0,
-    "Lee Hak Kan Multimedia and Language Learning Centre – MLLC (2/F Zone C)": 3.0,
-    "21, 23 (2/F Zone C)": 1.1,
-    "22BW (2/F Zone A)": 1.1,
-    "Group Study Room 10 – 11 (2/F Zone B)": 3.0,
-    "Chang Han-tsiu Reading Room (2/F Zone A)": 3.0,
-    "Lee Hak Kan Multimedia and Language Learning Centre – MLLC (2/F Zone C)": 3.0,
-    "Mini Theatre (2/F Zone B)": 3.0,
-    "2/F (2/F Zone A)": 0.5,
-    "2/F Male & Female ( Zone C)": 3.0,
-    "Lift (2/F Zone B)": 3.0
-  };
- 
-  for (const [key, height] of Object.entries(heightMap)) {
-    if (facilityName.includes(key)) return height;
-  }
-  return 2.5; // default height
+  return 3.1; 
 }
 
 // Generic tooltip function using API data with image on right
