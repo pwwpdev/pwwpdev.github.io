@@ -1748,7 +1748,7 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
     disableCameraRotation: true,
      loadingMessage: "Loading...",
     cameraPlacement: {
-      : -1.5722224976673886,
+      alpha : -1.5722224976673886,
       beta: 0.22438049962679768,
       radius: 151.566640313453746,
       target: {
@@ -1865,11 +1865,12 @@ updateMapForFacility() {
 
       // Create the Space instance
       let spc = new Space(
-        SPACE_ID,
-        CLIENT_ID,
-        toilet_assets,
-        nonAccessibleArea_assets, rooms
-      );
+  SPACE_ID,
+  CLIENT_ID,
+  toilet_assets,
+  nonAccessibleArea_assets,
+  rooms
+);
 
       // delete dict;
 
@@ -1881,28 +1882,31 @@ updateMapForFacility() {
         });
       }
 
-      async function start() {
+     async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
   
   console.log("Starting initialization...");
   
-  // Fetch facility data first and wait for it
   await fetchFacilityData();
   console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
   
   spc.initSpace(smplr);
   console.log("Space initialized");
   
-  // Handle query parameter after everything is initialized
   setTimeout(() => {
     console.log("Calling handleQueryParameter...");
     handleQueryParameter();
-  }, 3500);
+  }, 1500);
   
+  // Add interval to refresh data periodically
+  setInterval(() => {
+    spc.fetchData();
+  }, UPDATE_FREQUENCY * 1000);
 }
-      start();
+
+start();
     </script>
 
   </body>
