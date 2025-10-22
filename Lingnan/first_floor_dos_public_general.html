@@ -6697,58 +6697,8 @@ function handleSpecialFacility(facility) {
   // Add other special cases here if needed
 }
 
-// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  const heightMap = {
-    "Service Counter (1/F Zone A)": 1.1,
-    "Books A-DS776 (1/F Zone A)": 3.0,
-    "Books DS777-HJ (1/F Zone C)": 3.0,
-    "Course Reserves (1/F Zone A) ": 3.0,
-    "Good Reads, New Arrivals (1/F Zone B)": 3.0,
-    "High Use Books (1/F Zone B)": 3.0,
-    "Category III Multimedia - Ask at Service Counter (1/F Zone A)": 1.1,
-    "Staff Publications (1/F Zone B)": 3.0,
-    "Chiang Chen Information Commons (1/F Zone A)": 3.0,
-    "Computer Room 2(1/F Zone B)": 3.0,
-    "SEN Workstation 1 (1/F Zone B)": 1.1,
-    "SEN Workstation 2 (1/F Zone C)": 1.1,
-    "Bloomberg Terminal - Database Workstation (1/F Zone B)": 1.1,
-    "LSEG Workspace (1/F Zone B)": 1.1,
-    "WIND 資訊金融終端 (1/F Zone B)": 1.1,
-    "11-13 (1/F Zone A)": 1.1,
-    "14-16BW (1/F Zone B)": 1.1,
-    "Individual Study Rooms 1 - 7 (1/F Zone C)": 3.0,
-    "Individual Study Rooms 8 (1/F Zone C)": 3.0,
-    "Individual Study Rooms 9 - 11 (1/F Zone A)": 3.0,
-    "Group Study Rooms 1 - 4 (1/F Zone C)": 3.0,
-    "Group Study Room 5 (1/F Zone C)": 3.0,
-    "Group Study Rooms 8 - 9 (1/F Zone A)": 3.0,
-    "Late Reading Room (1/F Zone B)": 3.0,
-    "Postgraduate Research Carrels (1/F Zone B)": 3.0,
-    "Individual Study Carrels (1/F Zone A)": 3.0,
-    "Individual Study Carrels (1/F Zone C)": 3.0,
-    "Activity Room (1/F Zone A)":3.0,
-    "Café (1/F Zone A)": 3.0,
-    "Computer Rooms 1 & 2 (1/F Zone B)": 3.0,
-    "1/F (1/F Zone B)": 0.5,
-    "1/F Male & Female (Zone A)": 3.0,
-    "1/F Male & Female (Zone C)": 3.0,
-    "1/F Unisex - Available during Overnight Study Period (Zone B)": 3.0,
-    "1/F Accessible Toilets (Zone A)": 3.0,
-    "1/F Accessible Toilets (Zone C)": 3.0,
-    "Book Drop (1/F Zone B)":0.8,
-    "Book Sterilizer (1/ F Zone B)": 1.5,
-    "Self-Checkout Machine (1/F Zone A & Zone B)": 1.5,
-    "Self-Pickup Locker (1/F Zone B)": 2.0,
-    "SEN Equipment - Service Counter (1/F Zone B)": 0.7,
-    "Laser Cutter / Engraver - LU Barn (Makerspace) Maker Room (1/F Zone A)": 3.0,
-    "Lift (1/F Zone B)": 3.0
-  };
-  
-  for (const [key, height] of Object.entries(heightMap)) {
-    if (facilityName.includes(key)) return height;
-  }
-  return 2.5; // default height
+  return 3.1; 
 }
 
 // Generic tooltip function using API data
@@ -6900,7 +6850,7 @@ class Space {
         type: "polygon",
         data: this.rooms,
         color: (d) => d.color,
-        alpha: 2.2,
+        alpha: 0.7,
         height: (d) => d.height || 2.4,
       });
     }
