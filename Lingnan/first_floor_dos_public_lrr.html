@@ -6516,8 +6516,8 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
     }
     
     // Show actual content when data is available
-    const description = facilityInfo.description;
-    const imageUrl = facilityInfo.image;
+    const description = facilityInfo.description || "";  // CHANGED: Added default ""
+  const imageUrl = facilityInfo.image || "/placeholder-image.png"; 
     
     const content = `
       <div style="padding: 0; margin: 0; line-height: 1.2;">
