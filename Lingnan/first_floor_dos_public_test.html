@@ -6897,10 +6897,10 @@ if (iconData.length > 0) {
         data: icons,
         icon: {
           url: iconUrl,
-          width: 512,
-          height: 512
+          width: 2000,
+          height: 20000
         },
-        width: 5.0
+        width: icons[0].width || 4.0,
       });
       console.log(`  Layer created for: ${iconUrl} (${icons.length} icon(s))`);
     });
