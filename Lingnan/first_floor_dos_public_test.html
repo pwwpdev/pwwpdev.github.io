@@ -6804,6 +6804,115 @@ class Space {
         height: (d) => d.height,
       });
     }
+
+// Define facility icon configurations by unique ID
+const facilityIconConfigs = {
+  // First 11-15, 16BW facility
+  "bcde2b79-a2b7-4545-8cf8-23707194140b": { 
+    iconUrl: "./icons/11-15, 16BW (1F Zone A & Zone B)_a.png",
+    width: 5.0 
+  },
+  // Second 11-15, 16BW facility
+  "35cf415d-fad0-4475-9baf-4aa5e8468d0c": { 
+    iconUrl: "./icons/11-15, 16BW (1F Zone A & Zone B)_b.png",
+    width: 5.0 
+  },
+  // Third 11-15, 16BW facility
+  "5802d3c4-48b2-474b-94e0-b91b94e68a4b": { 
+    iconUrl: "./icons/11-15, 16BW (1F Zone A & Zone B)_c.png",
+    width: 5.0 
+  },
+  // Fourth 11-15, 16BW facility
+  "d4092634-c275-4313-83ab-fe82c5e8e4e0": { 
+    iconUrl: "./icons/11-15, 16BW (1F Zone A & Zone B)_d.png",
+    width: 5.0 
+  }
+};
+
+// Array to hold all icon data
+const iconData = [];
+
+// Loop through each configured facility by ID
+for (const [facilityId, config] of Object.entries(facilityIconConfigs)) {
+  // Find the facility by ID in rooms array
+  const facility = this.rooms ? this.rooms.find(room => room.id === facilityId) : null;
+  
+  if (facility && facility.coordinates && facility.coordinates[0]) {
+    console.log(`✓ Found facility ID: ${facilityId}`);
+    
+    // Get polygon coordinates
+    const coords = facility.coordinates[0];
+    
+    // Calculate center X (average of all x coordinates)
+    const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+    
+    // Find TOP EDGE (minimum z value = northernmost point)
+    const minZ = Math.min(...coords.map(coord => coord.z));
+    
+    // Create icon data
+    iconData.push({
+      id: `icon-${facilityId}`,
+      levelIndex: 0,
+      position: {
+        x: centerX,           // Center horizontally
+        z: minZ,              // Top edge (minimum z)
+        elevation: 2.0,       // Height above ground
+        levelIndex: 0
+      },
+      iconUrl: config.iconUrl
+    });
+    
+    console.log(`  Icon position: x=${centerX.toFixed(2)}, z=${minZ.toFixed(2)}`);
+  } else {
+    console.warn(`✗ Facility not found for ID: ${facilityId}`);
+  }
+}
+
+// Add icon layers to the map
+if (iconData.length > 0) {
+  try {
+    // Group icons by their image URL
+    const iconsByUrl = {};
+    iconData.forEach(icon => {
+      if (!iconsByUrl[icon.iconUrl]) {
+        iconsByUrl[icon.iconUrl] = [];
+      }
+      iconsByUrl[icon.iconUrl].push(icon);
+    });
+    
+    // Remove old icon layers if they exist
+    Object.keys(iconsByUrl).forEach((url, index) => {
+      try {
+        this.space.removeDataLayer(`facility-icons-${index}`);
+      } catch (e) {
+        // Layer doesn't exist yet, that's fine
+      }
+    });
+    
+    // Create a separate layer for each unique icon image
+    Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
+      this.space.addDataLayer({
+        id: `facility-icons-${layerIndex}`,
+        type: "icon",
+        data: icons,
+        icon: {
+          url: iconUrl,
+          width: 512,
+          height: 512
+        },
+        width: 5.0
+      });
+      console.log(`  Layer created for: ${iconUrl} (${icons.length} icon(s))`);
+    });
+    
+    console.log(`✓ Total icons added: ${iconData.length}`);
+  } catch (error) {
+    console.error("✗ Error adding icon layers:", error);
+  }
+} else {
+  console.log("⚠ No facility icons to display");
+}
+
     
     // FIXED: Only set up click handlers if space is ready and handlers aren't already set
     if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
@@ -6817,6 +6926,8 @@ class Space {
       this._clickHandlerSet = true;
     }
   }
+
+
   
   updateMapForFacility() {
     this.updateDataLayers();
