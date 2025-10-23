@@ -6402,32 +6402,35 @@ async function handleQueryParameter() {
     }
     
     if (matchedFacility) {
-      // Try to find the facility asset in dict
-      let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
-      if (!facilityAsset) {
-        facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
+  // Try to find ALL facility assets with the same name using filter()
+  let facilityAssets = dict[11].assets.filter(asset => asset.name === matchedFacility.name);
+  if (facilityAssets.length === 0) {
+    facilityAssets = dict[12].assets.filter(asset => asset.name === matchedFacility.name);
+  }
+  
+  if (facilityAssets.length > 0) {
+    console.log(`Facility asset(s) found: ${facilityAssets.length}, calling handleGenericFacility`);
+    // Handle all matched facilities
+    facilityAssets.forEach(facilityAsset => {
+      setTimeout(() => {
+        handleGenericFacility(facilityAsset, matchedFacility.name);
+      }, 2000);
+    });
+  } else {
+    // Facility exists in API but not in visual map - just show tooltip
+    console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+    setTimeout(() => {
+      showGenericTooltip(matchedFacility.name, true);
+      // Set camera to a default position or facility-specific position if available
+      if (spc && spc.space) {
+        // You might want to set a default camera position here
+        console.log("Setting default camera view");
       }
-      
-      if (facilityAsset) {
-        console.log("Facility asset found, calling handleGenericFacility");
-        setTimeout(() => {
-          handleGenericFacility(facilityAsset, matchedFacility.name);
-        }, 2000);
-      } else {
-        // Facility exists in API but not in visual map - just show tooltip
-        console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
-        setTimeout(() => {
-          showGenericTooltip(matchedFacility.name, true);
-          // Set camera to a default position or facility-specific position if available
-          if (spc && spc.space) {
-            // You might want to set a default camera position here
-            console.log("Setting default camera view");
-          }
-        }, 2000);
-      }
-    } else {
-      console.log('No facility found for query_id:', queryId);
-    }
+    }, 2000);
+  }
+} else {
+  console.log('No facility found for query_id:', queryId);
+}
   } else if (queryId && !facilityAPIData) {
     console.log('Query ID present but no facility data yet, waiting...');
     // Wait for data to load
@@ -7030,14 +7033,17 @@ const params = new URLSearchParams(url.search);
 const facility = params.get("facility");
 
 if (!!facility) {
-  // Check both facilities_list (dict[11]) and facilities_demo (dict[12])
-  let facilityAsset = dict[11].assets.find(asset => asset.name === facility);
-  if (!facilityAsset) {
-    facilityAsset = dict[12].assets.find(asset => asset.name === facility);
+  // Get ALL facilities with the same name from both lists using filter()
+  let facilityAssets = dict[11].assets.filter(asset => asset.name === facility);
+  if (facilityAssets.length === 0) {
+    facilityAssets = dict[12].assets.filter(asset => asset.name === facility);
   }
   
-  if (facilityAsset) {
-    handleGenericFacility(facilityAsset, facility);
+  if (facilityAssets.length > 0) {
+    // Handle all matched facilities
+    facilityAssets.forEach(facilityAsset => {
+      handleGenericFacility(facilityAsset, facility);
+    });
   } else {
     // For API-only facilities, just show tooltip without adding to map
     console.log('Facility coordinates not found, will show tooltip only');
