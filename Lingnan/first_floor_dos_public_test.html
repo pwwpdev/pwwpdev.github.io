@@ -6580,58 +6580,8 @@ function handleSpecialFacility(facility) {
   // Add other special cases here if needed
 }
 
-// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  const heightMap = {
-    "Service Counter (1/F Zone A)": 1.1,
-    "Books A-DS776 (1/F Zone A)": 3.0,
-    "Books DS777-HJ (1/F Zone C)": 3.0,
-    "Course Reserves (1/F Zone A) ": 3.0,
-    "Good Reads, New Arrivals (1/F Zone B)": 3.0,
-    "High Use Books (1/F Zone B)": 3.0,
-    "Category III Multimedia - Ask at Service Counter (1/F Zone A)": 1.1,
-    "Staff Publications (1/F Zone B)": 3.0,
-    "Chiang Chen Information Commons (1/F Zone A)": 3.0,
-    "Computer Room 2(1/F Zone B)": 3.0,
-    "SEN Workstation 1 (1/F Zone B)": 1.1,
-    "SEN Workstation 2 (1/F Zone C)": 1.1,
-    "Bloomberg Terminal - Database Workstation (1/F Zone B)": 1.1,
-    "LSEG Workspace (1/F Zone B)": 1.1,
-    "WIND 資訊金融終端 (1/F Zone B)": 1.1,
-    "11-13 (1/F Zone A)": 1.1,
-    "14-16BW (1/F Zone B)": 1.1,
-    "Individual Study Rooms 1 - 7 (1/F Zone C)": 3.0,
-    "Individual Study Rooms 8 (1/F Zone C)": 3.0,
-    "Individual Study Rooms 9 - 11 (1/F Zone A)": 3.0,
-    "Group Study Rooms 1 - 4 (1/F Zone C)": 3.0,
-    "Group Study Room 5 (1/F Zone C)": 3.0,
-    "Group Study Rooms 8 - 9 (1/F Zone A)": 3.0,
-    "Late Reading Room (1/F Zone B)": 3.0,
-    "Postgraduate Research Carrels (1/F Zone B)": 3.0,
-    "Individual Study Carrels (1/F Zone A)": 3.0,
-    "Individual Study Carrels (1/F Zone C)": 3.0,
-    "Activity Room (1/F Zone A)":3.0,
-    "Café (1/F Zone A)": 3.0,
-    "Computer Rooms 1 & 2 (1/F Zone B)": 3.0,
-    "1/F (1/F Zone B)": 0.5,
-    "1/F Male & Female (Zone A)": 3.0,
-    "1/F Male & Female (Zone C)": 3.0,
-    "1/F Unisex - Available during Overnight Study Period (Zone B)": 3.0,
-    "1/F Accessible Toilets (Zone A)": 3.0,
-    "1/F Accessible Toilets (Zone C)": 3.0,
-    "Book Drop (1/F Zone B)":0.8,
-    "Book Sterilizer (1/ F Zone B)": 1.5,
-    "Self-Checkout Machine (1/F Zone A & Zone B)": 1.5,
-    "Self-Pickup Locker (1/F Zone B)": 2.0,
-    "SEN Equipment - Service Counter (1/F Zone B)": 0.7,
-    "Laser Cutter / Engraver - LU Barn (Makerspace) Maker Room (1/F Zone A)": 3.0,
-    "Lift (1/F Zone B)": 3.0
-  };
-  
-  for (const [key, height] of Object.entries(heightMap)) {
-    if (facilityName.includes(key)) return height;
-  }
-  return 2.5; // default height
+  return 3.1; 
 }
 
 // Generic tooltip function using API data
@@ -6822,9 +6772,17 @@ const iconData = [];
 const iconConfigs = {
   "5802d3c4-48b2-474b-94e0-b91b94e68a4b": "./icons/11-15, 16BW (1F Zone A & Zone B)_a.png",
   "bcde2b79-a2b7-4545-8cf8-23707194140b": "./icons/11-15, 16BW (1F Zone A & Zone B)_b.png",
-  "35cf415d-fad0-4475-9baf-4aa5e8468d0c": "./icons/11-15, 16BW (1F Zone A & Zone B)_c.png",
-  "d4092634-c275-4313-83ab-fe82c5e8e4e0": "./icons/11-15, 16BW (1F Zone A & Zone B)_d.png"
+  "d4092634-c275-4313-83ab-fe82c5e8e4e0": "./icons/11-15, 16BW (1F Zone A & Zone B)_c.png",
+  "35cf415d-fad0-4475-9baf-4aa5e8468d0c": "./icons/11-15, 16BW (1F Zone A & Zone B)_d.png",
+  "e02c5df4-47f8-4ddb-a72f-57f487eb9769": "./icons/For all entries under Computers.png",
+  "91eca3a2-4ab9-4e59-94fd-1f2838f8bf30": "./icons/For all entries under Computers.png",
+  "58e3b3bc-c7e0-4792-834b-a0acd95b30dd": "./icons/For all entries under Computers.png",
+  "66fe8cfe-7064-407f-bb15-07e51ef34241": "./icons/For all entries under Computers.png",
+  "34591980-9858-4f69-9fd3-564efa471f47": "./icons/For all entries under Computers.png",
+  "f01851b9-36f0-42fd-850c-54242e0406f9": "./icons/For all entries under Computers.png",
+  "0f801a83-b1db-4de1-a0e4-cf1323684b4d": "./icons/For all entries under Computers.png",
 };
+
 
 if (has11_15Facilities && has11_15Facilities.length > 0) {
   console.log(`Adding icons for ${has11_15Facilities.length} facilities`);
