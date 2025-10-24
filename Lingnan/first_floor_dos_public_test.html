@@ -3957,7 +3957,7 @@
       },
       {
         "id": "adbe21f3-e422-40b1-9ee8-6de4a9dd9eda",
-        "name": "Category III Multimedia – Ask at Service Counter (1/F Zone A)",
+        "name": "Category III Multimedia - Ask at Service Counter (1/F Zone A)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4173,7 +4173,7 @@
       },
       {
         "id": "34591980-9858-4f69-9fd3-564efa471f47",
-        "name": "Bloomberg Terminal – Database Workstation (1/F Zone B)",
+        "name": "Bloomberg Terminal - Database Workstation (1/F Zone B)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4333,7 +4333,7 @@
       },
       {
         "id": "189f3c16-af29-4cef-983e-e0db9211b145",
-        "name": "Individual Study Rooms 1 – 7 (1/F Zone C)",
+        "name": "Individual Study Rooms 1 - 7 (1/F Zone C)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4410,7 +4410,7 @@
       },
       {
         "id": "73f476ff-8e30-48e8-a0c9-21e0e1cbf642",
-        "name": "Individual Study Rooms 9 – 11 (1/F Zone A)",
+        "name": "Individual Study Rooms 9 - 11 (1/F Zone A)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4441,7 +4441,7 @@
       },
       {
         "id": "d99d78b8-e98f-4833-a312-9eae30281a5d",
-        "name": "Group Study Rooms 1 – 4 (1/F Zone C)",
+        "name": "Group Study Rooms 1 - 4 (1/F Zone C)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4503,7 +4503,7 @@
       },
       {
         "id": "f56a0186-a08c-49a5-8121-7bb306d70875",
-        "name": "Group Study Rooms 8 – 9 (1/F Zone A)",
+        "name": "Group Study Rooms 8 - 9 (1/F Zone A)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -4998,7 +4998,7 @@
       },
       {
         "id": "64ad1506-1d62-4522-9c9d-6a98e6776221",
-        "name": "1/F Unisex – Available during Overnight Study Period (Zone B)",
+        "name": "1/F Unisex - Available during Overnight Study Period (Zone B)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -5255,7 +5255,7 @@
       },
       {
         "id": "d67f0a01-4e82-4706-b206-1c1fc6f711a5",
-        "name": "SEN Equipment – Service Counter (1/F Zone B)",
+        "name": "SEN Equipment - Service Counter (1/F Zone B)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -5286,7 +5286,7 @@
       },
       {
         "id": "7e0c30e3-6098-49bd-8a4f-207d916590c6",
-        "name": "Laser Cutter / Engraver – LU Barn (Makerspace) Maker Room (1/F Zone A)",
+        "name": "Laser Cutter / Engraver - LU Barn (Makerspace) Maker Room (1/F Zone A)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -6580,8 +6580,9 @@ function handleSpecialFacility(facility) {
   // Add other special cases here if needed
 }
 
+// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  return 3.1; 
+  return 3.1;
 }
 
 // Generic tooltip function using API data
@@ -6758,22 +6759,22 @@ class Space {
       });
     }
     
-    // ============ FACILITY ICONS SECTION - START ============
-// Check for facilities with name "11-15, 16BW (1/F Zone A & Zone B)"
-const has11_15Facilities = this.rooms && this.rooms.filter(room => room.name === "11-15, 16BW (1/F Zone A & Zone B)");
+ // ============ FACILITY ICONS SECTION - START ============
 
-console.log("Checking for facilities...");
-console.log("Has 11-15, 16BW facilities:", has11_15Facilities ? has11_15Facilities.length : 0);
+console.log("Checking for facilities with icons...");
 
 // Array to hold all icon data
 const iconData = [];
 
 // Define icon configurations by facility ID
 const iconConfigs = {
+  // 11-15, 16BW facilities
   "5802d3c4-48b2-474b-94e0-b91b94e68a4b": "./icons/11-15, 16BW (1F Zone A & Zone B)_a.png",
   "bcde2b79-a2b7-4545-8cf8-23707194140b": "./icons/11-15, 16BW (1F Zone A & Zone B)_b.png",
   "d4092634-c275-4313-83ab-fe82c5e8e4e0": "./icons/11-15, 16BW (1F Zone A & Zone B)_c.png",
   "35cf415d-fad0-4475-9baf-4aa5e8468d0c": "./icons/11-15, 16BW (1F Zone A & Zone B)_d.png",
+  
+  // Computer facilities - all use same icon
   "e02c5df4-47f8-4ddb-a72f-57f487eb9769": "./icons/For all entries under Computers.png",
   "91eca3a2-4ab9-4e59-94fd-1f2838f8bf30": "./icons/For all entries under Computers.png",
   "58e3b3bc-c7e0-4792-834b-a0acd95b30dd": "./icons/For all entries under Computers.png",
@@ -6783,11 +6784,17 @@ const iconConfigs = {
   "0f801a83-b1db-4de1-a0e4-cf1323684b4d": "./icons/For all entries under Computers.png",
 };
 
+// Filter for ALL facilities that have an icon configured (by ID)
+const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
+  iconConfigs.hasOwnProperty(room.id)
+);
 
-if (has11_15Facilities && has11_15Facilities.length > 0) {
-  console.log(`Adding icons for ${has11_15Facilities.length} facilities`);
+console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
+
+if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
+  console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
   
-  has11_15Facilities.forEach(facility => {
+  facilitiesWithIcons.forEach(facility => {
     // Get the icon URL for this specific facility ID
     const iconUrl = iconConfigs[facility.id];
     
@@ -6812,7 +6819,7 @@ if (has11_15Facilities && has11_15Facilities.length > 0) {
         }
       });
       
-      console.log(`  Icon added for facility ${facility.id}: x=${centerX.toFixed(2)}, z=${minZ.toFixed(2)}`);
+      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${centerX.toFixed(2)}, z=${(minZ - 2.5).toFixed(2)}`);
     }
   });
 }
@@ -6823,7 +6830,7 @@ if (iconData.length > 0) {
     // Group by icon URL for separate layers
     const iconsByUrl = {};
     
-    has11_15Facilities.forEach(facility => {
+    facilitiesWithIcons.forEach(facility => {
       const iconUrl = iconConfigs[facility.id];
       if (iconUrl) {
         if (!iconsByUrl[iconUrl]) {
@@ -6845,17 +6852,19 @@ if (iconData.length > 0) {
         data: icons,
         icon: {
           url: iconUrl,
-          width: 2000,
-          height: 2000
+          width: 2000,    
+          height: 2000   
         },
         width: 5.0
       });
     });
     
-    console.log("Icon layer(s) added successfully!");
+    console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
   } catch (error) {
-    console.error("Error adding icon layer:", error);
+    console.error("✗ Error adding icon layer:", error);
   }
+} else {
+  console.log("⚠ No facility icons to display");
 }
 // ============ FACILITY ICONS SECTION - END ============
     
