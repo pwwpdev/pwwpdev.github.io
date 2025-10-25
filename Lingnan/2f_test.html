@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -120,14 +120,50 @@ button[title="Hide annotations"] {
   display: none !important;
 }
 
+#hover-id-display {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  z-index: 2000;
+  display: none;
+  max-width: 400px;
+  word-wrap: break-word;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
   </style>
   </head>
   <body>
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
     <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
+
+
    
 
     <div id="wrapper">
+      <!-- Hover ID Display -->
+<div id="hover-id-display" style="
+position: absolute;
+top: 10px;
+left: 10px;
+background: rgba(0, 0, 0, 0.85);
+color: #00ff00;
+font-family: 'Courier New', monospace;
+font-size: 12px;
+padding: 8px 12px;
+border-radius: 4px;
+z-index: 2000;
+display: none;
+pointer-events: none;
+"></div>
+
         <div id="smplrspace-container"></div>
         <div
           id="custom-tooltip"
@@ -1829,6 +1865,37 @@ this.space.on("click", (event) => {
     }
   }
 });
+
+// Add hover handlers to display IDs in console and on screen
+this.space.on("mouseover", (event) => {
+  if (event.data) {
+    const hoverDisplay = document.getElementById("hover-id-display");
+    let displayText = "";
+    
+    // Log to console
+    console.log("=== HOVER INFO ===");
+    console.log("ID:", event.data.id);
+    console.log("Name:", event.data.name);
+    console.log("Full data:", event.data);
+    console.log("==================");
+    
+    // Display on screen
+    displayText = `ID: ${event.data.id || 'N/A'}\nName: ${event.data.name || 'N/A'}`;
+    
+    if (hoverDisplay) {
+      hoverDisplay.textContent = displayText;
+      hoverDisplay.style.display = "block";
+    }
+  }
+});
+
+this.space.on("mouseout", (event) => {
+  const hoverDisplay = document.getElementById("hover-id-display");
+  if (hoverDisplay) {
+    hoverDisplay.style.display = "none";
+  }
+});
+
 }
 
 updateMapForFacility() {
