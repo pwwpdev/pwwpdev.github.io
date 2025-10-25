@@ -1722,45 +1722,45 @@ const facilityRoom = facilityRooms.length > 0 ? facilityRooms[0] : null;
 
   };
   
-  // Filter for ALL facilities that have an icon configured (by ID)
-  const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
-    iconConfigs.hasOwnProperty(room.id)
-  );
+ // Filter for ALL facilities that have an icon configured (by ID)
+const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
+  iconConfigs.hasOwnProperty(room.id)
+);
+
+console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
+
+if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
+  console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
   
-  console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
-  
-  if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
-    console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
+  facilitiesWithIcons.forEach(facility => {
+    // Get the icon URL for this specific facility ID
+    const iconUrl = iconConfigs[facility.id];
     
-    facilitiesWithIcons.forEach(facility => {
-      // Get the icon URL for this specific facility ID
-      const iconUrl = iconConfigs[facility.id];
+    if (iconUrl && facility.coordinates && facility.coordinates[0]) {
+      // Get polygon coordinates
+      const coords = facility.coordinates[0];
       
-      if (iconUrl && facility.coordinates && facility.coordinates[0]) {
-        // Get polygon coordinates
-        const coords = facility.coordinates[0];
-        
-        // Calculate center X (average of all x coordinates)
-        const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
-        
-        // Find TOP EDGE (minimum z value = northernmost point)
-        const minZ = Math.min(...coords.map(coord => coord.z));
-        
-        iconData.push({
-          id: `icon-${facility.id}`,
-          levelIndex: 0,
-          position: {
-            x: centerX + 0.5,
-            z: minZ + 7.5, 
-            elevation: 4.0,
-            levelIndex: 0
-          }
-        });
-        
-        console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${centerX.toFixed(2)}, z=${(minZ - 2.5).toFixed(2)}`);
-      }
-    });
-  }
+      // Calculate center X (average of all x coordinates)
+      const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+      
+      // Find TOP EDGE (minimum z value = northernmost point)
+      const minZ = Math.min(...coords.map(coord => coord.z));
+      
+      iconData.push({
+        id: `icon-${facility.id}`,
+        levelIndex: 0,
+        position: {
+          x: centerX,
+          z: minZ - 2.5, 
+          elevation: 2.0,
+          levelIndex: 0
+        }
+      });
+      
+      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${centerX.toFixed(2)}, z=${(minZ - 2.5).toFixed(2)}`);
+    }
+  });
+}
   
   // Add the icon layer if there's any icon data
   if (iconData.length > 0) {
