@@ -1721,90 +1721,102 @@ const facilityRoom = facilityRooms.length > 0 ? facilityRooms[0] : null;
 
 
   };
+
+  const positionAdjustments = {
+  "d0bc7111-7fdb-41b2-99ce-6434721407bc": { xOffset: 0, zOffset: 6.5, elevation: 5.0 },
+  "7d29c189-455f-4ac9-927b-75264829d3fe": { xOffset: 0, zOffset: 6.5, elevation: 5.0 },
+  "034e6926-21b5-4670-8286-c070910d7f2c": { xOffset: 0.5, zOffset: 6.2, elevation: 5.0 },
+  "265a2bb7-1628-49f3-8fd5-d03aa7e139fa": { xOffset: 0, zOffset: 0, elevation: 5.0 },
+  "ba53551e-4c19-4a9e-9d88-55cb97d08781": { xOffset: -1.5, zOffset: 0, elevation: 5.0 },  
+  "e0d95117-64aa-428d-8bde-d331fa064d54": { xOffset: 1.5, zOffset: 0, elevation: 5.0 },   
+};
   
-  // Filter for ALL facilities that have an icon configured (by ID)
-  const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
-    iconConfigs.hasOwnProperty(room.id)
-  );
+// Filter for ALL facilities that have an icon configured (by ID)
+const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
+  iconConfigs.hasOwnProperty(room.id)
+);
+
+console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
+
+if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
+  console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
   
-  console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
-  
-  if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
-    console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
+  facilitiesWithIcons.forEach(facility => {
+    // Get the icon URL for this specific facility ID
+    const iconUrl = iconConfigs[facility.id];
     
-    facilitiesWithIcons.forEach(facility => {
-      // Get the icon URL for this specific facility ID
-      const iconUrl = iconConfigs[facility.id];
+    if (iconUrl && facility.coordinates && facility.coordinates[0]) {
+      // Get polygon coordinates
+      const coords = facility.coordinates[0];
       
-      if (iconUrl && facility.coordinates && facility.coordinates[0]) {
-        // Get polygon coordinates
-        const coords = facility.coordinates[0];
-        
-        // Calculate center X (average of all x coordinates)
-        const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
-        
-        // Find TOP EDGE (minimum z value = northernmost point)
-        const minZ = Math.min(...coords.map(coord => coord.z));
-        
-        iconData.push({
-          id: `icon-${facility.id}`,
-          levelIndex: 0,
-          position: {
-            x: centerX + 0.5,
-            z: minZ + 7.5, 
-            elevation: 4.0,
-            levelIndex: 0
-          }
-        });
-        
-        console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${centerX.toFixed(2)}, z=${(minZ - 2.5).toFixed(2)}`);
-      }
-    });
-  }
-  
-  // Add the icon layer if there's any icon data
-  if (iconData.length > 0) {
-    try {
-      // Group by icon URL for separate layers
-      const iconsByUrl = {};
+      // Calculate center X (average of all x coordinates)
+      const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
       
-      facilitiesWithIcons.forEach(facility => {
-        const iconUrl = iconConfigs[facility.id];
-        if (iconUrl) {
-          if (!iconsByUrl[iconUrl]) {
-            iconsByUrl[iconUrl] = [];
-          }
-          // Find the corresponding icon data
-          const iconDataItem = iconData.find(item => item.id === `icon-${facility.id}`);
-          if (iconDataItem) {
-            iconsByUrl[iconUrl].push(iconDataItem);
-          }
+      // Find TOP EDGE (minimum z value = northernmost point)
+      const minZ = Math.min(...coords.map(coord => coord.z));
+      
+      // Get position adjustment or use defaults
+      const adjustment = positionAdjustments[facility.id] || { xOffset: 0, zOffset: 0, elevation: 5.0 };
+      
+      iconData.push({
+        id: `icon-${facility.id}`,
+        levelIndex: 0,
+        position: {
+          x: centerX + adjustment.xOffset,
+          z: minZ + adjustment.zOffset,
+          elevation: adjustment.elevation,
+          levelIndex: 0
         }
       });
       
-      // Create a layer for each unique icon
-      Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
-        this.space.addDataLayer({
-          id: `facility-icons-${layerIndex}`,
-          type: "icon",
-          data: icons,
-          icon: {
-            url: iconUrl,
-            width: 2000,
-            height: 2000
-          },
-          width: 5.0
-        });
-      });
-      
-      console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
-    } catch (error) {
-      console.error("✗ Error adding icon layer:", error);
+      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${(centerX + adjustment.xOffset).toFixed(2)}, z=${(minZ + adjustment.zOffset).toFixed(2)}, elevation=${adjustment.elevation}`);
     }
-  } else {
-    console.log("⚠ No facility icons to display");
+  });
+}
+
+// Add the icon layer if there's any icon data
+if (iconData.length > 0) {
+  try {
+    // Group by icon URL for separate layers
+    const iconsByUrl = {};
+    
+    facilitiesWithIcons.forEach(facility => {
+      const iconUrl = iconConfigs[facility.id];
+      if (iconUrl) {
+        if (!iconsByUrl[iconUrl]) {
+          iconsByUrl[iconUrl] = [];
+        }
+        // Find the corresponding icon data
+        const iconDataItem = iconData.find(item => item.id === `icon-${facility.id}`);
+        if (iconDataItem) {
+          iconsByUrl[iconUrl].push(iconDataItem);
+        }
+      }
+    });
+    
+    // Create a layer for each unique icon
+    Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
+      this.space.addDataLayer({
+        id: `facility-icons-${layerIndex}`,
+        type: "icon",
+        data: icons,
+        icon: {
+          url: iconUrl,
+          width: 512,
+          height: 512
+        },
+        width: 5.0
+      });
+    });
+    
+    console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
+  } catch (error) {
+    console.error("✗ Error adding icon layers:", error);
   }
-  // ============ FACILITY ICONS SECTION - END ============
+} else {
+  console.log(" No facility icons to display");
+}
+// ============ FACILITY ICONS SECTION - END ============
 
   // Add click handlers for custom tooltip
 this.space.on("click", (event) => {
