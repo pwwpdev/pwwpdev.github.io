@@ -1866,36 +1866,25 @@ this.space.on("click", (event) => {
   }
 });
 
-// Add hover handlers to display IDs in console and on screen
-this.space.on("mouseover", (event) => {
+// Add click handlers for custom tooltip AND ID display
+this.space.on("click", (event) => {
   if (event.data) {
-    const hoverDisplay = document.getElementById("hover-id-display");
-    let displayText = "";
-    
-    // Log to console
-    console.log("=== HOVER INFO ===");
+    // Show ID in console and on screen
+    console.log("=== CLICKED OBJECT INFO ===");
     console.log("ID:", event.data.id);
     console.log("Name:", event.data.name);
     console.log("Full data:", event.data);
-    console.log("==================");
+    console.log("==========================");
     
-    // Display on screen
-    displayText = `ID: ${event.data.id || 'N/A'}\nName: ${event.data.name || 'N/A'}`;
-    
-    if (hoverDisplay) {
-      hoverDisplay.textContent = displayText;
-      hoverDisplay.style.display = "block";
+    // Show tooltip
+    const tooltipDiv = document.getElementById("custom-tooltip");
+    const contentDiv = document.getElementById("tooltip-content");
+
+    if (event.data.name && tooltipDiv && contentDiv) {
+      showGenericTooltip(event.data.name, true);
     }
   }
 });
-
-this.space.on("mouseout", (event) => {
-  const hoverDisplay = document.getElementById("hover-id-display");
-  if (hoverDisplay) {
-    hoverDisplay.style.display = "none";
-  }
-});
-
 }
 
 updateMapForFacility() {
