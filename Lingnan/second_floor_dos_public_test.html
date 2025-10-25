@@ -1746,12 +1746,12 @@ if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
       // Find TOP EDGE (minimum z value = northernmost point)
       const minZ = Math.min(...coords.map(coord => coord.z));
       
-      iconData.push({
+    iconData.push({
         id: `icon-${facility.id}`,
         levelIndex: 0,
         position: {
-          x: centerX,
-          z: minZ, 
+          x: centerX - 1.0 ,
+          z: minZ - 1.0, 
           elevation: 4.0,
           levelIndex: 0
         }
