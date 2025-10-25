@@ -121,21 +121,23 @@ button[title="Hide annotations"] {
 }
 
 #hover-id-display {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.85);
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.95);
   color: #00ff00;
   font-family: 'Courier New', monospace;
-  font-size: 12px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  z-index: 2000;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 12px 16px;
+  border-radius: 6px;
+  z-index: 99999;
   display: none;
-  max-width: 400px;
+  min-width: 250px;
   word-wrap: break-word;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
   pointer-events: none;
+  border: 2px solid #00ff00;
 }
 
   </style>
@@ -149,19 +151,24 @@ button[title="Hide annotations"] {
 
     <div id="wrapper">
       <!-- Hover ID Display -->
+<!-- Hover ID Display -->
 <div id="hover-id-display" style="
-position: absolute;
-top: 10px;
-left: 10px;
-background: rgba(0, 0, 0, 0.85);
+position: fixed;
+top: 70px;
+left: 20px;
+background: rgba(0, 0, 0, 0.95);
 color: #00ff00;
 font-family: 'Courier New', monospace;
-font-size: 12px;
-padding: 8px 12px;
-border-radius: 4px;
-z-index: 2000;
+font-size: 14px;
+font-weight: bold;
+padding: 12px 16px;
+border-radius: 6px;
+z-index: 99999;
 display: none;
 pointer-events: none;
+border: 2px solid #00ff00;
+box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
+min-width: 250px;
 "></div>
 
         <div id="smplrspace-container"></div>
