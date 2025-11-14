@@ -6572,22 +6572,15 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
       spc.setCameraForFacility(facilityName);
       console.log("Camera positioned");
     }
-  }, 1500);
+  }, 500);
   
   // FIXED: Show tooltip with multiple retry attempts
   setTimeout(() => {
     console.log("First tooltip attempt for:", facilityName);
     showGenericTooltip(facilityName, true);
-  }, 2000);
+  }, 800);
   
-  // Retry showing tooltip if it didn't appear
-  setTimeout(() => {
-    const tooltipDiv = document.getElementById("custom-tooltip");
-    if (tooltipDiv && tooltipDiv.style.display !== "block") {
-      console.log("Tooltip not visible, retrying...");
-      showGenericTooltip(facilityName, false);
-    }
-  }, 4000);
+
 }
 
 // Handle special facilities not in facilities_list
@@ -7084,7 +7077,30 @@ window.addEventListener('message', (event) => {
     facilityAPIData = event.data.data;
     console.log('Received facility data from parent:', facilityAPIData);
   }
+  
+  // ✅ ADD THIS: Listen for facility selection
+  if (event.data.type === 'SELECT_FACILITY') {
+    const facilityName = event.data.facilityName;
+    console.log('Received facility selection:', facilityName);
+    
+    // Find facility assets
+    let facilityAssets = dict[11].assets.filter(asset => asset.name === facilityName);
+    if (facilityAssets.length === 0) {
+      facilityAssets = dict[12].assets.filter(asset => asset.name === facilityName);
+    }
+    
+    if (facilityAssets.length > 0) {
+      facilityAssets.forEach(facilityAsset => {
+        handleGenericFacility(facilityAsset, facilityName);
+      });
+    } else {
+      // Show tooltip only
+      showGenericTooltip(facilityName, true);
+    }
+  }
 });
+
+
 
 async function start() {
   while (typeof smplr === "undefined") {
