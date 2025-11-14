@@ -277,7 +277,10 @@
             containerId: "smplrspace-container",
           });
           this.space.startViewer({
-            preview: false,
+          preview: false,
+          allowModeChange: true,
+          disableCameraRotation: true,
+          loadingMessage: "Loading...",
             cameraPlacement: {
               alpha: 1.5642931020318165,
               beta: 0.5615178132728119,
