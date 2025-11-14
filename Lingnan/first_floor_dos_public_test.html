@@ -6315,28 +6315,29 @@ async function fetchFacilityData() {
     const data = await response.json();
     const firstLevels = data.data || [];
     
-    // Fetch all second levels for each first level
+    // Fetch second and third levels for each first level
     const facilitiesWithChildren = await Promise.all(
       firstLevels.map(async (firstLevel) => {
         try {
-          // Fetch second levels for this first level
-          const secondLevelsResponse = await fetch(
+          // Fetch second levels
+          const secondResponse = await fetch(
             `https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities/${firstLevel.id}/second_levels`
           );
-          const secondLevelsData = await secondLevelsResponse.json();
+          const secondData = await secondResponse.json();
+          const secondLevels = secondData.second_levels || [];
           
-          // For each second level, fetch third levels
-          const secondLevelsWithThirdLevels = await Promise.all(
-            (secondLevelsData.second_levels || []).map(async (secondLevel) => {
+          // Fetch third levels for each second level
+          const secondLevelsWithThird = await Promise.all(
+            secondLevels.map(async (secondLevel) => {
               try {
-                const thirdLevelsResponse = await fetch(
+                const thirdResponse = await fetch(
                   `https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities/${firstLevel.id}/second_levels/${secondLevel.id}/third_levels`
                 );
-                const thirdLevelsData = await thirdLevelsResponse.json();
+                const thirdData = await thirdResponse.json();
                 
                 return {
                   ...secondLevel,
-                  third_levels: thirdLevelsData.third_levels || []
+                  third_levels: thirdData.third_levels || []
                 };
               } catch (err) {
                 console.error(`Failed to fetch third levels for ${secondLevel.id}:`, err);
@@ -6350,7 +6351,7 @@ async function fetchFacilityData() {
           
           return {
             ...firstLevel,
-            second_levels: secondLevelsWithThirdLevels
+            second_levels: secondLevelsWithThird
           };
         } catch (err) {
           console.error(`Failed to fetch second levels for ${firstLevel.id}:`, err);
