@@ -6310,58 +6310,66 @@ let facilityAPIData = null;
 
 async function fetchFacilityData() {
   try {
-    // Fetch first levels
     const response = await fetch('https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities');
     const data = await response.json();
     const firstLevels = data.data || [];
     
-    // Fetch second and third levels for each first level
-    const facilitiesWithChildren = await Promise.all(
-      firstLevels.map(async (firstLevel) => {
-        try {
-          // Fetch second levels
-          const secondResponse = await fetch(
-            `https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities/${firstLevel.id}/second_levels`
-          );
-          const secondData = await secondResponse.json();
-          const secondLevels = secondData.second_levels || [];
-          
-          // Fetch third levels for each second level
-          const secondLevelsWithThird = await Promise.all(
-            secondLevels.map(async (secondLevel) => {
-              try {
-                const thirdResponse = await fetch(
-                  `https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities/${firstLevel.id}/second_levels/${secondLevel.id}/third_levels`
-                );
-                const thirdData = await thirdResponse.json();
-                
-                return {
-                  ...secondLevel,
-                  third_levels: thirdData.third_levels || []
-                };
-              } catch (err) {
-                console.error(`Failed to fetch third levels for ${secondLevel.id}:`, err);
-                return {
-                  ...secondLevel,
-                  third_levels: []
-                };
-              }
-            })
-          );
-          
-          return {
-            ...firstLevel,
-            second_levels: secondLevelsWithThird
-          };
-        } catch (err) {
-          console.error(`Failed to fetch second levels for ${firstLevel.id}:`, err);
-          return {
-            ...firstLevel,
-            second_levels: []
-          };
-        }
-      })
+    // Fetch ALL second levels in parallel
+    const allSecondLevels = await Promise.all(
+      firstLevels.map(firstLevel =>
+        fetch(`https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities/${firstLevel.id}/second_levels`)
+          .then(res => res.json())
+          .then(data => ({ firstLevelId: firstLevel.id, secondLevels: data.second_levels || [] }))
+          .catch(err => {
+            console.error(`Failed to fetch second levels for ${firstLevel.id}:`, err);
+            return { firstLevelId: firstLevel.id, secondLevels: [] };
+          })
+      )
     );
+
+    // Collect all third level fetch promises
+    const allThirdLevelPromises = [];
+    allSecondLevels.forEach(({ firstLevelId, secondLevels }) => {
+      secondLevels.forEach(secondLevel => {
+        allThirdLevelPromises.push(
+          fetch(`https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities/${firstLevelId}/second_levels/${secondLevel.id}/third_levels`)
+            .then(res => res.json())
+            .then(data => ({ 
+              firstLevelId, 
+              secondLevelId: secondLevel.id, 
+              thirdLevels: data.third_levels || [] 
+            }))
+            .catch(err => {
+              console.error(`Failed to fetch third levels for ${secondLevel.id}:`, err);
+              return { firstLevelId, secondLevelId: secondLevel.id, thirdLevels: [] };
+            })
+        );
+      });
+    });
+
+    // Fetch ALL third levels in parallel
+    const allThirdLevels = await Promise.all(allThirdLevelPromises);
+
+    // Build the hierarchical structure
+    const facilitiesWithChildren = firstLevels.map(firstLevel => {
+      const secondLevelsData = allSecondLevels.find(sl => sl.firstLevelId === firstLevel.id);
+      
+      const secondLevelsWithThird = (secondLevelsData?.secondLevels || []).map(secondLevel => {
+        const thirdLevelsData = allThirdLevels.find(
+          tl => tl.firstLevelId === firstLevel.id && tl.secondLevelId === secondLevel.id
+        );
+        
+        return {
+          ...secondLevel,
+          third_levels: thirdLevelsData?.thirdLevels || []
+        };
+      });
+      
+      return {
+        ...firstLevel,
+        second_levels: secondLevelsWithThird
+      };
+    });
     
     facilityAPIData = facilitiesWithChildren;
     console.log('Facility data loaded:', facilityAPIData);
@@ -6736,7 +6744,9 @@ class Space {
         radius: 185.49815361318093,
         target: { x: 70.43070629934955, y: 1, z: -48.22815466523894 },
       },
-      onReady: () => this.fetchAll(),
+      onReady: () => {
+      this.fetchAll();
+    },
       onError: (error) => console.error("Could not start viewer", error),
     });
   }
@@ -7069,16 +7079,34 @@ async function wait() {
   });
 }
 
+window.addEventListener('message', (event) => {
+  if (event.data.type === 'FACILITY_DATA') {
+    facilityAPIData = event.data.data;
+    console.log('Received facility data from parent:', facilityAPIData);
+  }
+});
+
 async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
-  
   console.log("Starting initialization...");
   
-  // Fetch facility data first and wait for it
-  await fetchFacilityData();
-  console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryId = urlParams.get('query');
+  const facilityParam = urlParams.get('facility');
+  
+  // Only fetch if data wasn't provided by parent AND we need it
+  if (!facilityAPIData && (queryId || facilityParam)) {
+    console.log("Fetching facility data (not provided by parent)...");
+    await fetchFacilityData();
+  } else if (facilityAPIData) {
+    console.log("Using facility data from parent (React)");
+  } else {
+    console.log("No facility data needed for this view");
+  }
+
+  console.log("Facility data status:", facilityAPIData ? 'Available' : 'Not needed');
   
   spc.initSpace(smplr);
   console.log("Space initialized");
@@ -7087,7 +7115,7 @@ async function start() {
   setTimeout(() => {
     console.log("Calling handleQueryParameter...");
     handleQueryParameter();
-  }, 3500); // Increased delay to ensure map is fully loaded
+  }, 1500);
   
   setInterval(() => {
     spc.fetchAll();
