@@ -128,6 +128,7 @@
     }
     </style>
   <body>
+
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
     <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
 
@@ -6580,7 +6581,7 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
     showGenericTooltip(facilityName, true);
   }, 800);
   
-
+ 
 }
 
 // Handle special facilities not in facilities_list
@@ -7077,30 +7078,7 @@ window.addEventListener('message', (event) => {
     facilityAPIData = event.data.data;
     console.log('Received facility data from parent:', facilityAPIData);
   }
-  
-  // ✅ ADD THIS: Listen for facility selection
-  if (event.data.type === 'SELECT_FACILITY') {
-    const facilityName = event.data.facilityName;
-    console.log('Received facility selection:', facilityName);
-    
-    // Find facility assets
-    let facilityAssets = dict[11].assets.filter(asset => asset.name === facilityName);
-    if (facilityAssets.length === 0) {
-      facilityAssets = dict[12].assets.filter(asset => asset.name === facilityName);
-    }
-    
-    if (facilityAssets.length > 0) {
-      facilityAssets.forEach(facilityAsset => {
-        handleGenericFacility(facilityAsset, facilityName);
-      });
-    } else {
-      // Show tooltip only
-      showGenericTooltip(facilityName, true);
-    }
-  }
 });
-
-
 
 async function start() {
   while (typeof smplr === "undefined") {
