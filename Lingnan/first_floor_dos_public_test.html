@@ -128,7 +128,6 @@
     }
     </style>
   <body>
-
     <script src="https://app.smplrspace.com/lib/smplr.js"></script>
     <link href="https://app.smplrspace.com/lib/smplr.css" rel="stylesheet" />
 
@@ -6311,66 +6310,33 @@ let facilityAPIData = null;
 
 async function fetchFacilityData() {
   try {
-    const response = await fetch('https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities');
+    // Fetch first levels
+    const response = await fetch('https://njs-01.optimuslab.space/library_facilities/');
     const data = await response.json();
-    const firstLevels = data.data || [];
+    const firstLevels = data.library_facilities || [];
     
-    // Fetch ALL second levels in parallel
-    const allSecondLevels = await Promise.all(
-      firstLevels.map(firstLevel =>
-        fetch(`https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities/${firstLevel.id}/second_levels`)
-          .then(res => res.json())
-          .then(data => ({ firstLevelId: firstLevel.id, secondLevels: data.second_levels || [] }))
-          .catch(err => {
-            console.error(`Failed to fetch second levels for ${firstLevel.id}:`, err);
-            return { firstLevelId: firstLevel.id, secondLevels: [] };
-          })
-      )
+    // Fetch children for each first level
+    const facilitiesWithChildren = await Promise.all(
+      firstLevels.map(async (firstLevel) => {
+        try {
+          const childrenResponse = await fetch(
+            `https://njs-01.optimuslab.space/library_facilities/children/${firstLevel.id}`
+          );
+          const childrenData = await childrenResponse.json();
+          
+          return {
+            ...firstLevel,
+            second_levels: childrenData.second_levels || []
+          };
+        } catch (err) {
+          console.error(`Failed to fetch children for ${firstLevel.id}:`, err);
+          return {
+            ...firstLevel,
+            second_levels: []
+          };
+        }
+      })
     );
-
-    // Collect all third level fetch promises
-    const allThirdLevelPromises = [];
-    allSecondLevels.forEach(({ firstLevelId, secondLevels }) => {
-      secondLevels.forEach(secondLevel => {
-        allThirdLevelPromises.push(
-          fetch(`https://facility-search-dot-optimus-lnu.df.r.appspot.com/api/library_facilities/${firstLevelId}/second_levels/${secondLevel.id}/third_levels`)
-            .then(res => res.json())
-            .then(data => ({ 
-              firstLevelId, 
-              secondLevelId: secondLevel.id, 
-              thirdLevels: data.third_levels || [] 
-            }))
-            .catch(err => {
-              console.error(`Failed to fetch third levels for ${secondLevel.id}:`, err);
-              return { firstLevelId, secondLevelId: secondLevel.id, thirdLevels: [] };
-            })
-        );
-      });
-    });
-
-    // Fetch ALL third levels in parallel
-    const allThirdLevels = await Promise.all(allThirdLevelPromises);
-
-    // Build the hierarchical structure
-    const facilitiesWithChildren = firstLevels.map(firstLevel => {
-      const secondLevelsData = allSecondLevels.find(sl => sl.firstLevelId === firstLevel.id);
-      
-      const secondLevelsWithThird = (secondLevelsData?.secondLevels || []).map(secondLevel => {
-        const thirdLevelsData = allThirdLevels.find(
-          tl => tl.firstLevelId === firstLevel.id && tl.secondLevelId === secondLevel.id
-        );
-        
-        return {
-          ...secondLevel,
-          third_levels: thirdLevelsData?.thirdLevels || []
-        };
-      });
-      
-      return {
-        ...firstLevel,
-        second_levels: secondLevelsWithThird
-      };
-    });
     
     facilityAPIData = facilitiesWithChildren;
     console.log('Facility data loaded:', facilityAPIData);
@@ -6573,15 +6539,22 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
       spc.setCameraForFacility(facilityName);
       console.log("Camera positioned");
     }
-  }, 500);
+  }, 1500);
   
   // FIXED: Show tooltip with multiple retry attempts
   setTimeout(() => {
     console.log("First tooltip attempt for:", facilityName);
     showGenericTooltip(facilityName, true);
-  }, 800);
+  }, 2000);
   
- 
+  // Retry showing tooltip if it didn't appear
+  setTimeout(() => {
+    const tooltipDiv = document.getElementById("custom-tooltip");
+    if (tooltipDiv && tooltipDiv.style.display !== "block") {
+      console.log("Tooltip not visible, retrying...");
+      showGenericTooltip(facilityName, false);
+    }
+  }, 4000);
 }
 
 // Handle special facilities not in facilities_list
@@ -6738,9 +6711,7 @@ class Space {
         radius: 185.49815361318093,
         target: { x: 70.43070629934955, y: 1, z: -48.22815466523894 },
       },
-      onReady: () => {
-      this.fetchAll();
-    },
+      onReady: () => this.fetchAll(),
       onError: (error) => console.error("Could not start viewer", error),
     });
   }
@@ -7073,34 +7044,16 @@ async function wait() {
   });
 }
 
-window.addEventListener('message', (event) => {
-  if (event.data.type === 'FACILITY_DATA') {
-    facilityAPIData = event.data.data;
-    console.log('Received facility data from parent:', facilityAPIData);
-  }
-});
-
 async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
+  
   console.log("Starting initialization...");
   
-  const urlParams = new URLSearchParams(window.location.search);
-  const queryId = urlParams.get('query');
-  const facilityParam = urlParams.get('facility');
-  
-  // Only fetch if data wasn't provided by parent AND we need it
-  if (!facilityAPIData && (queryId || facilityParam)) {
-    console.log("Fetching facility data (not provided by parent)...");
-    await fetchFacilityData();
-  } else if (facilityAPIData) {
-    console.log("Using facility data from parent (React)");
-  } else {
-    console.log("No facility data needed for this view");
-  }
-
-  console.log("Facility data status:", facilityAPIData ? 'Available' : 'Not needed');
+  // Fetch facility data first and wait for it
+  await fetchFacilityData();
+  console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
   
   spc.initSpace(smplr);
   console.log("Space initialized");
@@ -7109,7 +7062,7 @@ async function start() {
   setTimeout(() => {
     console.log("Calling handleQueryParameter...");
     handleQueryParameter();
-  }, 1500);
+  }, 3500); // Increased delay to ensure map is fully loaded
   
   setInterval(() => {
     spc.fetchAll();
