@@ -1721,7 +1721,12 @@ const facilityRoom = facilityRooms.length > 0 ? facilityRooms[0] : null;
 
   };
   
- // Filter for ALL facilities that have an icon configured (by ID)
+ // Define manual positions for specific facilities
+const manualPositions = {
+  "ba53551e-4c19-4a9e-9d88-55cb97d08781": { x: 51.0, z: -42.0 }
+};
+
+// Filter for ALL facilities that have an icon configured (by ID)
 const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
   iconConfigs.hasOwnProperty(room.id)
 );
@@ -1734,36 +1739,43 @@ if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
   facilitiesWithIcons.forEach(facility => {
     // Get the icon URL for this specific facility ID
     const iconUrl = iconConfigs[facility.id];
-   
+    
     if (iconUrl && facility.coordinates && facility.coordinates[0]) {
-      // Get polygon coordinates
-      const coords = facility.coordinates[0];
-     
-      // Calculate center X (average of all x coordinates)
-      const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
-     
-      // Find TOP EDGE (minimum z value = northernmost point)
-      // const minZ = Math.min(...coords.map(coord => coord.z));
- 
-      // Find the Top Edge (minZ) AND the Bottom Edge (maxZ)
-      const minZ = Math.min(...coords.map(coord => coord.z));
-      const maxZ = Math.max(...coords.map(coord => coord.z));
- 
-      // Calculate the exact middle point
-      const midZ = (minZ + maxZ) / 2;
-     
-    iconData.push({
+      let iconX, iconZ;
+      
+      // Check if this facility has manual positioning
+      if (manualPositions[facility.id]) {
+        iconX = manualPositions[facility.id].x;
+        iconZ = manualPositions[facility.id].z;
+        console.log(`  Using MANUAL position for ${facility.name}`);
+      } else {
+        // Use automatic TOP EDGE positioning for other facilities
+        const coords = facility.coordinates[0];
+        
+        // Calculate center X (average of all x coordinates)
+        const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+        
+        // Find TOP EDGE (minimum z value = northernmost point)
+        const minZ = Math.min(...coords.map(coord => coord.z));
+        
+        iconX = centerX + 0.1;
+        iconZ = minZ + 4.8;
+        
+        console.log(`  Using AUTO position (top edge) for ${facility.name}`);
+      }
+      
+      iconData.push({
         id: `icon-${facility.id}`,
         levelIndex: 0,
         position: {
-          x: centerX,
-          z: midZ,
+          x: iconX,
+          z: iconZ, 
           elevation: 4.0,
           levelIndex: 0
         }
       });
-     
-      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${centerX.toFixed(2)}, z=${(minZ - 2.5).toFixed(2)}`);
+      
+      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${iconX.toFixed(2)}, z=${iconZ.toFixed(2)}`);
     }
   });
 }
