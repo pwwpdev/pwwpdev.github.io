@@ -393,7 +393,7 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
     layerType: facilityAsset.layerType,
     mapped: facilityAsset.mapped,
     height: getFacilityHeight(facilityName),
-    color: "#E566FF",
+    color: "#FFC000",
     available: "Available",
     description: facilityInfo?.description || "Available for use"
   };
@@ -409,26 +409,9 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   setTimeout(() => showGenericTooltip(facilityName, true), 1000); // Show skeleton immediately
 }
 
+// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  const heightMap = {
-    "Books HN-HS (3/F Zone A)": 3.0,
-    "Books HT-NX (3/F Zone B)": 3.0,
-    "Books P-ZA (3/F Zone C)": 3.0,
-    "Large Books [LBK], Extra Large Books [XLBK] (3/F Zone A)": 3.0,
-    "31BW (3/F Zone B)": 1.1,
-    "Multi-Purpose Room 1 (3/F Zone C)": 3.0,
-    "Multi-Purpose Room 2 (3/F Zone A)": 3.0,
-    "3/F (3/F Zone A) ": 0.5,
-    "3/F (3/F Zone C)": 0.5,
-    "3/F Male & Female (Zone A & Zone C)": 3.0,
-    "3/F Accessible Toilets (Zone C)": 3.0,
-    "Lift (3/F Zone B)": 3.0,
-  };
- 
-  for (const [key, height] of Object.entries(heightMap)) {
-    if (facilityName.includes(key)) return height;
-  }
-  return 2.5; // default height
+  return 3.1;
 }
 
 // Generic tooltip function using API data
@@ -2322,7 +2305,7 @@ updateDataLayers() {
       data: this.toiletAreas.filter((d) => d.name === "3F-MT1"),
       tooltip: (d) => `Male Toilet`,
       color: (d) => "#1D547D",
-      alpha: 2.2,
+      alpha: 0.7,
       height: 1.0,
     });
 
@@ -2333,7 +2316,7 @@ updateDataLayers() {
       data: this.toiletAreas.filter((d) => d.name === "3F-FT1"),
       tooltip: (d) => `Female Toilet`,
       color: (d) => "#A7384E",
-      alpha: 2.2,
+      alpha: 0.7,
       height: 1.0,
     });
 
@@ -2344,7 +2327,7 @@ updateDataLayers() {
       data: this.toiletAreas.filter((d) => d.name === "3F-UT1"),
       tooltip: (d) => `Unisex Toilet/Accessible`,
       color: (d) => "#023b8c",
-      alpha: 2.2,
+      alpha: 0.7,
       height: 1.0,
     });
   }
@@ -2371,8 +2354,8 @@ updateDataLayers() {
       type: "polygon",
       data: this.rooms,
       color: (d) => d.color,
-      alpha: 2.2,
-      height: (d) => d.height || 2.4,
+      alpha: 0.7,
+      height: (d) => d.height || 3.1,
     });
   }
 
@@ -2398,6 +2381,121 @@ this.space.on("click", (event) => {
     }
   }
 });
+
+
+console.log("Checking for facilities with icons...");
+
+// Array to hold all icon data
+const iconData = [];
+
+// Define manual positions for specific facilities 
+const manualPositions = {
+  // "6fe4f4cb-b48d-4ff7-9ca2-670d2873dd92": { x: 32.5, z: -35.8 }
+};
+
+// Define icon configurations by facility ID for 3F
+const iconConfigs = {
+  "6fe4f4cb-b48d-4ff7-9ca2-670d2873dd92": "./icons/31 BW (3F Zone B).png"
+};
+
+// Filter for ALL facilities that have an icon configured (by ID)
+const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
+  iconConfigs.hasOwnProperty(room.id)
+);
+
+console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
+
+if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
+  console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
+  
+  facilitiesWithIcons.forEach(facility => {
+    // Get the icon URL for this specific facility ID
+    const iconUrl = iconConfigs[facility.id];
+    
+    if (iconUrl && facility.coordinates && facility.coordinates[0]) {
+      let iconX, iconZ;
+      
+      // Check if this facility has manual positioning
+      if (manualPositions[facility.id]) {
+        iconX = manualPositions[facility.id].x;
+        iconZ = manualPositions[facility.id].z;
+        console.log(`  Using MANUAL position for ${facility.name}`);
+      } else {
+        // Use automatic TOP EDGE positioning for other facilities
+        const coords = facility.coordinates[0];
+        
+        // Calculate center X (average of all x coordinates)
+        const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+        
+        // Find TOP EDGE (minimum z value = northernmost point)
+        const minZ = Math.min(...coords.map(coord => coord.z));
+        
+        iconX = centerX;
+        iconZ = minZ;
+        
+        console.log(`  Using AUTO position (top edge) for ${facility.name}`);
+      }
+      
+      iconData.push({
+        id: `icon-${facility.id}`,
+        levelIndex: 0,
+        position: {
+          x: iconX,
+          z: iconZ, 
+          elevation: 4.0,
+          levelIndex: 0
+        }
+      });
+      
+      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${iconX.toFixed(2)}, z=${iconZ.toFixed(2)}`);
+    }
+  });
+}
+
+// Add the icon layer if there's any icon data
+if (iconData.length > 0) {
+  try {
+    // Group by icon URL for separate layers
+    const iconsByUrl = {};
+    
+    facilitiesWithIcons.forEach(facility => {
+      const iconUrl = iconConfigs[facility.id];
+      if (iconUrl) {
+        if (!iconsByUrl[iconUrl]) {
+          iconsByUrl[iconUrl] = [];
+        }
+        // Find the corresponding icon data
+        const iconDataItem = iconData.find(item => item.id === `icon-${facility.id}`);
+        if (iconDataItem) {
+          iconsByUrl[iconUrl].push(iconDataItem);
+        }
+      }
+    });
+    
+    // Create a layer for each unique icon
+    Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
+      this.space.addDataLayer({
+        id: `facility-icons-${layerIndex}`,
+        type: "icon",
+        data: icons,
+        icon: {
+          url: iconUrl,
+          width: 2000,
+          height: 2000
+        },
+        width: 8.0
+      });
+    });
+    
+    console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
+  } catch (error) {
+    console.error("✗ Error adding icon layer:", error);
+  }
+} else {
+  console.log("⚠ No facility icons to display");
+}
+
+
 }
 
 updateMapForFacility() {
