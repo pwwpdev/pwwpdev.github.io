@@ -347,7 +347,7 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
     layerType: facilityAsset.layerType,
     mapped: facilityAsset.mapped,
     height: getFacilityHeight(facilityName),
-    color: "#E566FF",
+    color: "#005EF6",
     available: "Available",
     description: facilityInfo?.description || "Available for use"
   };
@@ -1696,7 +1696,7 @@ const facilityRoom = facilityRooms.length > 0 ? facilityRooms[0] : null;
       type: "polygon",
       data: this.rooms,
       color: (d) => d.color,
-      alpha: 2.2,
+      alpha: 0.7,
       height: (d) => d.height || 2.4,
     });
   }
@@ -1723,7 +1723,7 @@ const facilityRoom = facilityRooms.length > 0 ? facilityRooms[0] : null;
   
  // Define manual positions for specific facilities
 const manualPositions = {
-  "ba53551e-4c19-4a9e-9d88-55cb97d08781": { x: 51.0, z: -42.0 }
+  "ba53551e-4c19-4a9e-9d88-55cb97d08781": { x: 47.0, z: -42.0 }
 };
 
 // Filter for ALL facilities that have an icon configured (by ID)
@@ -1811,7 +1811,7 @@ if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
             width: 2000,
             height: 2000
           },
-          width: 5.0
+          width: 8.0
         });
       });
       
