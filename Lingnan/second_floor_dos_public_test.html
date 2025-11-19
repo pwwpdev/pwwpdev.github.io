@@ -1892,17 +1892,25 @@ updateMapForFacility() {
   // Wait for space to be ready
   setTimeout(() => {
     const facilitiesData = dict[4];
+    // Decode the facility name from URL
+    const decodedFacility = decodeURIComponent(facility);
+    console.log('Looking for facility:', decodedFacility);
+    
     // Get ALL facilities with the same name using filter()
-    let facilityAssets = facilitiesData.assets.filter(asset => asset.name === facility);
+    let facilityAssets = facilitiesData.assets.filter(asset => asset.name === decodedFacility);
+    
+    console.log('Found facility assets:', facilityAssets);
     
     if (facilityAssets.length > 0) {
       // Handle all matched facilities
       facilityAssets.forEach(facilityAsset => {
-        handleGenericFacility(facilityAsset, facility);
+        console.log('Processing facility asset:', facilityAsset.name);
+        handleGenericFacility(facilityAsset, decodedFacility);
       });
     } else {
-      console.log('Facility coordinates not found, will show tooltip only');
-      setTimeout(() => showGenericTooltip(facility), 2500);
+      console.log('Facility coordinates not found in dict, will show tooltip only');
+      // Even if not found in coordinates, still try to show tooltip
+      setTimeout(() => showGenericTooltip(decodedFacility, true), 2500);
     }
   }, 1000);
 }
