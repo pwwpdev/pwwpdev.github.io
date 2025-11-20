@@ -2612,19 +2612,22 @@ const toiletAreas = [];
   const facility = params.get("facility");
   
   if (!!facility) {
-    setTimeout(() => {
-      const facilitiesData = facilities_list;
-      let facilityAsset = facilitiesData.assets.find(asset => asset.name === facility);
-
-      
-      if (facilityAsset) {
+  setTimeout(() => {
+    const facilitiesData = facilities_list;
+    // Get ALL facilities with the same name using filter()
+    let facilityAssets = facilitiesData.assets.filter(asset => asset.name === facility);
+    
+    if (facilityAssets.length > 0) {
+      // Handle all matched facilities
+      facilityAssets.forEach(facilityAsset => {
         handleGenericFacility(facilityAsset, facility);
-      } else {
-        console.log('Facility coordinates not found, will show tooltip only');
-        setTimeout(() => showGenericTooltip(facility), 2500);
-      }
-    }, 1000);
-  }
+      });
+    } else {
+      console.log('Facility coordinates not found, will show tooltip only');
+      setTimeout(() => showGenericTooltip(facility), 2500);
+    }
+  }, 1000);
+}
   
   setInterval(() => {
     spc.fetchAll();
