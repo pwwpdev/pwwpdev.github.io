@@ -995,17 +995,8 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
     description: facilityInfo?.description || "Available for use"
   };
   
-  // Note: You'll need to add rooms array if it doesn't exist
-  // Add this near the top with other variables: const rooms = [];
   rooms.push(room);
-  
-  setTimeout(() => {
-    if (spc && spc.space) {
-      spc.updateMapForFacility();
-    }
-  }, 2000);
-  
-  setTimeout(() => showGenericTooltip(facilityName, true), 1000); // Show skeleton immediately
+  console.log(`Room added: ${room.id} - ${room.name}. Total rooms: ${rooms.length}`);
 }
 
 // Get appropriate height for different facility types
@@ -1103,23 +1094,38 @@ const params = new URLSearchParams(url.search);
 const facility = params.get("facility");
 
 if (!!facility) {
-  // First check hardcoded facilities
-  const facilitiesData = dict[2]; // facilities_list
-  // Get ALL facilities with the same name using filter()
-  let facilityAssets = facilitiesData.assets.filter(asset => asset.name === facility);
-  
-  if (facilityAssets.length > 0) {
-    // Handle all matched facilities
-    facilityAssets.forEach(facilityAsset => {
-      handleGenericFacility(facilityAsset, facility);
-    });
-  } else {
-    // For API-only facilities, just show tooltip without adding to map
-    console.log('Facility coordinates not found, will show tooltip only');
-    setTimeout(() => showGenericTooltip(facility), 2500);
-  }
+  // Wait for space to be ready
+  setTimeout(() => {
+    const facilitiesData = dict[2]; // facilities_list
+    // Get ALL facilities with the same name using filter()
+    let facilityAssets = facilitiesData.assets.filter(asset => asset.name === facility);
+    
+    console.log(`Found ${facilityAssets.length} facilities matching "${facility}"`);
+    
+    if (facilityAssets.length > 0) {
+      // Handle all matched facilities
+      facilityAssets.forEach((facilityAsset, index) => {
+        console.log(`Processing facility ${index + 1}/${facilityAssets.length}:`, facilityAsset.id);
+        handleGenericFacility(facilityAsset, facility);
+      });
+      
+      // Update the map ONCE after all facilities have been added
+      setTimeout(() => {
+        if (spc && spc.space) {
+          console.log(`Updating map with ${rooms.length} rooms`);
+          spc.updateMapForFacility();
+        }
+      }, 2000);
+      
+      // Show tooltip
+      setTimeout(() => showGenericTooltip(facility, true), 2500);
+    } else {
+      // For API-only facilities, just show tooltip without adding to map
+      console.log('Facility coordinates not found, will show tooltip only');
+      setTimeout(() => showGenericTooltip(facility, true), 2500);
+    }
+  }, 1000);
 }
-
       class Space {
         constructor(spaceId, clientToken, desks, rooms, sensors) {
   this.spaceId = spaceId;
