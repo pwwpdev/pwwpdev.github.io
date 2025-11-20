@@ -1063,19 +1063,19 @@ if (!facilityInfo || showSkeleton) {
   return;
 }
     
-    // Show actual content when data is available
-    const description = facilityInfo.description;
-    const imageUrl = facilityInfo.image;
-    
-    const content = `
-      <div style="padding: 0; margin: 0; line-height: 1.2;">
-        <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
-        <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
-        <img src="${imageUrl}" 
-             style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
-             onerror="this.style.display='none'" />
-      </div>
-    `;
+  // Show actual content when data is available
+const description = facilityInfo.description || "No description available";
+const imageUrl = facilityInfo.image;
+
+const content = `
+  <div style="padding: 0; margin: 0; line-height: 1.2;">
+    <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+    <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
+    ${imageUrl ? `<img src="${imageUrl}" 
+         style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
+         onerror="this.style.display='none'" />` : ''}
+  </div>
+`;
     
     contentDiv.innerHTML = content;
     tooltipDiv.style.display = "block";
