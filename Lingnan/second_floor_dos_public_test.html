@@ -353,14 +353,7 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   };
   
   rooms.push(room);
-  
-  setTimeout(() => {
-    if (spc && spc.space) {
-      spc.updateMapForFacility();
-    }
-  }, 2000);
-  
-  setTimeout(() => showGenericTooltip(facilityName, true), 1000); // Show skeleton immediately
+  console.log(`Room added: ${room.id} - ${room.name}. Total rooms: ${rooms.length}`);
 }
 
 
@@ -1899,14 +1892,25 @@ updateMapForFacility() {
     // Get ALL facilities with the same name using filter()
     let facilityAssets = facilitiesData.assets.filter(asset => asset.name === decodedFacility);
     
-    console.log('Found facility assets:', facilityAssets);
+    console.log(`Found ${facilityAssets.length} facilities matching "${decodedFacility}"`);
     
     if (facilityAssets.length > 0) {
       // Handle all matched facilities
-      facilityAssets.forEach(facilityAsset => {
-        console.log('Processing facility asset:', facilityAsset.name);
+      facilityAssets.forEach((facilityAsset, index) => {
+        console.log(`Processing facility ${index + 1}/${facilityAssets.length}:`, facilityAsset.id);
         handleGenericFacility(facilityAsset, decodedFacility);
       });
+      
+      // Update the map ONCE after all facilities have been added
+      setTimeout(() => {
+        if (spc && spc.space) {
+          console.log(`Updating map with ${rooms.length} rooms`);
+          spc.updateMapForFacility();
+        }
+      }, 2000);
+      
+      // Show tooltip
+      setTimeout(() => showGenericTooltip(decodedFacility, true), 2500);
     } else {
       console.log('Facility coordinates not found in dict, will show tooltip only');
       // Even if not found in coordinates, still try to show tooltip
