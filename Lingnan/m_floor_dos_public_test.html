@@ -1165,46 +1165,152 @@ if (!!facility) {
         }
 
         updateDataLayers() {
-          // remove previous layers if any
-          this.space.removeDataLayer("rooms");
-          this.space.removeDataLayer("desks");
+  // remove previous layers if any
+  this.space.removeDataLayer("rooms");
+  this.space.removeDataLayer("desks");
 
-          const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
-          const isDesksEmpty = Object.keys(this.desks).length === 0;
+  // this.space.removeDataLayer("facility-icons-0");
+  // this.space.removeDataLayer("facility-icons-1");
+  // this.space.removeDataLayer("facility-icons-2");
 
-          if (!isRoomsEmpty) {
-            // add new layers
-            this.space.addDataLayer({
-              id: "rooms",
-              type: "polygon",
-              data: this.rooms,
-              tooltip: (d) => `${d.name} - ${d.available}`,
-              color: (d) => d.color,
-              alpha: 0.7,
-              height: 2.9,
-            });
-          }
+  const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
+  const isDesksEmpty = Object.keys(this.desks).length === 0;
 
-          if (!isDesksEmpty) {
-            this.space.addDataLayer({
-              id: "desks",
-              type: "furniture",
-              data: this.desks,
-              tooltip: (d) => `${d.name} - ${d.available}`,
-              color: (d) => d.color,
-            });
-          }
-          // Add click handlers for custom tooltip
-this.space.on("click", (event) => {
-  if (event.data) {
-    const tooltipDiv = document.getElementById("custom-tooltip");
-    const contentDiv = document.getElementById("tooltip-content");
-
-    if (event.data.name && tooltipDiv && contentDiv) {
-      showGenericTooltip(event.data.name, true); // Use the centralized function with skeleton loading
-    }
+  if (!isRoomsEmpty) {
+    // add new layers
+    this.space.addDataLayer({
+      id: "rooms",
+      type: "polygon",
+      data: this.rooms,
+      tooltip: (d) => `${d.name} - ${d.available}`,
+      color: (d) => d.color,
+      alpha: 0.7,
+      height: 2.9,
+    });
   }
-});
+
+  if (!isDesksEmpty) {
+    this.space.addDataLayer({
+      id: "desks",
+      type: "furniture",
+      data: this.desks,
+      tooltip: (d) => `${d.name} - ${d.available}`,
+      color: (d) => d.color,
+    });
+  }
+
+  // ============ FACILITY ICONS SECTION - START ============
+  
+  console.log("Checking for facilities with icons...");
+  
+  const iconData = [];
+  
+  const manualPositions = {};
+  
+  const iconConfigs = {
+    "dbb606d1-e3b1-409c-93b0-a75700091327": "./icons/3d printers and 3d scanners.png",
+    "6bc75b14-db99-4744-aa61-b5ca6d397e7f": "./icons/3d printers and 3d scanners.png",
+    "a481c3e3-c322-4fbf-82ab-b2c5ff86bdcb": "./icons/3d printers and 3d scanners.png",
+  };
+  
+  const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
+    iconConfigs.hasOwnProperty(room.id)
+  );
+  
+  console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
+  
+  if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
+    console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
+    
+    facilitiesWithIcons.forEach(facility => {
+      const iconUrl = iconConfigs[facility.id];
+      
+      if (iconUrl && facility.coordinates && facility.coordinates[0]) {
+        let iconX, iconZ;
+        
+        if (manualPositions[facility.id]) {
+          iconX = manualPositions[facility.id].x;
+          iconZ = manualPositions[facility.id].z;
+          console.log(`  Using MANUAL position for ${facility.name}`);
+        } else {
+          const coords = facility.coordinates[0];
+          const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+          const minZ = Math.min(...coords.map(coord => coord.z));
+          
+          iconX = centerX;
+          iconZ = minZ; 
+          
+          console.log(`  Using AUTO position (top edge) for ${facility.name}`);
+        }
+        
+        iconData.push({
+          id: `icon-${facility.id}`,
+          levelIndex: 0,
+          position: {
+            x: iconX,
+            z: iconZ, 
+            elevation: 4.0,
+            levelIndex: 0
+          }
+        });
+        
+        console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${iconX.toFixed(2)}, z=${iconZ.toFixed(2)}`);
+      }
+    });
+  }
+  
+  if (iconData.length > 0) {
+    try {
+      const iconsByUrl = {};
+      
+      facilitiesWithIcons.forEach(facility => {
+        const iconUrl = iconConfigs[facility.id];
+        if (iconUrl) {
+          if (!iconsByUrl[iconUrl]) {
+            iconsByUrl[iconUrl] = [];
+          }
+          const iconDataItem = iconData.find(item => item.id === `icon-${facility.id}`);
+          if (iconDataItem) {
+            iconsByUrl[iconUrl].push(iconDataItem);
+          }
+        }
+      });
+      
+      Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
+        this.space.addDataLayer({
+          id: `facility-icons-${layerIndex}`,
+          type: "icon",
+          data: icons,
+          icon: {
+            url: iconUrl,
+            width: 2000,
+            height: 2000
+          },
+          width: 8.0
+        });
+      });
+      
+      console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
+    } catch (error) {
+      console.error("✗ Error adding icon layer:", error);
+    }
+  } else {
+    console.log("No facility icons to display");
+  }
+  
+  // ============ FACILITY ICONS SECTION - END ============
+
+  // Add click handlers for custom tooltip (MOVED TO END)
+  this.space.on("click", (event) => {
+    if (event.data) {
+      const tooltipDiv = document.getElementById("custom-tooltip");
+      const contentDiv = document.getElementById("tooltip-content");
+
+      if (event.data.name && tooltipDiv && contentDiv) {
+        showGenericTooltip(event.data.name, true);
+      }
+    }
+  });
 }
 
         updateMapForFacility() {
