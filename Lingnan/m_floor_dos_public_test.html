@@ -1001,22 +1001,9 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
 
 // Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  const heightMap = {
- 
-    "Books HM-HM1100 (M/F Zone B)": 2.2,
-    "Individual Study Carrels (M/F Zone C)": 2.2,
-    "Postgraduate Lounge (M/F Zone C)": 2.2,
-    "LU Barn (Makerspace) (M/F Zone A)": 2.2,
-    "3D Printers - LU Barn (Makerspace) (M/F Zone A)": 1.1,
-    "3D Scanner - LU Barn (Makerspace) (M/F Zone A)": 1.1,
-    "Lift (M/F Zone B)": 2.2
-  };
- 
-  for (const [key, height] of Object.entries(heightMap)) {
-    if (facilityName.includes(key)) return height;
-  }
-  return 2.5; // default height
+  return 3.1;
 }
+
 
 // Generic tooltip function using API data
 function showGenericTooltip(facilityName, showSkeleton = false) {
@@ -1205,10 +1192,9 @@ if (!!facility) {
   
   const iconData = [];
   
-  const manualPositions = {"6fe4f4cb-b48d-4ff7-9ca2-670d2873dd92": { x: 105.8, z: -29.8 }, 
-                           "dbb606d1-e3b1-409c-93b0-a75700091327": { x: 104.5, z: - 31.2 }, 
-                            "a481c3e3-c322-4fbf-82ab-b2c5ff86bdcb": { x: 103.0, z: -29.5 },
-                  };
+  const manualPositions = {"dbb606d1-e3b1-409c-93b0-a75700091327": { x: 104.5, z: - 27.2 }, 
+                            "a481c3e3-c322-4fbf-82ab-b2c5ff86bdcb": { x: 103.0, z: -27.5 },
+                            "6bc75b14-db99-4744-aa61-b5ca6d397e7f": { x: 105.0, z: -27.0} };
   
   const iconConfigs = {
     "dbb606d1-e3b1-409c-93b0-a75700091327": "./icons/3d printers and 3d scanners.png",
