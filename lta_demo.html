@@ -6198,7 +6198,7 @@
         const away = desks.filter(d => d.status === 'away').length;
 
         return `
-          <div style="margin-bottom: 20px;">
+          <div style="margin-bottom: 10px;">
             <h2 style="font-size: 24px; margin-bottom: 16px;">Desk Occupancy Overview</h2>
             <div style="display: flex; gap: 20px; margin-bottom: 20px;">
               <div class="data-card" style="flex: 1;">
@@ -6222,7 +6222,7 @@
       renderRoomOccupancy(rooms) {
         return `
           <h2 style="font-size: 24px; margin-bottom: 16px;">Room Occupancy</h2>
-          <div class="data-grid">
+          <div class="data-grid" style="margin-bottom: 40px;">
             ${rooms.map(room => `
               <div class="data-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -6260,7 +6260,7 @@
         </div>
       </div>
     </div>
-    <div class="data-grid" style="margin-bottom: 30px;">
+    <div class="data-grid" style="margin-bottom: 40px;">
       ${sensors.map(sensor => `
         <div class="data-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -6347,7 +6347,7 @@ renderAllSensors() {
     </div>
 
     <h3 style="font-size: 18px; margin-bottom: 12px; color: #000;"> IAQ Sensors - 11-15, 16BW (${bwFacilities.length})</h3>
-    <div class="data-grid" style="margin-bottom: 30px;">
+    <div class="data-grid" style="margin-bottom: 40px;">
       ${bwFacilities.map(facility => `
         <div class="data-card" style="border-left: 4px solid #2196F3;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
