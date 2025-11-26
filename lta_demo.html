@@ -7,18 +7,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
-    body, html {
-      height: 100vh !important;
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
+ body, html {
+  height: 100vh !important;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
 
-    #wrapper, #smplrspace-container {
-      height: 60vh !important;
-    }
+#wrapper {
+  position: relative;
+  height: 60vh;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  isolation: isolate;
+}
 
+#smplrspace-container {
+  position: absolute; /* Added */
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
     /* Tab Navigation Styles */
     #tab-navigation {
       position: fixed;
@@ -87,40 +99,42 @@
     .status-away { background: #ffbf00; }
     .status-warning { background: #ffbf00; }
 
-    /* Tooltip Styles */
+    
     #custom-tooltip {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-      font-family: 'Inter', sans-serif;
-      display: none;
-      min-width: 380px;
-    }
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-family: 'Inter', sans-serif;
+  display: none;
+  min-width: 380px;
+  max-width: 400px;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+  will-change: contents;
+}
 
-    /* Legend Styles */
-    #legend-container {
-      position: absolute;
-      bottom: 290px;
-      left: 54px;
-      background: rgba(219, 218, 218, 0.492);
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-      font-size: 12px;
-      font-weight: 400;
-      font-family: 'Inter', sans-serif;
-      color: #333;
-      min-width: 100px;
-    }
-
+#legend-container {
+  position: sticky;
+  bottom: 290px;
+  left: 54px;
+  background: rgba(219, 218, 218, 0.492);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-size: 12px;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  min-width: 100px;
+}
     .legend-item {
       padding: 4px 4px;
       text-align: center;
@@ -194,9 +208,9 @@
   <div id="wrapper">
     <div id="smplrspace-container"></div>
     
-    <div id="custom-tooltip">
+    <!-- <div id="custom-tooltip">
       <div id="tooltip-content"></div>
-    </div>
+    </div> -->
   </div>
 
   <!-- Data Display Section -->
@@ -209,12 +223,12 @@
 
 
   <!-- Legend -->
-  <div id="legend-container">
+  <!-- <div id="legend-container">
     <div class="legend-item">Default View</div>
     <div class="legend-item">Zoom IN</div>
     <div class="legend-item">Zoom OUT</div>
     <div class="legend-item">Switch 2D/3D</div>
-  </div>
+  </div> -->
 
 
 
@@ -6070,19 +6084,22 @@
       }
 
       generateFakeData() {
-        const zones = ['Zone A', 'Zone B', 'Zone C'];
-        const statuses = ['occupied', 'vacant', 'away'];
-        
-        // Fake desk data (96 desks matching your dict structure)
-        this.currentData.desks = Array.from({ length: 96 }, (_, i) => ({
-          id: `desk-${i}`,
-          name: `LRT${String(Math.floor(i/10) + 1).padStart(2, '0')}-S${String((i%10) + 1).padStart(2, '0')}`,
-          zone: zones[Math.floor(Math.random() * zones.length)],
-          status: statuses[Math.floor(Math.random() * statuses.length)],
-          temperature: (22 + Math.random() * 4).toFixed(1),
-          lastUpdate: new Date()
-        }));
+  const zones = ['Zone A', 'Zone B', 'Zone C'];
+  const statuses = ['occupied', 'vacant', 'away'];
+  
 
+  
+  const actualDeskCount = 60; // Match your visible desks
+  
+  // Fake desk data matching your actual desk count
+  this.currentData.desks = Array.from({ length: actualDeskCount }, (_, i) => ({
+    id: `desk-${i}`,
+    name: `LRT${String(Math.floor(i/10) + 1).padStart(2, '0')}-S${String((i%10) + 1).padStart(2, '0')}`,
+    zone: zones[Math.floor(Math.random() * zones.length)],
+    status: statuses[Math.floor(Math.random() * statuses.length)],
+    temperature: (22 + Math.random() * 4).toFixed(1),
+    lastUpdate: new Date()
+  }));
         // Fake room data (5 study rooms)
         this.currentData.rooms = Array.from({ length: 5 }, (_, i) => ({
           id: `room-${i}`,
@@ -6198,7 +6215,8 @@
   const occupied = desks.filter(d => d.status === 'occupied').length;
   const vacant = desks.filter(d => d.status === 'vacant').length;
   const away = desks.filter(d => d.status === 'away').length;
-  const occupancyRate = ((occupied / desks.length) * 100).toFixed(1);
+  const total = desks.length;
+  const occupancyRate = total > 0 ? ((occupied / total) * 100).toFixed(1) : '0.0';
 
   return `
     <div>
@@ -6212,7 +6230,7 @@
         </div>
         
         <div style="background: white; border-radius: 8px; margin-right:26px; padding: 16px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); min-width: 140px;">
-          <div style="font-size: 38px; font-weight: 500; color: #1a1a1a; line-height: 1;">${desks.length}</div>
+          <div style="font-size: 38px; font-weight: 500; color: #1a1a1a; line-height: 1;">${total}</div>
           <div style="font-size: 12px; font-weight: 400; color: #666; margin-top: 4px;">Total Desks</div>
         </div>
         
