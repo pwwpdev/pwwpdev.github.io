@@ -6097,7 +6097,7 @@
         }));
 
         // Fake sensor data (12 IAQ sensors across zones)
-        this.currentData.sensors = Array.from({ length: 12 }, (_, i) => ({
+        this.currentData.sensors = Array.from({ length: 4 }, (_, i) => ({
           id: `sensor-${i}`,
           name: `IAQ Sensor ${String(i + 1).padStart(2, '0')}`,
           zone: zones[Math.floor(Math.random() * zones.length)],
