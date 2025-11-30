@@ -6359,92 +6359,144 @@ function getCurrentFloorFromURL() {
 function getFacilityFloorHTML(facilityName) {
     const floorMappings = {
       "1/F": [
-        "Service Counter (1/F Zone A)",
+        // Collections
         "Books A-DS776 (1/F Zone A)",
         "Books DS777-HJ (1/F Zone C)",
+        "Service Counter (1/F Zone A)",
         "Course Reserves (1/F Zone A)",
         "Good Reads, New Arrivals (1/F Zone B)",
         "High Use Books (1/F Zone B)",
         "Category III Multimedia - Ask at Service Counter (1/F Zone A)",
         "Staff Publications (1/F Zone B)",
+        "Special Collections - Ask at Service Counter (1/F Zone A)",
+        
+        // Study Areas
         "Chiang Chen Information Commons (1/F Zone A)",
-        "Computer Room 2 (1/F Zone B)",
+        "Late Reading Room (1/F Zone B)",
+        "Activity Room (1/F Zone A)",
+        
+        // Computers & Workstations
+        "Computer Room 2(1/F Zone B)",
+        "Computer Rooms 1 & 2 (1/F Zone B)",
         "SEN Workstation 1 (1/F Zone B)",
         "SEN Workstation 2 (1/F Zone C)",
         "Bloomberg Terminal - Database Workstation (1/F Zone B)",
         "LSEG Workspace (1/F Zone B)",
-        "WIND Terminal (1/F Zone B)",
-        "11-13 (1/F Zone A)",
-        "14-16BW (1/F Zone B)",
+        "WIND 資訊金融終端 (1/F Zone B)",
+        
+        // Printers
+        "11-15, 16BW (1/F Zone A & Zone B)",
+        
+        // Study Rooms
         "Individual Study Rooms 1 - 7 (1/F Zone C)",
         "Individual Study Rooms 8 (1/F Zone C)",
         "Individual Study Rooms 9 - 11 (1/F Zone A)",
         "Group Study Rooms 1 - 4 (1/F Zone C)",
         "Group Study Room 5 (1/F Zone C)",
+        "Group Study Rooms 6-7 (1/F Zone C)",
         "Group Study Rooms 8 - 9 (1/F Zone A)",
-        "Late Reading Room (1/F Zone B)",
+        
+        // Carrels
         "Postgraduate Research Carrels (1/F Zone B)",
         "Individual Study Carrels (1/F Zone A)",
         "Individual Study Carrels (1/F Zone C)",
-        "Activity Room (1/F Zone A)",
+        
+        // Other Facilities
         "Café (1/F Zone A)",
-        "Computer Rooms 1 & 2 (1/F Zone B)",
-        "1/F (1/F Zone B)",
-        "1/F Male & Female (Zone A)",
-        "1/F Male & Female (Zone C)",
-        "1/F Unisex - Available during Overnight Study Period (Zone B)",
-        "1/F Accessible Toilets (Zone A)",
-        "1/F Accessible Toilets (Zone C)",
         "Book Drop (1/F Zone B)",
         "Book Sterilizer (1/F Zone B)",
-        "Self-Checkout Machine (1/F Zone A & Zone B)",
+        "Self-Checkout Machine (1/F Zone B)",
         "Self-Pickup Locker (1/F Zone B)",
         "SEN Equipment - Service Counter (1/F Zone B)",
         "Laser Cutter / Engraver - LU Barn (Makerspace) Maker Room (1/F Zone A)",
-        "Lift (1/F Zone B)"
+        "Lift (1/F Zone B)",
+        
+        //Toilets
+        "1/F Male (Zone A)",
+         "1/F Male (Zone A)",
+        "1/F Female (Zone A)",
+         "1/F Male (Zone C)",
+        "1/F Male (Zone C)",
+        "1/F Female (Zone C)",
+       "1/F Unisex - Available during Overnight Study Period (Zone B)",
+        "1/F Accessible Toilets (Zone A)",
+       "1/F Accessible Toilets (Zone C)",
       ],
+      
       "M/F": [
-        "Books HM-HM1100 (M/F Zone B)",
-        "Individual Study Carrels (M/F Zone C)",
-        "Postgraduate Lounge (M/F Zone C)",
+        // Collections
+        "Books HM (M/F Zone B)",
+        
+        // Study Areas
         "LU Barn (Makerspace) (M/F Zone A)",
+        "Postgraduate Lounge (M/F Zone C)",
+        "Individual Study Carrels (M/F Zone C)",
+        
+        // Equipment
         "3D Printers - LU Barn (Makerspace) (M/F Zone A)",
         "3D Scanner - LU Barn (Makerspace) (M/F Zone A)",
+        
+        // Other
         "Lift (M/F Zone B)"
       ],
+      
       "2/F": [
-        "Books HM1101-HN (2/F Zone B)",
+        // Collections
         "Current Journals (2/F Zone A)",
         "Bound Journals (2/F Zone A)",
         "Language Examinations & Learning Resources [LANG] (2/F Zone C)",
         "Lingnan University Archives (2/F Zone A)",
         "Multimedia (2/F Zone C)",
+        
+        // Newspapers
         "Current Issues (2/F Zone B)",
         "Back Issues (2/F Zone A)",
+        
+        // References
         "References A-HM (2/F Zone A)",
         "References HN-Z (2/F Zone C)",
+        
+        // Study Areas & Facilities
         "Lee Hak Kan Multimedia and Language Learning Centre - MLLC (2/F Zone C)",
-        "21, 23 (2/F Zone C)",
-        "22BW (2/F Zone A)",
-        "Group Study Room 10 - 11 (2/F Zone B)",
         "Chang Han-tsiu Reading Room (2/F Zone A)",
         "Mini Theatre (2/F Zone B)",
+        
+        // Printers
+        "21, 22BW, 23 (2/F Zone A & Zone C)",
+        
+        // Study Rooms
+        "Group Study Rooms 10 - 11 (2/F Zone B)",
+        
+        // Toilets & Water
         "2/F (2/F Zone A)",
-        "2/F Male & Female (Zone C)",
+        "2/F Male (Zone C)",
+        "2/F Female (Zone C)",
+        
+        // Other
         "Lift (2/F Zone B)"
       ],
+      
       "3/F": [
+        // Collections
         "Books HN-HS (3/F Zone A)",
         "Books HT-NX (3/F Zone B)",
         "Books P-ZA (3/F Zone C)",
         "Large Books [LBK], Extra Large Books [XLBK] (3/F Zone A)",
-        "31BW (3/F Zone B)",
+        
+        // Study Areas
         "Multi-Purpose Room 1 (3/F Zone C)",
         "Multi-Purpose Room 2 (3/F Zone A)",
-        "3/F (3/F Zone A)",
-        "3/F (3/F Zone C)",
-        "3/F Male & Female (Zone A & Zone C)",
+        
+        // Printers
+        "31BW (3/F Zone B)",
+        
+        // Toilets & Water
+        "3/F (3/F Zone A & Zone C)",
+        "3/F Male (Zone A)",
+        "3/F Female (Zone C)",
         "3/F Accessible Toilets (Zone C)",
+        
+        // Other
         "Lift (3/F Zone B)"
       ]
     };
@@ -6456,7 +6508,6 @@ function getFacilityFloorHTML(facilityName) {
   }
   return null;
 }
-
 // Replace the existing handleQueryParameter function with this:
 async function handleQueryParameter() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -6513,38 +6564,43 @@ async function handleQueryParameter() {
     }
     
     if (matchedFacility) {
-  // Check if facility belongs to this floor using getFacilityFloor logic
-  const facilityFloor = getFacilityFloorHTML(matchedFacility.name);
-  const currentFloorFromURL = getCurrentFloorFromURL();
-  
-  console.log("Facility floor:", facilityFloor, "Current floor:", currentFloorFromURL);
-  
-  // Only handle facility if it belongs to current floor
-  if (facilityFloor === currentFloorFromURL) {
-    // Try to find the facility asset in dict
-    let facilityAsset = dict[11].assets.find(asset => asset.name === matchedFacility.name);
-    if (!facilityAsset) {
-      facilityAsset = dict[12].assets.find(asset => asset.name === matchedFacility.name);
-    }
-    
-    if (facilityAsset) {
-      console.log("Facility asset found, calling handleGenericFacility");
-      setTimeout(() => {
-        handleGenericFacility(facilityAsset, matchedFacility.name);
-      }, 800);
-    } else {
-      // Facility exists in API but not in visual map - just show tooltip
-      console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
-      setTimeout(() => {
-        showGenericTooltip(matchedFacility.name, true);
-        if (spc && spc.space) {
-          console.log("Setting default camera view");
+      // Check if facility belongs to this floor using getFacilityFloor logic
+      const facilityFloor = getFacilityFloorHTML(matchedFacility.name);
+      const currentFloorFromURL = getCurrentFloorFromURL();
+      
+      console.log("Facility floor:", facilityFloor, "Current floor:", currentFloorFromURL);
+      
+      // Only handle facility if it belongs to current floor
+      if (facilityFloor === currentFloorFromURL) {
+        // Try to find ALL facility assets with the same name using filter()
+        let facilityAssets = dict[11].assets.filter(asset => asset.name === matchedFacility.name);
+        if (facilityAssets.length === 0) {
+          facilityAssets = dict[12].assets.filter(asset => asset.name === matchedFacility.name);
         }
-      }, 800);
-    }
-  } else {
-    console.log("Facility belongs to different floor, skipping HTML handling");
-  }
+        
+        if (facilityAssets.length > 0) {
+          console.log(`Facility asset(s) found: ${facilityAssets.length}, calling handleGenericFacility`);
+          // Handle all matched facilities
+          facilityAssets.forEach(facilityAsset => {
+            setTimeout(() => {
+              handleGenericFacility(facilityAsset, matchedFacility.name);
+            }, 800);
+          });
+        } else {
+          // Facility exists in API but not in visual map - just show tooltip
+          console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+          setTimeout(() => {
+            showGenericTooltip(matchedFacility.name, true);
+            // Set camera to a default position or facility-specific position if available
+            if (spc && spc.space) {
+              // You might want to set a default camera position here
+              console.log("Setting default camera view");
+            }
+          }, 800);
+        }
+      } else {
+        console.log("Facility belongs to different floor, skipping HTML handling");
+      }
     } else {
       console.log('No facility found for query_id:', queryId);
     }
@@ -6674,31 +6730,9 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   }, 1500);
 }
 
-// Handle special facilities not in facilities_list
-function handleSpecialFacility(facility) {
-  if (facility === "Study Rooms") {
-    rooms.push({
-      id: "2c742e1d-1ab7-4600-8376-76626e90c084",
-      name: "Individual Study Room 1",
-      levelIndex: 0,
-      coordinates: [
-        [
-          { x: 117.426, z: -56.963, levelIndex: 0 },
-          { x: 119.377, z: -56.963, levelIndex: 0 },
-          { x: 119.377, z: -54.059, levelIndex: 0 },
-          { x: 117.426, z: -54.059, levelIndex: 0 },
-          { x: 117.426, z: -56.963, levelIndex: 0 }
-        ]
-      ],
-      layerType: "polygon",
-      mapped: true
-    });
-  }
-  // Add other special cases here if needed
-}
-
+// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  return 3.1; 
+  return 3.1;
 }
 
 // Generic tooltip function using API data
@@ -6875,6 +6909,148 @@ class Space {
       });
     }
     
+ // ============ FACILITY ICONS SECTION - START ============
+
+console.log("Checking for facilities with icons...");
+
+// Array to hold all icon data
+const iconData = [];
+
+// Define icon configurations by facility ID
+const iconConfigs = {
+  // 11-15, 16BW facilities
+  "5802d3c4-48b2-474b-94e0-b91b94e68a4b": "./icons/11-15, 16BW (1F Zone A & Zone B)_a.png",
+  "bcde2b79-a2b7-4545-8cf8-23707194140b": "./icons/11-15, 16BW (1F Zone A & Zone B)_b.png",
+  "d4092634-c275-4313-83ab-fe82c5e8e4e0": "./icons/11-15, 16BW (1F Zone A & Zone B)_c.png",
+  "35cf415d-fad0-4475-9baf-4aa5e8468d0c": "./icons/11-15, 16BW (1F Zone A & Zone B)_d.png",
+  
+  // Computer facilities - all use same icon
+  "e02c5df4-47f8-4ddb-a72f-57f487eb9769": "./icons/For all entries under Computers.png",
+  "91eca3a2-4ab9-4e59-94fd-1f2838f8bf30": "./icons/For all entries under Computers.png",
+  "58e3b3bc-c7e0-4792-834b-a0acd95b30dd": "./icons/For all entries under Computers.png",
+  "66fe8cfe-7064-407f-bb15-07e51ef34241": "./icons/For all entries under Computers.png",
+  "34591980-9858-4f69-9fd3-564efa471f47": "./icons/For all entries under Computers.png",
+  "f01851b9-36f0-42fd-850c-54242e0406f9": "./icons/For all entries under Computers.png",
+  "0f801a83-b1db-4de1-a0e4-cf1323684b4d": "./icons/For all entries under Computers.png",
+
+    "4e979083-7039-413f-ae3a-a9a9c2d8354b": "./icons/Service Counter (1F Zone A).png",
+    "adbe21f3-e422-40b1-9ee8-6de4a9dd9eda": "./icons/Service Counter (1F Zone A).png",
+    "d67f0a01-4e82-4706-b206-1c1fc6f711a5": "./icons/Service Counter (1F Zone A).png",
+    "21ed8b4d-c15b-4837-ad1a-eab600069ca4": "./icons/Service Counter (1F Zone A).png",
+
+    // Drinking water stations 
+    "b4c8b792-7bfb-4fca-b431-d2fcbc21d75a": "./icons/drinking water stations.png",
+
+    // Laser Cutter / Engraver
+    "7e0c30e3-6098-49bd-8a4f-207d916590c6": "./icons/laser cutter or engraver.png",
+    "9f4fec45-5420-4b57-b79d-7af998e96ece": "./icons/laser cutter or engraver.png",
+
+    // Lifts
+    "52412747-42c1-4b10-aaf9-77f7a36dfd01": "./icons/lift.png",
+    "d283c740-b483-43b2-abe8-2a35f9dc47a2": "./icons/lift.png",
+
+    // Self-Pickup Locker
+    "7b343b35-04bc-442f-b769-5c1f737175ac": "./icons/Self-Pickup Locker.png",
+    "81b1d768-017c-40c1-b3b5-e02d1fb4ce2a": "./icons/Self-Pickup Locker.png",
+
+    // Book Sterilizer
+    "e4414eb6-7a52-4e27-833a-035b1f711752": "./icons/bookdrop, book sterilizer and self-checkout machine.png",
+    "d2f5a585-036b-4087-8915-3aedaedc608f": "./icons/bookdrop, book sterilizer and self-checkout machine.png",
+
+    // Book Drop
+    "f6de3312-c59f-4f2a-ab76-ba1e99bdb5af": "./icons/bookdrop, book sterilizer and self-checkout machine.png",
+    "b4adb4e5-709b-4e9b-a498-69050087f92d": "./icons/bookdrop, book sterilizer and self-checkout machine.png",
+
+    // Book Self-Checkout Machine
+    "2b15faa1-0a7f-489e-adb3-05b0954532bd": "./icons/bookdrop, book sterilizer and self-checkout machine.png",
+    "88f10fd7-5ee4-4c49-8ef6-60398b71c53c": "./icons/bookdrop, book sterilizer and self-checkout machine.png",
+
+};
+
+// Filter for ALL facilities that have an icon configured (by ID)
+const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
+  iconConfigs.hasOwnProperty(room.id)
+);
+
+console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
+
+if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
+  console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
+  
+  facilitiesWithIcons.forEach(facility => {
+    // Get the icon URL for this specific facility ID
+    const iconUrl = iconConfigs[facility.id];
+    
+    if (iconUrl && facility.coordinates && facility.coordinates[0]) {
+      // Get polygon coordinates
+      const coords = facility.coordinates[0];
+      
+      // Calculate center X (average of all x coordinates)
+      const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+      
+      // Find TOP EDGE (minimum z value = northernmost point)
+      const minZ = Math.min(...coords.map(coord => coord.z));
+      
+      iconData.push({
+        id: `icon-${facility.id}`,
+        levelIndex: 0,
+        position: {
+          x: centerX,
+          z: minZ - 2.5, 
+          elevation: 4.0,
+          levelIndex: 0
+        }
+      });
+      
+      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${centerX.toFixed(2)}, z=${(minZ - 2.5).toFixed(2)}`);
+    }
+  });
+}
+
+// Add the icon layer if there's any icon data
+if (iconData.length > 0) {
+  try {
+    // Group by icon URL for separate layers
+    const iconsByUrl = {};
+    
+    facilitiesWithIcons.forEach(facility => {
+      const iconUrl = iconConfigs[facility.id];
+      if (iconUrl) {
+        if (!iconsByUrl[iconUrl]) {
+          iconsByUrl[iconUrl] = [];
+        }
+        // Find the corresponding icon data
+        const iconDataItem = iconData.find(item => item.id === `icon-${facility.id}`);
+        if (iconDataItem) {
+          iconsByUrl[iconUrl].push(iconDataItem);
+        }
+      }
+    });
+    
+    // Create a layer for each unique icon
+    Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
+      this.space.addDataLayer({
+        id: `facility-icons-${layerIndex}`,
+        type: "icon",
+        data: icons,
+        icon: {
+          url: iconUrl,
+          width: 2000,    
+          height: 2000   
+        },
+        width: 5.0
+      });
+    });
+    
+    console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
+  } catch (error) {
+    console.error("✗ Error adding icon layer:", error);
+  }
+} else {
+  console.log("⚠ No facility icons to display");
+}
+// ============ FACILITY ICONS SECTION - END ============
+    
     // FIXED: Only set up click handlers if space is ready and handlers aren't already set
     if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
       console.log("Setting up click handlers");
@@ -6887,6 +7063,7 @@ class Space {
       this._clickHandlerSet = true;
     }
   }
+
   
   updateMapForFacility() {
     this.updateDataLayers();
@@ -7003,14 +7180,17 @@ const params = new URLSearchParams(url.search);
 const facility = params.get("facility");
 
 if (!!facility) {
-  // Check both facilities_list (dict[11]) and facilities_demo (dict[12])
-  let facilityAsset = dict[11].assets.find(asset => asset.name === facility);
-  if (!facilityAsset) {
-    facilityAsset = dict[12].assets.find(asset => asset.name === facility);
+  // Get ALL facilities with the same name from both lists using filter()
+  let facilityAssets = dict[11].assets.filter(asset => asset.name === facility);
+  if (facilityAssets.length === 0) {
+    facilityAssets = dict[12].assets.filter(asset => asset.name === facility);
   }
   
-  if (facilityAsset) {
-    handleGenericFacility(facilityAsset, facility);
+  if (facilityAssets.length > 0) {
+    // Handle all matched facilities
+    facilityAssets.forEach(facilityAsset => {
+      handleGenericFacility(facilityAsset, facility);
+    });
   } else {
     // For API-only facilities, just show tooltip without adding to map
     console.log('Facility coordinates not found, will show tooltip only');
