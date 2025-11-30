@@ -284,6 +284,88 @@ async function fetchFacilityData() {
   }
 }
 
+async function handleQueryParameter() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryId = urlParams.get('query');
+  
+  console.log("handleQueryParameter called with queryId:", queryId);
+  
+  if (queryId && facilityAPIData) {
+    console.log('Query ID detected:', queryId);
+    console.log('Facility API Data available:', facilityAPIData ? 'Yes' : 'No');
+    
+    // Search through API data to find matching facility
+    let matchedFacility = null;
+    
+    for (const firstLevel of facilityAPIData) {
+      // Check if first level matches
+      if (firstLevel.query_id === queryId) {
+        matchedFacility = {
+          name: firstLevel.name,
+          description: firstLevel.description,
+          image: firstLevel.image,
+          query_id: firstLevel.query_id
+        };
+        break;
+      }
+      
+      for (const secondLevel of firstLevel.second_levels || []) {
+        // Check if second level matches
+        if (secondLevel.query_id === queryId) {
+          matchedFacility = {
+            name: secondLevel.name,
+            description: secondLevel.description,
+            image: secondLevel.image,
+            query_id: secondLevel.query_id
+          };
+          break;
+        }
+        
+        for (const thirdLevel of secondLevel.third_levels || []) {
+          if (thirdLevel.query_id === queryId) {
+            matchedFacility = {
+              name: thirdLevel.name,
+              description: thirdLevel.description,
+              image: thirdLevel.image,
+              query_id: thirdLevel.query_id
+            };
+            console.log('Found matching facility:', matchedFacility);
+            break;
+          }
+        }
+        if (matchedFacility) break;
+      }
+      if (matchedFacility) break;
+    }
+    
+    if (matchedFacility) {
+  // Try to find the facility asset in dict
+  let facilityAsset = dict[4].assets.find(asset => asset.name === matchedFacility.name);
+  
+  if (facilityAsset) {
+    console.log("Facility asset found, calling handleGenericFacility");
+    setTimeout(() => {
+      handleGenericFacility(facilityAsset, matchedFacility.name);
+    }, 800);
+  } else {
+    // Facility exists in API but not in visual map - just show tooltip
+    console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
+    setTimeout(() => {
+      showGenericTooltip(matchedFacility.name, true);
+    }, 600);
+  }
+} else {
+      console.log('No facility found for query_id:', queryId);
+    }
+  } else if (queryId && !facilityAPIData) {
+    console.log('Query ID present but no facility data yet, waiting...');
+    // Wait for data to load
+    setTimeout(() => handleQueryParameter(), 1000);
+  }
+}
+
+
+
 // Function to find facility info by name
 function findFacilityInfo(facilityName) {
   if (!facilityAPIData) return null;
@@ -297,6 +379,7 @@ function findFacilityInfo(facilityName) {
         name: firstLevel.name
       };
     }
+
     
     for (const secondLevel of firstLevel.second_levels || []) {
       if (secondLevel.name === facilityName) {
@@ -339,6 +422,9 @@ function handleGenericFacility(facilityAsset, facilityName) {
 
 // Extract display logic
 function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
+  console.log("updateFacilityDisplay called for:", facilityName);  // NEW LOG
+  console.log("Facility info:", facilityInfo);  // NEW LOG
+  
   const room = {
     id: facilityAsset.id,
     name: facilityAsset.name,
@@ -347,89 +433,138 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
     layerType: facilityAsset.layerType,
     mapped: facilityAsset.mapped,
     height: getFacilityHeight(facilityName),
-    color: "#005EF6",
+    color: "#E566FF",
     available: "Available",
     description: facilityInfo?.description || "Available for use"
   };
   
   rooms.push(room);
-  console.log(`Room added: ${room.id} - ${room.name}. Total rooms: ${rooms.length}`);
+  console.log("Room added to array, total rooms:", rooms.length);  // NEW LOG
+  
+  // Update map immediately - CHANGED: Removed setTimeout, made immediate
+  if (spc && spc.space) {
+    spc.updateMapForFacility();
+    console.log("Map updated");  // NEW LOG
+  }
+  
+  // Set camera after map update - CHANGED: Reduced timeout from 3000 to 1500
+  setTimeout(() => {
+    if (spc && spc.space && spc.setCameraForFacility) {
+      spc.setCameraForFacility(facilityName);
+      console.log("Camera positioned");  // NEW LOG
+    }
+  }, 800);  // CHANGED: Was 3000, now 1500
+  
+  // FIXED: Show tooltip with multiple retry attempts - CHANGED: Increased from 1000 to 1500
+  setTimeout(() => {
+    console.log("First tooltip attempt for:", facilityName);  // NEW LOG
+    showGenericTooltip(facilityName, true);
+  }, 800);  // CHANGED: Was 1000, now 1500
+  
+  // NEW: Retry showing tooltip if it didn't appear - COMPLETELY NEW BLOCK
+  setTimeout(() => {
+    const tooltipDiv = document.getElementById("custom-tooltip");
+    if (tooltipDiv && tooltipDiv.style.display !== "block") {
+      console.log("Tooltip not visible, retrying...");
+      showGenericTooltip(facilityName, false);
+    }
+  }, 2400);
 }
 
 
 
-// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  return 3.1;
+  return 3.1; 
 }
 
 // Generic tooltip function using API data with image on right
-// Generic tooltip function using API data
 function showGenericTooltip(facilityName, showSkeleton = false) {
+  console.log("showGenericTooltip called for:", facilityName, "showSkeleton:", showSkeleton);  // NEW LOG
+  
   const tooltipDiv = document.getElementById("custom-tooltip");
   const contentDiv = document.getElementById("tooltip-content");
   
-  if (tooltipDiv && contentDiv) {
-    const facilityInfo = findFacilityInfo(facilityName);
+  // NEW: Error checking with logging
+  if (!tooltipDiv || !contentDiv) {
+    console.error("Tooltip elements not found in DOM");  // NEW ERROR LOG
+    return;
+  }
+  
+  const facilityInfo = findFacilityInfo(facilityName);
+  console.log("Facility info retrieved:", facilityInfo);  // NEW LOG
+  
+  // Show skeleton loading if no data available or explicitly requested
+  if (!facilityInfo || showSkeleton) {
+    const content = `
+      <div style="padding: 0; margin: 0; line-height: 1.2;">
+        <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+        <div style="margin-bottom: 8px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
+        <div style="width: 120px; height: 80px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; display: block;"></div>
+      </div>
+      <style>
+        @keyframes loading {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      </style>
+    `;
+    contentDiv.innerHTML = content;
+    tooltipDiv.style.display = "block";
+    console.log("Tooltip set to display: block (skeleton)");  // NEW LOG
     
-    // Show skeleton loading if no data available or explicitly requested
-if (!facilityInfo || showSkeleton) {
+    // If we have facility info but are showing skeleton, show actual data after delay
+    if (facilityInfo && showSkeleton) {
+      setTimeout(() => {
+        showGenericTooltip(facilityName, false);
+      }, 1000);  // CHANGED: Was 500, now 1000
+    }
+    // If no facility info, try to refresh data
+    else if (!facilityInfo) {
+      console.log("No facility info found, attempting to refresh data...");  // NEW LOG
+      refreshFacilityData().then(() => {
+        const updatedInfo = findFacilityInfo(facilityName);
+        if (updatedInfo) {
+          console.log("Data refreshed, showing tooltip with data");  // NEW LOG
+          showGenericTooltip(facilityName, false);
+        } else {
+          // NEW: Fallback basic tooltip if still no data
+          console.error("Still no facility info after refresh for:", facilityName);  // NEW ERROR LOG
+          // Show a basic tooltip with just the name
+          const basicContent = `
+            <div style="padding: 0; margin: 0; line-height: 1.2;">
+              <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
+              <div style="margin-bottom: 8px; font-size: 14px; color: #666;">-</div>
+            </div>
+          `;
+          contentDiv.innerHTML = basicContent;
+          tooltipDiv.style.display = "block";
+        }
+      });
+    }
+    return;
+  }
+  
+  // Show actual content when data is available
+  const description = facilityInfo.description || "";  // CHANGED: Added default ""
+  const imageUrl = facilityInfo.image || "/placeholder-image.png";  // CHANGED: Added default
+  
+  // CHANGED: Conditional image rendering
   const content = `
     <div style="padding: 0; margin: 0; line-height: 1.2;">
       <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
-      <div style="margin-bottom: 8px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
-      <div style="width: 120px; height: 80px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; display: block;"></div>
-    </div>
-    <style>
-      @keyframes loading {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-      }
-    </style>
-  `;
-  contentDiv.innerHTML = content;
-  tooltipDiv.style.display = "block";
-  
-  // If we have facility info but are showing skeleton (showSkeleton = true), 
-  // show actual data after a brief delay
-  if (facilityInfo && showSkeleton) {
-    setTimeout(() => {
-      showGenericTooltip(facilityName, false);
-    }, 500);
-  }
-  // If no facility info, try to refresh data
-  else if (!facilityInfo) {
-    refreshFacilityData().then(() => {
-      const updatedInfo = findFacilityInfo(facilityName);
-      if (updatedInfo) {
-        showGenericTooltip(facilityName, false);
-      }
-    });
-  }
-  return;
-}
-    
-    // Show actual content when data is available
-    const description = facilityInfo.description;
-    const imageUrl = facilityInfo.image;
-    
-    const content = `
-    <div style="padding: 0; margin: 0; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start;">
-      <div style="flex: 1;">
-        <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
-        <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
-      </div>
+      <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
       ${imageUrl !== "/placeholder-image.png" ? `
         <img src="${imageUrl}" 
-             style="width: 120px; height: 80px; border-radius: 4px; object-fit: cover; flex-shrink: 0;" 
+             style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
              onerror="this.style.display='none'" />
       ` : ''}
     </div>
   `;
-    
-    contentDiv.innerHTML = content;
-    tooltipDiv.style.display = "block";
-  }
+  
+  contentDiv.innerHTML = content;
+  tooltipDiv.style.display = "block";
+  console.log("Tooltip set to display: block (with data)");  // NEW LOG
+  console.log("Tooltip display style:", tooltipDiv.style.display);  // NEW LOG
 }
 
       // Define the assets for the second floor - keep only what's needed
@@ -1049,7 +1184,7 @@ if (!facilityInfo || showSkeleton) {
       },
       {
         "id": "ba53551e-4c19-4a9e-9d88-55cb97d08781",
-        "name": "Lee Hak Kan Multimedia and Language Learning Centre - MLLC (2/F Zone C)",
+        "name": "Lee Hak Kan Multimedia and Language Learning Centre – MLLC (2/F Zone C)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -1192,7 +1327,7 @@ if (!facilityInfo || showSkeleton) {
       },
       {
         "id": "0a491f46-ea57-4674-b494-8a2ecb513adf",
-        "name": "Group Study Rooms 10 - 11 (2/F Zone B)",
+        "name": "Group Study Room 10 – 11 (2/F Zone B)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -1294,7 +1429,7 @@ if (!facilityInfo || showSkeleton) {
       },
       {
         "id": "e0d95117-64aa-428d-8bde-d331fa064d54",
-        "name": "Lee Hak Kan Multimedia and Language Learning Centre - MLLC (2/F Zone C)",
+        "name": "Lee Hak Kan Multimedia and Language Learning Centre – MLLC (2/F Zone C)",
         "levelIndex": 0,
         "coordinates": [
           [
@@ -1597,6 +1732,7 @@ if (!facilityInfo || showSkeleton) {
           this.toilets = toilets;
           this.nonAccessibleArea = nonAccessibleArea;
           this.rooms = rooms;
+          this._clickHandlerSet = false;
 
         }
 
@@ -1612,7 +1748,7 @@ if (!facilityInfo || showSkeleton) {
     disableCameraRotation: true,
      loadingMessage: "Loading...",
     cameraPlacement: {
-      alpha: -1.5722224976673886,
+      alpha : -1.5722224976673886,
       beta: 0.22438049962679768,
       radius: 151.566640313453746,
       target: {
@@ -1628,8 +1764,7 @@ if (!facilityInfo || showSkeleton) {
       const facility = params.get("facility");
       if (facility && this.rooms && this.rooms.length > 0) {
         // Focus camera on the facility if it exists
-        const facilityRooms = this.rooms.filter(r => r.name === facility);
-const facilityRoom = facilityRooms.length > 0 ? facilityRooms[0] : null;
+        const facilityRoom = this.rooms.find(r => r.name === facility);
         if (facilityRoom && facilityRoom.coordinates) {
           // Calculate center of facility for camera positioning
           // You may need to adjust these values based on your space
@@ -1698,146 +1833,18 @@ const facilityRoom = facilityRooms.length > 0 ? facilityRooms[0] : null;
     });
   }
 
-  // ============ FACILITY ICONS SECTION - START ============
-  
-  console.log("Checking for facilities with icons...");
-  
-  // Array to hold all icon data
-  const iconData = [];
-  
-  // Define icon configurations by facility ID for 2F
-  const iconConfigs = {
-    "d0bc7111-7fdb-41b2-99ce-6434721407bc": "./icons/21, 22BW, 23 (2F Zone A & Zone C)_c.png",
-    "7d29c189-455f-4ac9-927b-75264829d3fe": "./icons/21, 22BW, 23 (2F Zone A & Zone C)_b.png",
-    "034e6926-21b5-4670-8286-c070910d7f2c": "./icons/21, 22BW, 23 (2F Zone A & Zone C)_a.png",
-
-    "265a2bb7-1628-49f3-8fd5-d03aa7e139fa": "./icons/Current Issues (2F Zone B).png",
-    "2cb77f88-3f4a-4608-b5ac-e7555a12bd4b": "./icons/Current Issues (2F Zone B).png",
-
-    "ba53551e-4c19-4a9e-9d88-55cb97d08781": "./icons/For all entries under Computers.png",
-
-    "f738d6e8-1f42-4be7-8bd8-2398ebbb4d49": "./icons/drinking water stations.png",
-
-    "af0a79b4-e8d5-4362-891a-818391977191": "./icons/lift.png",
-
-
-  };
-  
- // Define manual positions for specific facilities
-const manualPositions = {
-  "ba53551e-4c19-4a9e-9d88-55cb97d08781": { x: 50.0, z: -42.0 },
-  "265a2bb7-1628-49f3-8fd5-d03aa7e139fa": { x: 14.6, z: -39.0 }
-};
-
-// Filter for ALL facilities that have an icon configured (by ID)
-const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
-  iconConfigs.hasOwnProperty(room.id)
-);
-
-console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
-
-if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
-  console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
-  
-  facilitiesWithIcons.forEach(facility => {
-    // Get the icon URL for this specific facility ID
-    const iconUrl = iconConfigs[facility.id];
-    
-    if (iconUrl && facility.coordinates && facility.coordinates[0]) {
-      let iconX, iconZ;
-      
-      // Check if this facility has manual positioning
-      if (manualPositions[facility.id]) {
-        iconX = manualPositions[facility.id].x;
-        iconZ = manualPositions[facility.id].z;
-        console.log(`  Using MANUAL position for ${facility.name}`);
-      } else {
-        // Use automatic TOP EDGE positioning for other facilities
-        const coords = facility.coordinates[0];
-        
-        // Calculate center X (average of all x coordinates)
-        const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
-        
-        // Find TOP EDGE (minimum z value = northernmost point)
-        const minZ = Math.min(...coords.map(coord => coord.z));
-        
-        iconX = centerX + 0.1;
-        iconZ = minZ + 7.0;
-        
-        console.log(`  Using AUTO position (top edge) for ${facility.name}`);
-      }
-      
-      iconData.push({
-        id: `icon-${facility.id}`,
-        levelIndex: 0,
-        position: {
-          x: iconX,
-          z: iconZ, 
-          elevation: 4.0,
-          levelIndex: 0
-        }
-      });
-      
-      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${iconX.toFixed(2)}, z=${iconZ.toFixed(2)}`);
+  // Add click handlers for custom tooltip
+// FIXED: Only set up click handlers if space is ready and handlers aren't already set
+if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
+  console.log("Setting up click handlers");
+  this.space.on("click", (event) => {
+    if (event.data && event.data.name) {
+      console.log("Click detected on:", event.data.name);
+      showGenericTooltip(event.data.name, true);
     }
   });
+  this._clickHandlerSet = true;
 }
-  
-  // Add the icon layer if there's any icon data
-  if (iconData.length > 0) {
-    try {
-      // Group by icon URL for separate layers
-      const iconsByUrl = {};
-      
-      facilitiesWithIcons.forEach(facility => {
-        const iconUrl = iconConfigs[facility.id];
-        if (iconUrl) {
-          if (!iconsByUrl[iconUrl]) {
-            iconsByUrl[iconUrl] = [];
-          }
-          // Find the corresponding icon data
-          const iconDataItem = iconData.find(item => item.id === `icon-${facility.id}`);
-          if (iconDataItem) {
-            iconsByUrl[iconUrl].push(iconDataItem);
-          }
-        }
-      });
-      
-      // Create a layer for each unique icon
-      Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
-        this.space.addDataLayer({
-          id: `facility-icons-${layerIndex}`,
-          type: "icon",
-          data: icons,
-          icon: {
-            url: iconUrl,
-            width: 2000,
-            height: 2000
-          },
-          width: 8.0
-        });
-      });
-      
-      console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
-    } catch (error) {
-      console.error("✗ Error adding icon layer:", error);
-    }
-  } else {
-    console.log("⚠ No facility icons to display");
-  }
-  // ============ FACILITY ICONS SECTION - END ============
-
-  // Add click handlers for custom tooltip
-this.space.on("click", (event) => {
-  if (event.data) {
-    const tooltipDiv = document.getElementById("custom-tooltip");
-    const contentDiv = document.getElementById("tooltip-content");
-
-    if (event.data.name && tooltipDiv && contentDiv) {
-      showGenericTooltip(event.data.name, true); // Use the centralized function with skeleton loading
-    }
-  }
-});
 }
 
 updateMapForFacility() {
@@ -1858,11 +1865,12 @@ updateMapForFacility() {
 
       // Create the Space instance
       let spc = new Space(
-        SPACE_ID,
-        CLIENT_ID,
-        toilet_assets,
-        nonAccessibleArea_assets, rooms
-      );
+  SPACE_ID,
+  CLIENT_ID,
+  toilet_assets,
+  nonAccessibleArea_assets,
+  rooms
+);
 
       // delete dict;
 
@@ -1874,60 +1882,31 @@ updateMapForFacility() {
         });
       }
 
-      async function start() {
+     async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
   
-  // Fetch facility data first
+  console.log("Starting initialization...");
+  
   await fetchFacilityData();
+  console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
   
   spc.initSpace(smplr);
+  console.log("Space initialized");
   
-  const currentUrl = window.location.href;
-  const url = new URL(currentUrl);
-  const params = new URLSearchParams(url.search);
-  const facility = params.get("facility");
-  
-  if (!!facility) {
-  // Wait for space to be ready
   setTimeout(() => {
-    const facilitiesData = dict[4];
-    // Decode the facility name from URL
-    const decodedFacility = decodeURIComponent(facility);
-    console.log('Looking for facility:', decodedFacility);
-    
-    // Get ALL facilities with the same name using filter()
-    let facilityAssets = facilitiesData.assets.filter(asset => asset.name === decodedFacility);
-    
-    console.log(`Found ${facilityAssets.length} facilities matching "${decodedFacility}"`);
-    
-    if (facilityAssets.length > 0) {
-      // Handle all matched facilities
-      facilityAssets.forEach((facilityAsset, index) => {
-        console.log(`Processing facility ${index + 1}/${facilityAssets.length}:`, facilityAsset.id);
-        handleGenericFacility(facilityAsset, decodedFacility);
-      });
-      
-      // Update the map ONCE after all facilities have been added
-      setTimeout(() => {
-        if (spc && spc.space) {
-          console.log(`Updating map with ${rooms.length} rooms`);
-          spc.updateMapForFacility();
-        }
-      }, 2000);
-      
-      // Show tooltip
-      setTimeout(() => showGenericTooltip(decodedFacility, true), 2500);
-    } else {
-      console.log('Facility coordinates not found in dict, will show tooltip only');
-      // Even if not found in coordinates, still try to show tooltip
-      setTimeout(() => showGenericTooltip(decodedFacility, true), 2500);
-    }
-  }, 1000);
+    console.log("Calling handleQueryParameter...");
+    handleQueryParameter();
+  }, 1500);
+  
+  // Add interval to refresh data periodically
+  setInterval(() => {
+    spc.fetchData();
+  }, UPDATE_FREQUENCY * 1000);
 }
-}
-      start();
+
+start();
     </script>
 
   </body>
