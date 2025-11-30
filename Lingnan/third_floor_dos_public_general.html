@@ -328,87 +328,6 @@ async function fetchFacilityData() {
   }
 }
 
-// Replace the existing handleQueryParameter function with this:
-async function handleQueryParameter() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const queryId = urlParams.get('query');
-  
-  console.log("handleQueryParameter called with queryId:", queryId);
-  
-  if (queryId && facilityAPIData) {
-    console.log('Query ID detected:', queryId);
-    console.log('Facility API Data available:', facilityAPIData ? 'Yes' : 'No');
-    
-    // Search through API data to find matching facility
-    let matchedFacility = null;
-    
-    for (const firstLevel of facilityAPIData) {
-      // Check if first level matches
-      if (firstLevel.query_id === queryId) {
-        matchedFacility = {
-          name: firstLevel.name,
-          description: firstLevel.description,
-          image: firstLevel.image,
-          query_id: firstLevel.query_id
-        };
-        break;
-      }
-      
-      for (const secondLevel of firstLevel.second_levels || []) {
-        // Check if second level matches
-        if (secondLevel.query_id === queryId) {
-          matchedFacility = {
-            name: secondLevel.name,
-            description: secondLevel.description,
-            image: secondLevel.image,
-            query_id: secondLevel.query_id
-          };
-          break;
-        }
-        
-        for (const thirdLevel of secondLevel.third_levels || []) {
-          if (thirdLevel.query_id === queryId) {
-            matchedFacility = {
-              name: thirdLevel.name,
-              description: thirdLevel.description,
-              image: thirdLevel.image,
-              query_id: thirdLevel.query_id
-            };
-            console.log('Found matching facility:', matchedFacility);
-            break;
-          }
-        }
-        if (matchedFacility) break;
-      }
-      if (matchedFacility) break;
-    }
-    
-    if (matchedFacility) {
-  // Try to find the facility asset in facilities_list
-  let facilityAsset = facilities_list.assets.find(asset => asset.name === matchedFacility.name);
-  
-  if (facilityAsset) {
-    console.log("Facility asset found, calling handleGenericFacility");
-    setTimeout(() => {
-      handleGenericFacility(facilityAsset, matchedFacility.name);
-    }, 2000);
-  } else {
-    // Facility exists in API but not in visual map - just show tooltip
-    console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
-    setTimeout(() => {
-      showGenericTooltip(matchedFacility.name, true);
-    }, 800);
-  }
-}else {
-      console.log('No facility found for query_id:', queryId);
-    }
-  } else if (queryId && !facilityAPIData) {
-    console.log('Query ID present but no facility data yet, waiting...');
-    // Wait for data to load
-    setTimeout(() => handleQueryParameter(), 600);
-  }
-}
-
 async function refreshFacilityData() {
   console.log('Refreshing facility data...');
   await fetchFacilityData();
@@ -450,7 +369,6 @@ function findFacilityInfo(facilityName) {
   return null;
 }
 
-// Generic facility handler
 function handleGenericFacility(facilityAsset, facilityName) {
   let facilityInfo = findFacilityInfo(facilityName);
   
@@ -466,11 +384,7 @@ function handleGenericFacility(facilityAsset, facilityName) {
   updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
 }
 
-// Extract display logic
 function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
-  console.log("updateFacilityDisplay called for:", facilityName);  // NEW LOG
-  console.log("Facility info:", facilityInfo);  // NEW LOG
-  
   const room = {
     id: facilityAsset.id,
     name: facilityAsset.name,
@@ -479,47 +393,18 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
     layerType: facilityAsset.layerType,
     mapped: facilityAsset.mapped,
     height: getFacilityHeight(facilityName),
-    color: "#E566FF",
+    color: "#FFC000",
     available: "Available",
     description: facilityInfo?.description || "Available for use"
   };
   
   rooms.push(room);
-  console.log("Room added to array, total rooms:", rooms.length);  // NEW LOG
-  
-  // Update map immediately - CHANGED: Removed setTimeout, made immediate
-  if (spc && spc.space) {
-    spc.updateMapForFacility();
-    console.log("Map updated");  // NEW LOG
-  }
-  
-  // Set camera after map update - CHANGED: Reduced timeout from 3000 to 1500
-  setTimeout(() => {
-    if (spc && spc.space && spc.setCameraForFacility) {
-      spc.setCameraForFacility(facilityName);
-      console.log("Camera positioned");  // NEW LOG
-    }
-  }, 1300);  
-  
-  // FIXED: Show tooltip with multiple retry attempts - CHANGED: Increased from 1000 to 1500
-  setTimeout(() => {
-    console.log("First tooltip attempt for:", facilityName);  // NEW LOG
-    showGenericTooltip(facilityName, true);
-  }, 1500); 
-  
-  // NEW: Retry showing tooltip if it didn't appear - COMPLETELY NEW BLOCK
-  setTimeout(() => {
-    const tooltipDiv = document.getElementById("custom-tooltip");
-    if (tooltipDiv && tooltipDiv.style.display !== "block") {
-      console.log("Tooltip not visible, retrying...");
-      showGenericTooltip(facilityName, false);
-    }
-  }, 2600);
+  console.log(`Room added: ${room.id} - ${room.name}. Total rooms: ${rooms.length}`);
 }
 
-
+// Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  return 3.1; 
+  return 3.1;
 }
 
 // Generic tooltip function using API data
@@ -568,18 +453,22 @@ if (!facilityInfo || showSkeleton) {
 }
     
     // Show actual content when data is available
-    const description = facilityInfo.description || "";  // CHANGED: Added default ""
-  const imageUrl = facilityInfo.image || "/placeholder-image.png"; 
+    const description = facilityInfo.description;
+    const imageUrl = facilityInfo.image;
     
     const content = `
-      <div style="padding: 0; margin: 0; line-height: 1.2;">
+    <div style="padding: 0; margin: 0; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start;">
+      <div style="flex: 1;">
         <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000;">${facilityName}</div>
         <div style="margin-bottom: 8px; font-size: 14px;">${description}</div>
-        <img src="${imageUrl}" 
-             style="width: 120px; height: 80px; border-radius: 4px; display: block; object-fit: cover;" 
-             onerror="this.style.display='none'" />
       </div>
-    `;
+      ${imageUrl !== "/placeholder-image.png" ? `
+        <img src="${imageUrl}" 
+             style="width: 120px; height: 80px; border-radius: 4px; object-fit: cover; flex-shrink: 0;" 
+             onerror="this.style.display='none'" />
+      ` : ''}
+    </div>
+  `;
     
     contentDiv.innerHTML = content;
     tooltipDiv.style.display = "block";
@@ -1604,7 +1493,7 @@ if (!facilityInfo || showSkeleton) {
     ]
   };
 
-  const facilities_list =   {
+  const facilities_list =    {
     "id": "fd18c63b-12c9-410d-a51c-d2d8ccb5d9e1",
     "name": "facilities_list",
     "type": "polygon",
@@ -2330,7 +2219,6 @@ if (!facilityInfo || showSkeleton) {
     this.studyCarrels = studyCarrels;
     this.rooms = rooms;  
     this.deskStatus = [];
-    this._clickHandlerSet = false; 
   }
 
   initSpace(smplr) {
@@ -2347,7 +2235,7 @@ if (!facilityInfo || showSkeleton) {
     cameraPlacement: {
       alpha: -1.5721425958892115,
       beta: 0.22414041027672915,
-      radius: 208.16809499700365,
+      radius: 160.16809499700365,
       target: {
         x: 40.939410866804785,
         y: 1,
@@ -2356,24 +2244,37 @@ if (!facilityInfo || showSkeleton) {
     },
     onReady: () => {
       this.fetchAll();
+
+       // ADD CLICK HANDLER HERE
+  this.space.on("click", (event) => {
+    if (event.data) {
+      const tooltipDiv = document.getElementById("custom-tooltip");
+      const contentDiv = document.getElementById("tooltip-content");
+
+      if (event.data.name && tooltipDiv && contentDiv) {
+        showGenericTooltip(event.data.name, true);
+      }
+    }
+  });
       // Check for facility parameter after space is ready
       const params = new URLSearchParams(window.location.search);
       const facility = params.get("facility");
       if (facility && this.rooms && this.rooms.length > 0) {
-        const facilityRoom = this.rooms.find(r => r.name === facility);
-        if (facilityRoom && facilityRoom.coordinates) {
-          this.space.setCameraPlacement({
-            alpha: -1.5721425958892115,
-      beta: 0.22414041027672915,
-      radius: 208.16809499700365,
-      target: {
-        x: 40.939410866804785,
-        y: 1,
-        z: -48.16045790160895,
-            },
-          });
-        }
-      }
+    const facilityRoom = this.rooms.find(r => r.name === facility);
+    if (facilityRoom && facilityRoom.coordinates) {
+      this.space.setCameraPlacement({
+        alpha: -1.5721425958892115,
+        beta: 0.22414041027672915,
+        radius: 180.16809499700365,
+        target: {
+          x: 40.939410866804785,
+          y: 1,
+          z: -48.16045790160895,
+        },
+      });
+    }
+  }
+
     },
     onError: (error) => console.error("Could not start viewer", error),
   });
@@ -2414,7 +2315,7 @@ updateDataLayers() {
       data: this.toiletAreas.filter((d) => d.name === "3F-MT1"),
       tooltip: (d) => `Male Toilet`,
       color: (d) => "#1D547D",
-      alpha: 2.2,
+      alpha: 0.7,
       height: 1.0,
     });
 
@@ -2425,7 +2326,7 @@ updateDataLayers() {
       data: this.toiletAreas.filter((d) => d.name === "3F-FT1"),
       tooltip: (d) => `Female Toilet`,
       color: (d) => "#A7384E",
-      alpha: 2.2,
+      alpha: 0.7,
       height: 1.0,
     });
 
@@ -2436,7 +2337,7 @@ updateDataLayers() {
       data: this.toiletAreas.filter((d) => d.name === "3F-UT1"),
       tooltip: (d) => `Unisex Toilet/Accessible`,
       color: (d) => "#023b8c",
-      alpha: 2.2,
+      alpha: 0.7,
       height: 1.0,
     });
   }
@@ -2464,34 +2365,142 @@ updateDataLayers() {
       data: this.rooms,
       color: (d) => d.color,
       alpha: 0.7,
-      height: (d) => d.height || 2.4,
+      height: (d) => d.height || 3.1,
     });
   }
 
-// Add click handlers for custom tooltip
-// FIXED: Only set up click handlers if space is ready and handlers aren't already set
-if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
-  console.log("Setting up click handlers");
-  this.space.on("click", (event) => {
-    if (event.data && event.data.name) {
-      console.log("Click detected on:", event.data.name);
-      showGenericTooltip(event.data.name, true);
+  // ============ FACILITY ICONS SECTION - START ============
+  
+  console.log("Checking for facilities with icons...");
+  
+  // Array to hold all icon data
+  const iconData = [];
+  
+  // manual positions for specific facilities 
+  const manualPositions = {
+    "6fe4f4cb-b48d-4ff7-9ca2-670d2873dd92": { x: 32.8, z: -30.8 },
+
+    "853ce3bc-eee7-46e6-9f8e-37d847d21745": { x: 2.218, z: -32.969 },  
+    "7df1deb1-dff4-4004-b0d8-c41ef6d581ba": { x: 46.3, z: -32.8 },
+
+    "a62c4b18-5801-49a2-b2bf-37bfca97b056": { x: 33.2, z: -33.2 },
+  };
+  
+  // icon configurations by facility ID 
+  const iconConfigs = {
+    "6fe4f4cb-b48d-4ff7-9ca2-670d2873dd92": "./icons/31 BW (3F Zone B).png",
+    "853ce3bc-eee7-46e6-9f8e-37d847d21745": "./icons/drinking water stations.png",
+    "7df1deb1-dff4-4004-b0d8-c41ef6d581ba": "./icons/drinking water stations.png",
+
+    "a62c4b18-5801-49a2-b2bf-37bfca97b056": "./icons/lift.png",
+  };
+  
+  // Filter for ALL facilities that have an icon configured (by ID)
+  const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
+    iconConfigs.hasOwnProperty(room.id)
+  );
+  
+  console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
+  
+  if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
+    console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
+    
+    facilitiesWithIcons.forEach(facility => {
+      // Get the icon URL for this specific facility ID
+      const iconUrl = iconConfigs[facility.id];
+      
+      if (iconUrl && facility.coordinates && facility.coordinates[0]) {
+        let iconX, iconZ;
+        
+        // Check if this facility has manual positioning
+        if (manualPositions[facility.id]) {
+          iconX = manualPositions[facility.id].x;
+          iconZ = manualPositions[facility.id].z;
+          console.log(`  Using MANUAL position for ${facility.name}`);
+        } else {
+          // Use automatic TOP EDGE positioning for other facilities
+          const coords = facility.coordinates[0];
+          
+          // Calculate center X (average of all x coordinates)
+          const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+          
+          // Find TOP EDGE (minimum z value = northernmost point)
+          const minZ = Math.min(...coords.map(coord => coord.z));
+          
+          iconX = centerX;
+          iconZ = minZ; 
+          
+          console.log(`  Using AUTO position (top edge) for ${facility.name}`);
+        }
+        
+        iconData.push({
+          id: `icon-${facility.id}`,
+          levelIndex: 0,
+          position: {
+            x: iconX,
+            z: iconZ, 
+            elevation: 4.0,
+            levelIndex: 0
+          }
+        });
+        
+        console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${iconX.toFixed(2)}, z=${iconZ.toFixed(2)}`);
+      }
+    });
+  }
+  
+  // Add the icon layer if there's any icon data
+  if (iconData.length > 0) {
+    try {
+      // Group by icon URL for separate layers
+      const iconsByUrl = {};
+      
+      facilitiesWithIcons.forEach(facility => {
+        const iconUrl = iconConfigs[facility.id];
+        if (iconUrl) {
+          if (!iconsByUrl[iconUrl]) {
+            iconsByUrl[iconUrl] = [];
+          }
+          // Find the corresponding icon data
+          const iconDataItem = iconData.find(item => item.id === `icon-${facility.id}`);
+          if (iconDataItem) {
+            iconsByUrl[iconUrl].push(iconDataItem);
+          }
+        }
+      });
+      
+      // Create a layer for each unique icon
+      Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
+        this.space.addDataLayer({
+          id: `facility-icons-${layerIndex}`,
+          type: "icon",
+          data: icons,
+          icon: {
+            url: iconUrl,
+            width: 2000,
+            height: 2000
+          },
+          width: 8.0
+        });
+      });
+      
+      console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
+    } catch (error) {
+      console.error("✗ Error adding icon layer:", error);
     }
-  });
-  this._clickHandlerSet = true;
-}
+  } else {
+    console.log("⚠ No facility icons to display");
+  }
+  
+  // ============ FACILITY ICONS SECTION - END ============
 }
 
 updateMapForFacility() {
   this.updateDataLayers();
 }
-fetchAll() {
-  this.fetchData();
-  // ADDED: Handle query parameter after data is fetched
-  setTimeout(() => {
-    handleQueryParameter();
-  }, 1000);
-}
+        fetchAll() {
+          this.fetchData();
+        }
 
         fetchData() {
           fetch(API_ENDPOINT)
@@ -2597,20 +2606,48 @@ const toiletAreas = [];
     await wait();
   }
   
-  console.log("Starting initialization...");
-  
-  // Fetch facility data first and wait for it
+  // Fetch facility data first
   await fetchFacilityData();
-  console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
   
   spc.initSpace(smplr);
-  console.log("Space initialized");
   
-  // Handle query parameter after everything is initialized
+  // Handle facility parameter after space init
+  const currentUrl = window.location.href;
+  const url = new URL(currentUrl);
+  const params = new URLSearchParams(url.search);
+  const facility = params.get("facility");
+  
+  if (!!facility) {
   setTimeout(() => {
-    console.log("Calling handleQueryParameter...");
-    handleQueryParameter();
-  }, 3500); // Increased delay to ensure map is fully loaded
+    const facilitiesData = facilities_list;
+    // Get ALL facilities with the same name using filter()
+    let facilityAssets = facilitiesData.assets.filter(asset => asset.name === facility);
+    
+    console.log(`Found ${facilityAssets.length} facilities matching "${facility}"`);
+    
+    if (facilityAssets.length > 0) {
+      // Handle all matched facilities
+      facilityAssets.forEach((facilityAsset, index) => {
+        console.log(`Processing facility ${index + 1}/${facilityAssets.length}:`, facilityAsset.id);
+        handleGenericFacility(facilityAsset, facility);
+      });
+      
+      // Update the map ONCE after all facilities have been added
+      setTimeout(() => {
+        if (spc && spc.space) {
+          console.log(`Updating map with ${rooms.length} rooms`);
+          spc.updateDataLayers();
+        }
+      }, 2000);
+      
+      // Show tooltip
+      setTimeout(() => showGenericTooltip(facility, true), 2500);
+    } else {
+      console.log('Facility coordinates not found, will show tooltip only');
+      setTimeout(() => showGenericTooltip(facility), 2500);
+    }
+  }, 1000);
+}
   
   setInterval(() => {
     spc.fetchAll();
