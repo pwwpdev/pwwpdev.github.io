@@ -2543,7 +2543,7 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
 }
 
       // Space class to handle the Smplrspace viewer and data
-      class Space {
+class Space {
   constructor(spaceId, clientToken, nonAccessibleArea, toiletAreas, studyCarrels, rooms) {
     this.spaceId = spaceId;
     this.clientToken = clientToken;
@@ -2557,290 +2557,427 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
   }
 
   initSpace(smplr) {
-  this.space = new smplr.Space({
-    spaceId: this.spaceId,
-    clientToken: this.clientToken,
-    containerId: "smplrspace-container",
-  });
-  this.space.startViewer({
-    preview: false,
-    allowModeChange: true,
-    disableCameraRotation: true,
-    loadingMessage: "Loading...",
-    cameraPlacement: {
-      alpha: -1.5721425958892115,
-      beta: 0.22414041027672915,
-      radius: 208.16809499700365,
-      target: {
-        x: 40.939410866804785,
-        y: 1,
-        z: -48.16045790160895,
+    this.space = new smplr.Space({
+      spaceId: this.spaceId,
+      clientToken: this.clientToken,
+      containerId: "smplrspace-container",
+    });
+    this.space.startViewer({
+      preview: false,
+      allowModeChange: true,
+      disableCameraRotation: true,
+      loadingMessage: "Loading...",
+      cameraPlacement: {
+        alpha: -1.5721425958892115,
+        beta: 0.22414041027672915,
+        radius: 160.16809499700365,
+        target: {
+          x: 40.939410866804785,
+          y: 1,
+          z: -48.16045790160895,
+        },
       },
-    },
-    onReady: () => {
-      this.fetchAll();
-      // Check for facility parameter after space is ready
-      const params = new URLSearchParams(window.location.search);
-      const facility = params.get("facility");
-      if (facility && this.rooms && this.rooms.length > 0) {
-        const facilityRoom = this.rooms.find(r => r.name === facility);
-        if (facilityRoom && facilityRoom.coordinates) {
-          this.space.setCameraPlacement({
-            alpha: -1.5721425958892115,
-      beta: 0.22414041027672915,
-      radius: 208.16809499700365,
-      target: {
-        x: 40.939410866804785,
-        y: 1,
-        z: -48.16045790160895,
-            },
-          });
-        }
-      }
-    },
-    onError: (error) => console.error("Could not start viewer", error),
-  });
-}
-
-updateDataLayers() {
-  // Remove previous layers if any
-  this.space.removeDataLayer("nonAccessibleArea");
-  this.space.removeDataLayer("maleToiletArea");
-  this.space.removeDataLayer("femaleToiletArea");
-  this.space.removeDataLayer("uniToiletArea");
-  this.space.removeDataLayer("studyCarrels");
-  this.space.removeDataLayer("rooms");
-
-  const isNonAccessibleAreaEmpty =
-    !this.nonAccessibleArea || this.nonAccessibleArea.length === 0;
-
-  if (!isNonAccessibleAreaEmpty) {
-    this.space.addDataLayer({
-      id: "nonAccessibleArea",
-      type: "polygon",
-      data: this.nonAccessibleArea,
-      tooltip: (d) => `Not Accessible`,
-      color: (d) => d.color || color_dict.restricted,
-      alpha: 2.2,
-      height: (d) => (d.name === "8" || d.name === "9") ? 3.0 : 1.0,
-    });
-  }
-
-  const isToiletAreasEmpty =
-    !this.toiletAreas || this.toiletAreas.length === 0;
-
-  if (!isToiletAreasEmpty) {
-    // Add Male Toilet layer
-    this.space.addDataLayer({
-      id: "maleToiletArea",
-      type: "polygon",
-      data: this.toiletAreas.filter((d) => d.name === "3F-MT1"),
-      tooltip: (d) => `Male Toilet`,
-      color: (d) => "#1D547D",
-      alpha: 2.2,
-      height: 1.0,
-    });
-
-    // Add Female Toilet layer
-    this.space.addDataLayer({
-      id: "femaleToiletArea",
-      type: "polygon",
-      data: this.toiletAreas.filter((d) => d.name === "3F-FT1"),
-      tooltip: (d) => `Female Toilet`,
-      color: (d) => "#A7384E",
-      alpha: 2.2,
-      height: 1.0,
-    });
-
-    // Add Unisex/Accessible Toilet layer
-    this.space.addDataLayer({
-      id: "uniToiletArea",
-      type: "polygon",
-      data: this.toiletAreas.filter((d) => d.name === "3F-UT1"),
-      tooltip: (d) => `Unisex Toilet/Accessible`,
-      color: (d) => "#023b8c",
-      alpha: 2.2,
-      height: 1.0,
-    });
-  }
-
-  const isStudyCarrelsEmpty =
-    !this.studyCarrels || this.studyCarrels.length === 0;
-
-  if (!isStudyCarrelsEmpty) {
-    this.space.addDataLayer({
-      id: "studyCarrels",
-      type: "furniture",
-      data: this.studyCarrels,
-      tooltip: (d) => `${d.name} - ${d.available || "Unknown"}`,
-      color: (d) => d.color || color_dict.unavailable,
-    });
-  }
-
-  // Add rooms layer handling
-  const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
-  
-  if (!isRoomsEmpty) {
-    this.space.addDataLayer({
-      id: "rooms",
-      type: "polygon",
-      data: this.rooms,
-      color: (d) => d.color,
-      alpha: 0.7,
-      height: (d) => d.height || 2.4,
-    });
-  }
-
-// Add click handlers for custom tooltip
-// FIXED: Only set up click handlers if space is ready and handlers aren't already set
-if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
-  console.log("Setting up click handlers");
-  this.space.on("click", (event) => {
-    if (event.data && event.data.name) {
-      console.log("Click detected on:", event.data.name);
-      showGenericTooltip(event.data.name, true);
-    }
-  });
-  this._clickHandlerSet = true;
-}
-}
-
-updateMapForFacility() {
-  this.updateDataLayers();
-}
-fetchAll() {
-  this.fetchData();
-  // ADDED: Handle query parameter after data is fetched
-  setTimeout(() => {
-    handleQueryParameter();
-  }, 1000);
-}
-
-        fetchData() {
-          fetch(API_ENDPOINT)
-            .then((res) => res.json())
-            .then((data) => {
-              let occupancy = {};
-              for (let i = 0; i < data.length; i++) {
-                let value = data[i];
-                let loc = value.area;
-                let timestamp = value.timestamp;
-                let available = value.occupancy;
-
-                let color = color_dict.hasOwnProperty(available)
-                  ? color_dict[available]
-                  : "#ffffff";
-
-                if (!occupancy.hasOwnProperty(loc)) {
-                  occupancy[loc] = {
-                    timestamp: timestamp,
-                    available: available,
-                    occupancy: value.occupancy,
-                    color: color,
-                  };
-                } else if (occupancy[loc].timestamp < timestamp) {
-                  occupancy[loc] = {
-                    timestamp: timestamp,
-                    available: available,
-                    occupancy: value.occupancy,
-                    color: color,
-                  };
-                }
-              }
-
-              // Update study carrels based on occupancy data
-              for (let key in occupancy) {
-                if (
-                  occupancy.hasOwnProperty(key) &&
-                  study_carrel_filter.hasOwnProperty(key)
-                ) {
-                  const jsonKey = study_carrel_filter[key];
-                  const _index = study_carrel_index[jsonKey];
-
-                  console.log("updated " + jsonKey);
-                  console.log(occupancy[key]);
-                  this.studyCarrels[_index]["available"] =
-                    occupancy[key]["available"];
-                  this.studyCarrels[_index]["color"] = occupancy[key]["color"];
-                }
-              }
-              this.updateDataLayers();
+      onReady: () => {
+        this.fetchAll();
+        // Check for facility parameter after space is ready
+        const params = new URLSearchParams(window.location.search);
+        const facility = params.get("facility");
+        if (facility && this.rooms && this.rooms.length > 0) {
+          // Get ALL facilities with the same name using filter()
+          const facilityRooms = this.rooms.filter(r => r.name === facility);
+          const facilityRoom = facilityRooms.length > 0 ? facilityRooms[0] : null;
+          if (facilityRoom && facilityRoom.coordinates) {
+            this.space.setCameraPlacement({
+              alpha: -1.5721425958892115,
+              beta: 0.22414041027672915,
+              radius: 208.16809499700365,
+              target: {
+                x: 40.939410866804785,
+                y: 1,
+                z: -48.16045790160895,
+              },
             });
+          }
         }
-      }
+      },
+      onError: (error) => console.error("Could not start viewer", error),
+    });
+  }
 
+  updateDataLayers() {
+    // Remove previous layers if any
+    this.space.removeDataLayer("nonAccessibleArea");
+    this.space.removeDataLayer("maleToiletArea");
+    this.space.removeDataLayer("femaleToiletArea");
+    this.space.removeDataLayer("uniToiletArea");
+    this.space.removeDataLayer("studyCarrels");
+    this.space.removeDataLayer("rooms");
+
+    const isNonAccessibleAreaEmpty =
+      !this.nonAccessibleArea || this.nonAccessibleArea.length === 0;
+
+    if (!isNonAccessibleAreaEmpty) {
+      this.space.addDataLayer({
+        id: "nonAccessibleArea",
+        type: "polygon",
+        data: this.nonAccessibleArea,
+        tooltip: (d) => `Not Accessible`,
+        color: (d) => d.color || color_dict.restricted,
+        alpha: 2.2,
+        height: (d) => (d.name === "8" || d.name === "9") ? 3.0 : 1.0,
+      });
+    }
+
+    const isToiletAreasEmpty =
+      !this.toiletAreas || this.toiletAreas.length === 0;
+
+    if (!isToiletAreasEmpty) {
+      // Add Male Toilet layer
+      this.space.addDataLayer({
+        id: "maleToiletArea",
+        type: "polygon",
+        data: this.toiletAreas.filter((d) => d.name === "3F-MT1"),
+        tooltip: (d) => `Male Toilet`,
+        color: (d) => "#1D547D",
+        alpha: 2.2,
+        height: 1.0,
+      });
+
+      // Add Female Toilet layer
+      this.space.addDataLayer({
+        id: "femaleToiletArea",
+        type: "polygon",
+        data: this.toiletAreas.filter((d) => d.name === "3F-FT1"),
+        tooltip: (d) => `Female Toilet`,
+        color: (d) => "#A7384E",
+        alpha: 2.2,
+        height: 1.0,
+      });
+
+      // Add Unisex/Accessible Toilet layer
+      this.space.addDataLayer({
+        id: "uniToiletArea",
+        type: "polygon",
+        data: this.toiletAreas.filter((d) => d.name === "3F-UT1"),
+        tooltip: (d) => `Unisex Toilet/Accessible`,
+        color: (d) => "#023b8c",
+        alpha: 2.2,
+        height: 1.0,
+      });
+    }
+
+    const isStudyCarrelsEmpty =
+      !this.studyCarrels || this.studyCarrels.length === 0;
+
+    if (!isStudyCarrelsEmpty) {
+      this.space.addDataLayer({
+        id: "studyCarrels",
+        type: "furniture",
+        data: this.studyCarrels,
+        tooltip: (d) => `${d.name} - ${d.available || "Unknown"}`,
+        color: (d) => d.color || color_dict.unavailable,
+      });
+    }
+
+    // Add rooms layer handling
+    const isRoomsEmpty = !this.rooms || this.rooms.length === 0;
+    
+    if (!isRoomsEmpty) {
+      this.space.addDataLayer({
+        id: "rooms",
+        type: "polygon",
+        data: this.rooms,
+        color: (d) => d.color,
+        alpha: 0.7,
+        height: (d) => d.height || 2.4,
+      });
+    }
+
+    // ============ FACILITY ICONS SECTION - START ============
+    
+    console.log("Checking for facilities with icons...");
+    
+    // Array to hold all icon data
+    const iconData = [];
+    
+    // Define icon configurations by facility ID for 3F
+    const iconConfigs = {
+      "6fe4f4cb-b48d-4ff7-9ca2-670d2873dd92": "./icons/31BW (3F Zone B).png",
+      "853ce3bc-eee7-46e6-9f8e-37d847d21745": "./icons/drinking water stations.png",
+      "a62c4b18-5801-49a2-b2bf-37bfca97b056": "./icons/lift.png",
+    };
+    
+    // Filter for ALL facilities that have an icon configured (by ID)
+    const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
+      iconConfigs.hasOwnProperty(room.id)
+    );
+
+    console.log("Facilities with icons found:", facilitiesWithIcons ? facilitiesWithIcons.length : 0);
+
+    if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
+      console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
       
-
-      const nonAccessibleArea_assets = nonAccessibleAreaData.assets.map(
-        (area, index) => {
-          const areaName = area.name;
-          return {
-            ...area,
-            index:
-              non_accessible_area_index[areaName] !== undefined
-                ? non_accessible_area_index[areaName]
-                : index,
-            available: "restricted",
-            color: color_dict["restricted"],
-          };
+      facilitiesWithIcons.forEach(facility => {
+        // Get the icon URL for this specific facility ID
+        const iconUrl = iconConfigs[facility.id];
+        
+        if (iconUrl && facility.coordinates && facility.coordinates[0]) {
+          // Get polygon coordinates
+          const coords = facility.coordinates[0];
+          
+          // Calculate center X (average of all x coordinates)
+          const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+          
+          // Find TOP EDGE (minimum z value = northernmost point)
+          const minZ = Math.min(...coords.map(coord => coord.z));
+          
+          iconData.push({
+            id: `icon-${facility.id}`,
+            levelIndex: 0,
+            position: {
+              x: centerX,
+              z: minZ - 2.5, 
+              elevation: 4.0,
+              levelIndex: 0
+            }
+          });
+          
+          console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${centerX.toFixed(2)}, z=${(minZ - 2.5).toFixed(2)}`);
         }
-      );
+      });
+    }
+    
+    // Add the icon layer if there's any icon data
+    if (iconData.length > 0) {
+      try {
+        // Group by icon URL for separate layers
+        const iconsByUrl = {};
+        
+        facilitiesWithIcons.forEach(facility => {
+          const iconUrl = iconConfigs[facility.id];
+          if (iconUrl) {
+            if (!iconsByUrl[iconUrl]) {
+              iconsByUrl[iconUrl] = [];
+            }
+            // Find the corresponding icon data
+            const iconDataItem = iconData.find(item => item.id === `icon-${facility.id}`);
+            if (iconDataItem) {
+              iconsByUrl[iconUrl].push(iconDataItem);
+            }
+          }
+        });
+        
+        // Create a layer for each unique icon
+        Object.entries(iconsByUrl).forEach(([iconUrl, icons], layerIndex) => {
+          this.space.addDataLayer({
+            id: `facility-icons-${layerIndex}`,
+            type: "icon",
+            data: icons,
+            icon: {
+              url: iconUrl,
+              width: 2000,
+              height: 2000
+            },
+            width: 5.0
+          });
+        });
+        
+        console.log(`✓ Icon layer(s) added successfully! Total icons: ${iconData.length}`);
+      } catch (error) {
+        console.error("✗ Error adding icon layer:", error);
+      }
+    } else {
+      console.log("⚠ No facility icons to display");
+    }
+    // ============ FACILITY ICONS SECTION - END ============
 
-     
-      // Initialize toilet areas
+    // Add click handlers for custom tooltip
+    if (this.space && typeof this.space.on === 'function' && !this._clickHandlerSet) {
+      console.log("Setting up click handlers");
+      this.space.on("click", (event) => {
+        if (event.data && event.data.name) {
+          console.log("Click detected on:", event.data.name);
+          showGenericTooltip(event.data.name, true);
+        }
+      });
+      this._clickHandlerSet = true;
+    }
+  }
+
+  updateMapForFacility() {
+    this.updateDataLayers();
+  }
+
+  fetchAll() {
+    this.fetchData();
+    // Handle query parameter after data is fetched
+    setTimeout(() => {
+      handleQueryParameter();
+    }, 1000);
+  }
+
+  fetchData() {
+    fetch(API_ENDPOINT)
+      .then((res) => res.json())
+      .then((data) => {
+        let occupancy = {};
+        for (let i = 0; i < data.length; i++) {
+          let value = data[i];
+          let loc = value.area;
+          let timestamp = value.timestamp;
+          let available = value.occupancy;
+
+          let color = color_dict.hasOwnProperty(available)
+            ? color_dict[available]
+            : "#ffffff";
+
+          if (!occupancy.hasOwnProperty(loc)) {
+            occupancy[loc] = {
+              timestamp: timestamp,
+              available: available,
+              occupancy: value.occupancy,
+              color: color,
+            };
+          } else if (occupancy[loc].timestamp < timestamp) {
+            occupancy[loc] = {
+              timestamp: timestamp,
+              available: available,
+              occupancy: value.occupancy,
+              color: color,
+            };
+          }
+        }
+
+        // Update study carrels based on occupancy data
+        for (let key in occupancy) {
+          if (
+            occupancy.hasOwnProperty(key) &&
+            study_carrel_filter.hasOwnProperty(key)
+          ) {
+            const jsonKey = study_carrel_filter[key];
+            const _index = study_carrel_index[jsonKey];
+
+            console.log("updated " + jsonKey);
+            console.log(occupancy[key]);
+            this.studyCarrels[_index]["available"] =
+              occupancy[key]["available"];
+            this.studyCarrels[_index]["color"] = occupancy[key]["color"];
+          }
+        }
+        this.updateDataLayers();
+      });
+  }
+}
+
+const nonAccessibleArea_assets = nonAccessibleAreaData.assets.map(
+  (area, index) => {
+    const areaName = area.name;
+    return {
+      ...area,
+      index:
+        non_accessible_area_index[areaName] !== undefined
+          ? non_accessible_area_index[areaName]
+          : index,
+      available: "restricted",
+      color: color_dict["restricted"],
+    };
+  }
+);
+
+// Initialize toilet areas
 const toiletAreas = [];
 
-      // Initialize study carrels with default status
-      const studyCarrels = studyCarrelsData.assets.map((carrel) => ({
-        ...carrel,
-        available: "unavailable", // Default status until API provides data
-        color: color_dict["unavailable"],
-        index: study_carrel_index[carrel.name] || 0,
-      }));
+// Initialize study carrels with default status
+const studyCarrels = studyCarrelsData.assets.map((carrel) => ({
+  ...carrel,
+  available: "unavailable",
+  color: color_dict["unavailable"],
+  index: study_carrel_index[carrel.name] || 0,
+}));
 
-      // Create the Space instance with only non-accessible areas
-      let spc = new Space(
-        SPACE_ID,
-        CLIENT_ID,
-        nonAccessibleArea_assets,
-        toiletAreas,
-        studyCarrels, rooms 
-      );
+// Create the Space instance
+let spc = new Space(
+  SPACE_ID,
+  CLIENT_ID,
+  nonAccessibleArea_assets,
+  toiletAreas,
+  studyCarrels,
+  rooms 
+);
 
-      async function wait() {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve();
-          }, 500);
-        });
-      }
+async function wait() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 500);
+  });
+}
 
-      async function start() {
+async function start() {
   while (typeof smplr === "undefined") {
     await wait();
   }
   
   console.log("Starting initialization...");
   
-  // Fetch facility data first and wait for it
   await fetchFacilityData();
   console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
   
   spc.initSpace(smplr);
   console.log("Space initialized");
   
-  // Handle query parameter after everything is initialized
   setTimeout(() => {
     console.log("Calling handleQueryParameter...");
     handleQueryParameter();
-  }, 3500); // Increased delay to ensure map is fully loaded
+  }, 2000);
+  
+  // Handle direct facility parameter from URL
+  const currentUrl = window.location.href();
+  const url = new URL(currentUrl);
+  const params = new URLSearchParams(url.search);
+  const facility = params.get("facility");
+  
+  if (!!facility) {
+    // Wait for space to be ready
+    setTimeout(() => {
+      const decodedFacility = decodeURIComponent(facility);
+      console.log('Looking for facility:', decodedFacility);
+      
+      // Get ALL facilities with the same name using filter()
+      let facilityAssets = facilities_list.assets.filter(asset => asset.name === decodedFacility);
+      
+      console.log(`Found ${facilityAssets.length} facilities matching "${decodedFacility}"`);
+      
+      if (facilityAssets.length > 0) {
+        // Handle all matched facilities
+        facilityAssets.forEach((facilityAsset, index) => {
+          console.log(`Processing facility ${index + 1}/${facilityAssets.length}:`, facilityAsset.id);
+          handleGenericFacility(facilityAsset, decodedFacility);
+        });
+        
+        // Update the map ONCE after all facilities have been added
+        setTimeout(() => {
+          if (spc && spc.space) {
+            console.log(`Updating map with ${rooms.length} rooms`);
+            spc.updateMapForFacility();
+          }
+        }, 2000);
+        
+        // Show tooltip
+        setTimeout(() => showGenericTooltip(decodedFacility, true), 2500);
+      } else {
+        console.log('Facility coordinates not found in dict, will show tooltip only');
+        setTimeout(() => showGenericTooltip(decodedFacility, true), 2500);
+      }
+    }, 1000);
+  }
   
   setInterval(() => {
     spc.fetchAll();
   }, UPDATE_FREQUENCY * 1000);
 }
 
-      start();
+start();
     </script>
   </body>
 </html>
