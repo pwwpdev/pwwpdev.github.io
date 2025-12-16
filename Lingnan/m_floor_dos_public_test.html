@@ -208,7 +208,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: none;
-    max-width: 410px;
+    width: 410px;
   "
 >
   <div id="tooltip-content"></div>
@@ -1196,7 +1196,14 @@ if (!!facility) {
   
   const manualPositions = {"dbb606d1-e3b1-409c-93b0-a75700091327": { x: 102.5, z: - 41.0 }, 
                             "a481c3e3-c322-4fbf-82ab-b2c5ff86bdcb": { x: 102.0, z: -35.8 },
-                            "6bc75b14-db99-4744-aa61-b5ca6d397e7f": { x: 104.0, z: -35.8} };
+                            "6bc75b14-db99-4744-aa61-b5ca6d397e7f": { x: 104.0, z: -35.8},
+
+                            //lift
+                            "cbfb0928-b64c-443f-8714-f4cfebdf0d1a": { x: 61.9, z: -50.8},
+                          
+                          
+                          };
+                            
   
   const iconConfigs = {
     "dbb606d1-e3b1-409c-93b0-a75700091327": "./icons/3d printers and 3d scanners.png",
@@ -1279,7 +1286,7 @@ if (!!facility) {
             width: 2000,
             height: 2000
           },
-          width: 8.0
+          width: 6.0
         });
       });
       
