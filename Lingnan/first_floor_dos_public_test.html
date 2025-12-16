@@ -6722,10 +6722,10 @@ const iconData = [];
 // Define icon configurations by facility ID
 const iconConfigs = {
   // 11-15, 16BW facilities
-  "5802d3c4-48b2-474b-94e0-b91b94e68a4b": "./icons/11-15, 16BW (1F Zone A & Zone B)_a.png",
-  "bcde2b79-a2b7-4545-8cf8-23707194140b": "./icons/11-15, 16BW (1F Zone A & Zone B)_b.png",
-  "d4092634-c275-4313-83ab-fe82c5e8e4e0": "./icons/11-15, 16BW (1F Zone A & Zone B)_c.png",
-  "35cf415d-fad0-4475-9baf-4aa5e8468d0c": "./icons/11-15, 16BW (1F Zone A & Zone B)_d.png",
+  "5802d3c4-48b2-474b-94e0-b91b94e68a4b": "./icons/11-15, 16BW (1F Zone A & Zone B)_a.png", //11&12
+  "bcde2b79-a2b7-4545-8cf8-23707194140b": "./icons/11-15, 16BW (1F Zone A & Zone B)_b.png", //13
+  "d4092634-c275-4313-83ab-fe82c5e8e4e0": "./icons/11-15, 16BW (1F Zone A & Zone B)_c.png", //14
+  "35cf415d-fad0-4475-9baf-4aa5e8468d0c": "./icons/11-15, 16BW (1F Zone A & Zone B)_d.png", //15&16
   
   // Computer facilities - all use same icon
   "e02c5df4-47f8-4ddb-a72f-57f487eb9769": "./icons/For all entries under Computers.png",
@@ -6770,6 +6770,13 @@ const iconConfigs = {
 
 };
 
+const manualPositions = {
+  "5802d3c4-48b2-474b-94e0-b91b94e68a4b": { x: 95.1, z: -60.8 }, //11&12
+  "bcde2b79-a2b7-4545-8cf8-23707194140b": { x: 89.6, z: -42.8 }, //13
+  "35cf415d-fad0-4475-9baf-4aa5e8468d0c": { x: 54.2, z: -58.9 }, //15&16
+  "d4092634-c275-4313-83ab-fe82c5e8e4e0": { x: 87.0, z: - 63.3 }, //14
+};
+
 // Filter for ALL facilities that have an icon configured (by ID)
 const facilitiesWithIcons = this.rooms && this.rooms.filter(room => 
   iconConfigs.hasOwnProperty(room.id)
@@ -6781,31 +6788,39 @@ if (facilitiesWithIcons && facilitiesWithIcons.length > 0) {
   console.log(`Adding icons for ${facilitiesWithIcons.length} facilities`);
   
   facilitiesWithIcons.forEach(facility => {
-    // Get the icon URL for this specific facility ID
     const iconUrl = iconConfigs[facility.id];
     
     if (iconUrl && facility.coordinates && facility.coordinates[0]) {
-      // Get polygon coordinates
-      const coords = facility.coordinates[0];
+      let iconX, iconZ;
       
-      // Calculate center X (average of all x coordinates)
-      const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
-      
-      // Find TOP EDGE (minimum z value = northernmost point)
-      const minZ = Math.min(...coords.map(coord => coord.z));
+      // Check if manual position exists for this facility
+      if (manualPositions[facility.id]) {
+        iconX = manualPositions[facility.id].x;
+        iconZ = manualPositions[facility.id].z;
+        console.log(`  Using MANUAL position for ${facility.name} (${facility.id})`);
+      } else {
+        // Use automatic positioning
+        const coords = facility.coordinates[0];
+        const centerX = coords.reduce((sum, coord) => sum + coord.x, 0) / coords.length;
+        const minZ = Math.min(...coords.map(coord => coord.z));
+        
+        iconX = centerX;
+        iconZ = minZ - 3.6;
+        console.log(`  Using AUTO position for ${facility.name} (${facility.id})`);
+      }
       
       iconData.push({
         id: `icon-${facility.id}`,
         levelIndex: 0,
         position: {
-          x: centerX,
-          z: minZ - 3.6, 
+          x: iconX,
+          z: iconZ, 
           elevation: 4.0,
           levelIndex: 0
         }
       });
       
-      console.log(`  Icon added for facility ${facility.id} (${facility.name}): x=${centerX.toFixed(2)}, z=${(minZ - 2.5).toFixed(2)}`);
+      console.log(`  Icon positioned at: x=${iconX.toFixed(2)}, z=${iconZ.toFixed(2)}`);
     }
   });
 }
