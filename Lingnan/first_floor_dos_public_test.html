@@ -7037,13 +7037,6 @@ if (!!facility) {
 if (!!facility) {
   // Show tooltip after map loads using the centralized function
   setTimeout(() => showGenericTooltip(facility, true), 1500);
-  setTimeout(() => {
-    const tooltipDiv = document.getElementById("custom-tooltip");
-    if (tooltipDiv && tooltipDiv.style.display !== "block") {
-      console.log("Tooltip not visible, retrying for special facility...");
-      showGenericTooltip(facility, false);
-    }
-  }, 4000);
 }
 
 // Create the Space instance with the updated parameters
