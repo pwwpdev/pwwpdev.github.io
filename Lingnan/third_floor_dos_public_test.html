@@ -2656,27 +2656,9 @@ const toiletAreas = [];
       
       // Show tooltip
       setTimeout(() => showGenericTooltip(facility, true), 2500);
-      
-      // Retry showing tooltip if it didn't appear
-      setTimeout(() => {
-        const tooltipDiv = document.getElementById("custom-tooltip");
-        if (tooltipDiv && tooltipDiv.style.display !== "block") {
-          console.log("Tooltip not visible, retrying...");
-          showGenericTooltip(facility, false);
-        }
-      }, 4000);
     } else {
       console.log('Facility coordinates not found, will show tooltip only');
-      setTimeout(() => showGenericTooltip(facility, true), 2500);
-      
-      // Retry showing tooltip for facilities without coordinates
-      setTimeout(() => {
-        const tooltipDiv = document.getElementById("custom-tooltip");
-        if (tooltipDiv && tooltipDiv.style.display !== "block") {
-          console.log("Tooltip not visible for non-map facility, retrying...");
-          showGenericTooltip(facility, false);
-        }
-      }, 4000);
+      setTimeout(() => showGenericTooltip(facility), 2500);
     }
   }, 1000);
 }
