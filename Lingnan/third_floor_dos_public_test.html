@@ -1491,7 +1491,7 @@ if (!facilityInfo || showSkeleton) {
     ]
   };
 
-  const facilities_list =    {
+  const facilities_list =     {
     "id": "fd18c63b-12c9-410d-a51c-d2d8ccb5d9e1",
     "name": "facilities_list",
     "type": "polygon",
@@ -1533,13 +1533,13 @@ if (!facilityInfo || showSkeleton) {
               "levelIndex": 0
             },
             {
-              "x": 6.104,
-              "z": -38.35,
+              "x": 5.577,
+              "z": -44.166,
               "levelIndex": 0
             },
             {
-              "x": 4.908,
-              "z": -38.316,
+              "x": 4.998,
+              "z": -44.152,
               "levelIndex": 0
             }
           ]
@@ -1554,23 +1554,23 @@ if (!facilityInfo || showSkeleton) {
         "coordinates": [
           [
             {
-              "x": 19.353,
-              "z": -33.958,
+              "x": 19.479,
+              "z": -34.357,
               "levelIndex": 0
             },
             {
-              "x": 19.415,
-              "z": -43.618,
+              "x": 19.512,
+              "z": -43.08,
               "levelIndex": 0
             },
             {
-              "x": 30.6,
-              "z": -43.722,
+              "x": 30.426,
+              "z": -43.092,
               "levelIndex": 0
             },
             {
-              "x": 30.558,
-              "z": -34.027,
+              "x": 30.413,
+              "z": -34.348,
               "levelIndex": 0
             }
           ]
@@ -1995,23 +1995,38 @@ if (!facilityInfo || showSkeleton) {
         "coordinates": [
           [
             {
-              "x": -4.522,
-              "z": -38.143,
+              "x": 5.08,
+              "z": -43.392,
               "levelIndex": 0
             },
             {
-              "x": -4.558,
-              "z": -41.514,
+              "x": 5.83,
+              "z": -43.402,
               "levelIndex": 0
             },
             {
-              "x": 4.723,
-              "z": -41.491,
+              "x": 5.843,
+              "z": -41.55,
               "levelIndex": 0
             },
             {
-              "x": 4.767,
-              "z": -38.16,
+              "x": 5.831,
+              "z": -38.412,
+              "levelIndex": 0
+            },
+            {
+              "x": -4.533,
+              "z": -38.401,
+              "levelIndex": 0
+            },
+            {
+              "x": -4.487,
+              "z": -41.475,
+              "levelIndex": 0
+            },
+            {
+              "x": 4.966,
+              "z": -41.434,
               "levelIndex": 0
             }
           ]
@@ -2093,23 +2108,23 @@ if (!facilityInfo || showSkeleton) {
               "levelIndex": 0
             },
             {
-              "x": 43.869,
-              "z": -44.756,
+              "x": 43.119,
+              "z": -44.968,
               "levelIndex": 0
             },
             {
-              "x": 43.88,
-              "z": -46.972,
+              "x": 43.111,
+              "z": -47.03,
               "levelIndex": 0
             },
             {
-              "x": 46.638,
-              "z": -47.082,
+              "x": 46.524,
+              "z": -47.033,
               "levelIndex": 0
             },
             {
-              "x": 46.591,
-              "z": -49.41,
+              "x": 46.525,
+              "z": -49.449,
               "levelIndex": 0
             },
             {
@@ -2144,18 +2159,18 @@ if (!facilityInfo || showSkeleton) {
         "coordinates": [
           [
             {
-              "x": 44.233,
-              "z": -38.415,
+              "x": 44.224,
+              "z": -38.054,
               "levelIndex": 0
             },
             {
               "x": 44.195,
-              "z": -46.55,
+              "z": -46.212,
               "levelIndex": 0
             },
             {
-              "x": 52.571,
-              "z": -46.618,
+              "x": 52.59,
+              "z": -46.259,
               "levelIndex": 0
             },
             {
@@ -2194,8 +2209,8 @@ if (!facilityInfo || showSkeleton) {
               "levelIndex": 0
             },
             {
-              "x": 62.647,
-              "z": -38.57,
+              "x": 62.638,
+              "z": -38.18,
               "levelIndex": 0
             }
           ]
@@ -2204,6 +2219,7 @@ if (!facilityInfo || showSkeleton) {
         "mapped": true
       }
     ]
+
   };
 
       // Space class to handle the Smplrspace viewer and data
@@ -2640,9 +2656,27 @@ const toiletAreas = [];
       
       // Show tooltip
       setTimeout(() => showGenericTooltip(facility, true), 2500);
+      
+      // Retry showing tooltip if it didn't appear
+      setTimeout(() => {
+        const tooltipDiv = document.getElementById("custom-tooltip");
+        if (tooltipDiv && tooltipDiv.style.display !== "block") {
+          console.log("Tooltip not visible, retrying...");
+          showGenericTooltip(facility, false);
+        }
+      }, 4000);
     } else {
       console.log('Facility coordinates not found, will show tooltip only');
-      setTimeout(() => showGenericTooltip(facility), 2500);
+      setTimeout(() => showGenericTooltip(facility, true), 2500);
+      
+      // Retry showing tooltip for facilities without coordinates
+      setTimeout(() => {
+        const tooltipDiv = document.getElementById("custom-tooltip");
+        if (tooltipDiv && tooltipDiv.style.display !== "block") {
+          console.log("Tooltip not visible for non-map facility, retrying...");
+          showGenericTooltip(facility, false);
+        }
+      }, 4000);
     }
   }, 1000);
 }
