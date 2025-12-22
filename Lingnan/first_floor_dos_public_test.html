@@ -7084,25 +7084,7 @@ async function start() {
 
 start();
 
-window.addEventListener('message', function(event) {
-  if (event.data && event.data.type === 'SHOW_TOOLTIP') {
-    const facilityName = event.data.facilityName;
-    console.log('Received tooltip message for:', facilityName);
-    
-    setTimeout(() => {
-      showGenericTooltip(facilityName, true);
-    }, 500);
-    
-    // Retry if tooltip didn't show
-    setTimeout(() => {
-      const tooltipDiv = document.getElementById("custom-tooltip");
-      if (tooltipDiv && tooltipDiv.style.display !== "block") {
-        console.log("Tooltip not visible, retrying...");
-        showGenericTooltip(facilityName, false);
-      }
-    }, 2000);
-  }
-});
+
     </script>
   </body>
 </html>
