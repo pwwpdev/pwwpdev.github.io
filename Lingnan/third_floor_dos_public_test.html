@@ -393,7 +393,7 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
     layerType: facilityAsset.layerType,
     mapped: facilityAsset.mapped,
     height: getFacilityHeight(facilityName),
-    color: "#FFC000",
+    color: "#ffbb00",
     available: "Available",
     description: facilityInfo?.description || ""
   };
@@ -2378,7 +2378,7 @@ updateDataLayers() {
       type: "polygon",
       data: this.rooms,
       color: (d) => d.color,
-      alpha: 0.7,
+      alpha: 0.5,
       height: (d) => d.height || 3.1,
     });
   }
