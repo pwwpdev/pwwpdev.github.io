@@ -198,8 +198,8 @@
   id="custom-tooltip"
   style="
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 0px;
+    left: 0px;
     background: white;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -1024,7 +1024,7 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
   if (!facilityInfo || showSkeleton) {
     const content = `
   <div style="padding: 0; margin: 0; line-height: 1.2;">
-    <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${facilityName}</div>
+    <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px; color: #000; word-wrap: break-word;">${facilityName}</div>
     <div style="margin-bottom: 12px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
     <div style="width: 100%; height: 120px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
   </div>
@@ -1058,7 +1058,7 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
           // Show a basic tooltip with just the name
           const basicContent = `
             <div style="padding: 0; margin: 0; line-height: 1.2;">
-              <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${facilityName}</div>
+              <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000; word-wrap: break-word;">${facilityName}</div>
               <div style="margin-bottom: 12px; height: 14px;"></div>
             </div>
           `;
@@ -1079,7 +1079,7 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
   
   const content = `
   <div style="padding: 0; margin: 0; line-height: 1.2;">
-    <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${facilityName}</div>
+    <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000; word-wrap: break-word;">${facilityName}</div>
     ${cleanDescription ? `<div style="margin-bottom: 12px; font-size: 14px; color: #333;">${cleanDescription}</div>` : '<div style="margin-bottom: 12px; height: 14px;"></div>'}
     ${imageUrl && imageUrl !== "/placeholder-image.png" ? `
       <img src="${imageUrl}" 
