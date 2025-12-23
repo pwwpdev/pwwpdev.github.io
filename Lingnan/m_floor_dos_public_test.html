@@ -1007,15 +1007,22 @@ function getFacilityHeight(facilityName) {
 
 // Generic tooltip function using API data
 function showGenericTooltip(facilityName, showSkeleton = false) {
+  console.log("showGenericTooltip called for:", facilityName, "showSkeleton:", showSkeleton);
+  
   const tooltipDiv = document.getElementById("custom-tooltip");
   const contentDiv = document.getElementById("tooltip-content");
   
-  if (tooltipDiv && contentDiv) {
-    const facilityInfo = findFacilityInfo(facilityName);
-    
-   // Show skeleton loading if no data available or explicitly requested
-if (!facilityInfo || showSkeleton) {
-  const content = `
+  if (!tooltipDiv || !contentDiv) {
+    console.error("Tooltip elements not found in DOM");
+    return;
+  }
+  
+  const facilityInfo = findFacilityInfo(facilityName);
+  console.log("Facility info retrieved:", facilityInfo);
+  
+  // Show skeleton loading if no data available or explicitly requested
+  if (!facilityInfo || showSkeleton) {
+    const content = `
   <div style="padding: 0; margin: 0; line-height: 1.2;">
     <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${facilityName}</div>
     <div style="margin-bottom: 12px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
@@ -1028,33 +1035,49 @@ if (!facilityInfo || showSkeleton) {
     }
   </style>
 `;
-  contentDiv.innerHTML = content;
-  tooltipDiv.style.display = "block";
-  
-  // If we have facility info but are showing skeleton (showSkeleton = true), 
-  // show actual data after a brief delay
-  if (facilityInfo && showSkeleton) {
-    setTimeout(() => {
-      showGenericTooltip(facilityName, false);
-    }, 500);
-  }
-  // If no facility info, try to refresh data
-  else if (!facilityInfo) {
-    refreshFacilityData().then(() => {
-      const updatedInfo = findFacilityInfo(facilityName);
-      if (updatedInfo) {
-        showGenericTooltip(facilityName, false);
-      }
-    });
-  }
-  return;
-}
+    contentDiv.innerHTML = content;
+    tooltipDiv.style.display = "block";
+    console.log("Tooltip set to display: block (skeleton)");
     
+    // If we have facility info but are showing skeleton, show actual data after delay
+    if (facilityInfo && showSkeleton) {
+      setTimeout(() => {
+        showGenericTooltip(facilityName, false);
+      }, 1000);
+    }
+    // If no facility info, try to refresh data
+    else if (!facilityInfo) {
+      console.log("No facility info found, attempting to refresh data...");
+      refreshFacilityData().then(() => {
+        const updatedInfo = findFacilityInfo(facilityName);
+        if (updatedInfo) {
+          console.log("Data refreshed, showing tooltip with data");
+          showGenericTooltip(facilityName, false);
+        } else {
+          console.error("Still no facility info after refresh for:", facilityName);
+          // Show a basic tooltip with just the name
+          const basicContent = `
+            <div style="padding: 0; margin: 0; line-height: 1.2;">
+              <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${facilityName}</div>
+              <div style="margin-bottom: 12px; height: 14px;"></div>
+            </div>
+          `;
+          contentDiv.innerHTML = basicContent;
+          tooltipDiv.style.display = "block";
+        }
+      });
+    }
+    return;
+  }
+  
   // Show actual content when data is available
-const description = facilityInfo.description || "No description available";
-const imageUrl = facilityInfo.image;
-
-const content = `
+  const description = facilityInfo.description || " ";
+  const imageUrl = facilityInfo.image || "/placeholder-image.png";
+  
+  // Clean up description - remove extra spaces and handle empty descriptions
+  const cleanDescription = description.trim();
+  
+  const content = `
   <div style="padding: 0; margin: 0; line-height: 1.2;">
     <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${facilityName}</div>
     ${cleanDescription ? `<div style="margin-bottom: 12px; font-size: 14px; color: #333;">${cleanDescription}</div>` : '<div style="margin-bottom: 12px; height: 14px;"></div>'}
@@ -1065,10 +1088,11 @@ const content = `
     ` : ''}
   </div>
 `;
-    
-    contentDiv.innerHTML = content;
-    tooltipDiv.style.display = "block";
-  }
+  
+  contentDiv.innerHTML = content;
+  tooltipDiv.style.display = "block";
+  console.log("Tooltip set to display: block (with data)");
+  console.log("Tooltip display style:", tooltipDiv.style.display);
 }
 
 // Get the current URL
@@ -1141,7 +1165,7 @@ if (!!facility) {
             cameraPlacement: {
               alpha: 1.5642931020318165,
               beta: 0.7099240223592373,
-              radius: 130.228814129728086,
+              radius: 120.228814129728086,
               target: {
                 x: 69.04755001887268,
                 y: 1,
