@@ -6415,6 +6415,7 @@ async function handleQueryParameter() {
 }
 
 // Function to find facility info by name
+// Function to find facility info by name
 function findFacilityInfo(facilityName) {
   if (!facilityAPIData) {
     console.log("No facility API data available");
@@ -6422,6 +6423,31 @@ function findFacilityInfo(facilityName) {
   }
   
   console.log("Searching for facility:", facilityName);
+  
+  // ⬇️ DEBUG CODE TO FIND EMAIL ⬇️
+  console.log("🔍 Checking all facilities for email addresses...");
+  for (const firstLevel of facilityAPIData) {
+    // Check first level
+    if (firstLevel.description && firstLevel.description.includes('@')) {
+      console.log('🚨 FOUND EMAIL IN FIRST LEVEL:', firstLevel.name, firstLevel.description);
+    }
+    
+    // Check second levels
+    for (const secondLevel of firstLevel.second_levels || []) {
+      if (secondLevel.description && secondLevel.description.includes('@')) {
+        console.log('🚨 FOUND EMAIL IN SECOND LEVEL:', secondLevel.name, secondLevel.description);
+      }
+      
+      // Check third levels
+      for (const thirdLevel of secondLevel.third_levels || []) {
+        if (thirdLevel.description && thirdLevel.description.includes('@')) {
+          console.log('🚨 FOUND EMAIL IN THIRD LEVEL:', thirdLevel.name, thirdLevel.description);
+        }
+      }
+    }
+  }
+  console.log("✓ Email scan complete");
+  // ⬆️ END OF DEBUG CODE ⬆️
   
   // Search through all levels
   for (const firstLevel of facilityAPIData) {
@@ -6559,8 +6585,8 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
   if (!facilityInfo || showSkeleton) {
     const content = `
   <div style="padding: 0; margin: 0; line-height: 1.2;">
-anjali.ks@powerworkplace.com
-<div style="margin-bottom: 12px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
+    <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${facilityName}</div>
+    <div style="margin-bottom: 12px; height: 20px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
     <div style="width: 100%; height: 120px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px;"></div>
   </div>
   <style>
