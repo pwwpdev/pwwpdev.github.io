@@ -2450,6 +2450,9 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
 }
 
 function getFacilityHeight(facilityName) {
+  if (facilityName.includes("Toilet")) {
+    return 1.0;
+  }
   return 3.1; 
 }
 
