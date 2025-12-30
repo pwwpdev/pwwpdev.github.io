@@ -1001,7 +1001,12 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
 
 // Get appropriate height for different facility types
 function getFacilityHeight(facilityName) {
-  return 3.1;
+  // Return height of 1 for toilets
+  if (facilityName.includes("Toilet")) {
+    return 1.0;
+  }
+  // Return default height for other facilities
+  return 3.1; 
 }
 
 
