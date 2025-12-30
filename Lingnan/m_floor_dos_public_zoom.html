@@ -1004,22 +1004,13 @@
       }
 
       // Get appropriate height for different facility types
-     function getFacilityHeight(facilityName) {
-  const heightMap = {
- 
-    "Books HM-HM1100 (M/F Zone B)": 2.2,
-    "Individual Study Carrels (M/F Zone C)": 2.2,
-    "Postgraduate Lounge (M/F Zone C)": 2.2,
-    "LU Barn (Makerspace) (M/F Zone A)": 2.2,
-    "3D Printers – LU Barn (Makerspace) (M/F Zone A)": 1.1,
-    "3D Scanner – LU Barn (Makerspace) (M/F Zone A)": 1.1,
-    "Lift (M/F Zone B)": 2.2
-  };
- 
-  for (const [key, height] of Object.entries(heightMap)) {
-    if (facilityName.includes(key)) return height;
+   function getFacilityHeight(facilityName) {
+  // Return height of 1 for toilets
+  if (facilityName.includes("Toilet")) {
+    return 1.0;
   }
-  return 2.5; // default height
+  // Return default height for other facilities
+  return 3.1; 
 }
       // Generic tooltip function using API data with image on right
       function showGenericTooltip(facilityName, showSkeleton = false) {
