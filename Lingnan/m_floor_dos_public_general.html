@@ -1309,9 +1309,13 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
 }
 
 function getFacilityHeight(facilityName) {
+  // Return height of 1 for toilets
+  if (facilityName.includes("Toilet")) {
+    return 1.0;
+  }
+  // Return default height for other facilities
   return 3.1; 
 }
-
 function showGenericTooltip(facilityName, showSkeleton = false) {
   console.log("showGenericTooltip called for:", facilityName, "showSkeleton:", showSkeleton);
   
