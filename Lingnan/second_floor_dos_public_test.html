@@ -1861,7 +1861,7 @@ this.space.on("click", (event) => {
     const contentDiv = document.getElementById("tooltip-content");
 
     if (event.data.name && tooltipDiv && contentDiv) {
-      showGenericTooltip(event.data.name, true); // Use the centralized function with skeleton loading
+      showGenericTooltip(event.data.name, false); // Use the centralized function with skeleton loading
     }
   }
 });
@@ -1945,11 +1945,11 @@ updateMapForFacility() {
       }, 2000);
       
       // Show tooltip
-      setTimeout(() => showGenericTooltip(decodedFacility, true), 2500);
+      setTimeout(() => showGenericTooltip(decodedFacility, false), 2500);
     } else {
       console.log('Facility coordinates not found in dict, will show tooltip only');
       // Even if not found in coordinates, still try to show tooltip
-      setTimeout(() => showGenericTooltip(decodedFacility, true), 2500);
+      setTimeout(() => showGenericTooltip(decodedFacility, false), 2500);
     }
   }, 1000);
 }
