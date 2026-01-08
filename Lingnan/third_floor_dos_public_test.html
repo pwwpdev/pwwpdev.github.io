@@ -2295,7 +2295,7 @@ function showGenericTooltip(facilityName, showSkeleton = false) {
       const contentDiv = document.getElementById("tooltip-content");
 
       if (event.data.name && tooltipDiv && contentDiv) {
-        showGenericTooltip(event.data.name, true);
+        showGenericTooltip(event.data.name, false);
       }
     }
   });
@@ -2684,7 +2684,7 @@ const toiletAreas = [];
       }, 2000);
       
       // Show tooltip
-      setTimeout(() => showGenericTooltip(facility, true), 2500);
+      setTimeout(() => showGenericTooltip(facility, false), 2500);
     } else {
       console.log('Facility coordinates not found, will show tooltip only');
       setTimeout(() => showGenericTooltip(facility), 2500);
