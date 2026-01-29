@@ -6396,7 +6396,7 @@ async function handleQueryParameter() {
     // Facility exists in API but not in visual map - just show tooltip
     console.log("No facility asset found, showing tooltip only for:", matchedFacility.name);
     setTimeout(() => {
-        showGenericTooltip(matchedFacility.name, true);
+        showGenericTooltip(queryId, true); 
       // Set camera to a default position or facility-specific position if available
       if (spc && spc.space) {
         // You might want to set a default camera position here
