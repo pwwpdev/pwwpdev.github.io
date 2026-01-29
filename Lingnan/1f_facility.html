@@ -6463,21 +6463,19 @@ function findFacilityInfo(queryId) {
 function handleGenericFacility(facilityAsset, queryId) {
     let facilityInfo = findFacilityInfo(queryId); 
   
-
   console.log("Initial facility info:", facilityInfo);
   
-  // If facility not found, refresh data first
   if (!facilityInfo) {
     console.log('Facility not found, refreshing data...');
     refreshFacilityData().then(() => {
-      facilityInfo = findFacilityInfo(facilityName);
+      facilityInfo = findFacilityInfo(queryId);  
       console.log("Facility info after refresh:", facilityInfo);
-      updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+      updateFacilityDisplay(facilityAsset, queryId, facilityInfo);  
     });
     return;
   }
   
-  updateFacilityDisplay(facilityAsset, facilityName, facilityInfo);
+  updateFacilityDisplay(facilityAsset, queryId, facilityInfo);  
 }
 
 // Extract display logic
