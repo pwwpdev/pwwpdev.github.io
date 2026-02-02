@@ -7062,7 +7062,7 @@ async function start() {
     await wait();
   }
   
-  await fetchFacilityData();
+  await fetchFacilityData(); // ✅ Load API data first
   spc.initSpace(smplr);
   
   const currentUrl = window.location.href;
@@ -7072,19 +7072,24 @@ async function start() {
   
   if (!!facilityQueryId) {
     setTimeout(() => {
-      const facilitiesData = dict[11]; 
       const decodedQueryId = decodeURIComponent(facilityQueryId);
       console.log('Looking for facility with query_id:', decodedQueryId);
       
-      // Match by query_id (which is stored in asset.name in facility_search)
-      let facilityAssets = facilitiesData.assets.filter(asset => asset.name === decodedQueryId);
+      // ✅ STEP 1: Search dict[10] by query_id (stored as asset.name)
+      let facilityAssets = dict[10].assets.filter(asset => asset.name === decodedQueryId);
+      
+      // ✅ STEP 2: If not found in dict[10], try dict[11]
+      if (facilityAssets.length === 0) {
+        console.log('Not found in dict[10], trying dict[11]...');
+        facilityAssets = dict[11].assets.filter(asset => asset.name === decodedQueryId);
+      }
       
       console.log(`Found ${facilityAssets.length} facilities matching query_id "${decodedQueryId}"`);
       
       if (facilityAssets.length > 0) {
         facilityAssets.forEach((facilityAsset, index) => {
           console.log(`Processing facility ${index + 1}/${facilityAssets.length}:`, facilityAsset.id);
-          handleGenericFacility(facilityAsset, decodedQueryId); 
+          handleGenericFacility(facilityAsset, decodedQueryId); // ✅ Pass query_id
         });
         
         setTimeout(() => {
@@ -7095,6 +7100,10 @@ async function start() {
         }, 2000);
         
         setTimeout(() => showGenericTooltip(decodedQueryId, true), 2500);
+      } else {
+        console.error('No visual assets found for query_id:', decodedQueryId);
+        // ✅ Still show tooltip if we have API data
+        setTimeout(() => showGenericTooltip(decodedQueryId, true), 1000);
       }
     }, 1000);
   }
