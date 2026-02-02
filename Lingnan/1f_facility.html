@@ -7020,15 +7020,10 @@ if (!!facility) {
   
   if (facilityInfo) {
     // Now search assets by the NAME we got from the query_id
-    const facilitySearchGroup = dict.find(group => group.name === "facilities_list");
-let facilityAssets = [];
-
-if (facilitySearchGroup) {
-  facilityAssets = facilitySearchGroup.assets.filter(asset => asset.name === matchedFacility.name);
-  console.log(`Searching in facility_search group, found ${facilityAssets.length} assets`);
-} else {
-  console.error("facility_search group not found in dict");
-}
+    let facilityAssets = dict[11].assets.filter(asset => asset.name === facilityInfo.name);
+    if (facilityAssets.length === 0) {
+      facilityAssets = dict[12].assets.filter(asset => asset.name === facilityInfo.name);
+    }
     
     if (facilityAssets.length > 0) {
       facilityAssets.forEach(facilityAsset => {
@@ -7067,24 +7062,42 @@ async function start() {
     await wait();
   }
   
-  console.log("Starting initialization...");
-  
-  // Fetch facility data first and wait for it
   await fetchFacilityData();
-  console.log("Facility data fetched:", facilityAPIData ? 'Success' : 'Failed');
-  
   spc.initSpace(smplr);
-  console.log("Space initialized");
   
-  // Handle query parameter after everything is initialized
-  setTimeout(() => {
-    console.log("Calling handleQueryParameter...");
-    handleQueryParameter();
-  }, 3500); // Increased delay to ensure map is fully loaded
+  const currentUrl = window.location.href;
+  const url = new URL(currentUrl);
+  const params = new URLSearchParams(url.search);
+  const facilityQueryId = params.get("facility"); 
   
-  setInterval(() => {
-    spc.fetchAll();
-  }, UPDATE_FREQUENCY * 1000);
+  if (!!facilityQueryId) {
+    setTimeout(() => {
+      const facilitiesData = dict[11]; 
+      const decodedQueryId = decodeURIComponent(facilityQueryId);
+      console.log('Looking for facility with query_id:', decodedQueryId);
+      
+      // Match by query_id (which is stored in asset.name in facility_search)
+      let facilityAssets = facilitiesData.assets.filter(asset => asset.name === decodedQueryId);
+      
+      console.log(`Found ${facilityAssets.length} facilities matching query_id "${decodedQueryId}"`);
+      
+      if (facilityAssets.length > 0) {
+        facilityAssets.forEach((facilityAsset, index) => {
+          console.log(`Processing facility ${index + 1}/${facilityAssets.length}:`, facilityAsset.id);
+          handleGenericFacility(facilityAsset, decodedQueryId); 
+        });
+        
+        setTimeout(() => {
+          if (spc && spc.space) {
+            console.log(`Updating map with ${rooms.length} rooms`);
+            spc.updateMapForFacility();
+          }
+        }, 2000);
+        
+        setTimeout(() => showGenericTooltip(decodedQueryId, true), 2500);
+      }
+    }, 1000);
+  }
 }
 
 start();
