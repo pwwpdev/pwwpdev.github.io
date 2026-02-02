@@ -6302,7 +6302,7 @@ async function fetchFacilityData() {
           
           return {
             ...firstLevel,
-            second_levels: childrenData.second_levels || []
+            second_levels: childrenData.second_levels || []  // ✓ This is correct
           };
         } catch (err) {
           console.error(`Failed to fetch children for ${firstLevel.id}:`, err);
@@ -6325,7 +6325,7 @@ async function fetchFacilityData() {
 // Replace the existing handleQueryParameter function with this:
 async function handleQueryParameter() {
   const urlParams = new URLSearchParams(window.location.search);
-  const queryId = urlParams.get('facility'); 
+  const queryId = urlParams.get('query') || urlParams.get('facility'); 
   
   console.log("handleQueryParameter called with queryId:", queryId);
   
@@ -6415,12 +6415,7 @@ async function handleQueryParameter() {
 }
 
 function findFacilityInfo(queryId) {
-  if (!facilityAPIData) {
-    console.log("No facility API data available");
-    return null;
-  }
-  
-  console.log("Searching for query_id:", queryId);
+  if (!facilityAPIData) return null;
   
   // Search through all levels by query_id
   for (const firstLevel of facilityAPIData) {
@@ -6434,7 +6429,8 @@ function findFacilityInfo(queryId) {
     }
     
     for (const secondLevel of firstLevel.second_levels || []) {
-      if (secondLevel.query_id === queryId) {
+      // Check if second level matches (skip if query_id is null)
+      if (secondLevel.query_id && secondLevel.query_id === queryId) {
         return {
           description: secondLevel.description || "",
           image: secondLevel.image || "/placeholder-image.png",
@@ -6443,8 +6439,9 @@ function findFacilityInfo(queryId) {
         };
       }
       
+      // Check third levels
       for (const thirdLevel of secondLevel.third_levels || []) {
-        if (thirdLevel.query_id === queryId) {
+        if (thirdLevel.query_id && thirdLevel.query_id === queryId) {
           return {
             description: thirdLevel.description || "",
             image: thirdLevel.image || "/placeholder-image.png",
