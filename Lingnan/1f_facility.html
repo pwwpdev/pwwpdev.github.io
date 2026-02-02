@@ -7020,10 +7020,15 @@ if (!!facility) {
   
   if (facilityInfo) {
     // Now search assets by the NAME we got from the query_id
-    let facilityAssets = dict[11].assets.filter(asset => asset.name === facilityInfo.name);
-    if (facilityAssets.length === 0) {
-      facilityAssets = dict[12].assets.filter(asset => asset.name === facilityInfo.name);
-    }
+    const facilitySearchGroup = dict.find(group => group.name === "facilities_list");
+let facilityAssets = [];
+
+if (facilitySearchGroup) {
+  facilityAssets = facilitySearchGroup.assets.filter(asset => asset.name === matchedFacility.name);
+  console.log(`Searching in facility_search group, found ${facilityAssets.length} assets`);
+} else {
+  console.error("facility_search group not found in dict");
+}
     
     if (facilityAssets.length > 0) {
       facilityAssets.forEach(facilityAsset => {
