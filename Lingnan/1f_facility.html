@@ -6379,7 +6379,7 @@ async function handleQueryParameter() {
     
     if (matchedFacility) {
   // Try to find ALL facility assets with the same name using filter()
-  let facilityAssets = dict[10].assets.filter(asset => asset.query_id === queryId);
+  let facilityAssets = dict[10].assets.filter(asset => asset.name === queryId);
 if (facilityAssets.length === 0) {
   facilityAssets = dict[11].assets.filter(asset => asset.name === matchedFacility.name);
 }
