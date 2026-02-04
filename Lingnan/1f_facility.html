@@ -6495,34 +6495,6 @@ function updateFacilityDisplay(facilityAsset, facilityName, facilityInfo) {
   rooms.push(room);
   console.log("Room added to array, total rooms:", rooms.length);
   
-  // Update map immediately
-  if (spc && spc.space) {
-    spc.updateDataLayers();
-    console.log("Map updated");
-  }
-  
-  // Set camera after map update
-  setTimeout(() => {
-    if (spc && spc.space && spc.setCameraForFacility) {
-      spc.setCameraForFacility(facilityName);
-      console.log("Camera positioned");
-    }
-  }, 1500);
-  
-  // FIXED: Show tooltip with multiple retry attempts
-  setTimeout(() => {
-    console.log("First tooltip attempt for:", facilityName);
-    showGenericTooltip(facilityName, true);
-  }, 2000);
-  
-  // Retry showing tooltip if it didn't appear
-  setTimeout(() => {
-    const tooltipDiv = document.getElementById("custom-tooltip");
-    if (tooltipDiv && tooltipDiv.style.display !== "block") {
-      console.log("Tooltip not visible, retrying...");
-      showGenericTooltip(facilityName, false);
-    }
-  }, 4000);
 }
 
 
@@ -6536,7 +6508,7 @@ function getFacilityHeight(facilityName) {
   return 3.1; 
 }
 
-// Generic tooltip function using API data
+
 // Generic tooltip function using API data - now accepts query_id
 function showGenericTooltip(queryId, showSkeleton = false) {
   console.log("showGenericTooltip called for query_id:", queryId, "showSkeleton:", showSkeleton);
@@ -6549,8 +6521,8 @@ function showGenericTooltip(queryId, showSkeleton = false) {
     return;
   }
   
-  const facilityInfo = findFacilityInfo(queryId); // Look up by query_id
-  const displayName = facilityInfo?.name || queryId; // Get display name
+  const facilityInfo = findFacilityInfo(queryId);
+  const displayName = facilityInfo?.name || queryId;
   console.log("Facility info retrieved:", facilityInfo);
   
   // Show skeleton loading if no data available or explicitly requested
@@ -6576,9 +6548,9 @@ function showGenericTooltip(queryId, showSkeleton = false) {
     if (facilityInfo && showSkeleton) {
       setTimeout(() => {
         showGenericTooltip(queryId, false);
-      }, 1000);
+      }, 500);
     }
-    // If no facility info, try to refresh data
+    // If no facility info, try to refresh data ONCE
     else if (!facilityInfo) {
       console.log("No facility info found, attempting to refresh data...");
       refreshFacilityData().then(() => {
@@ -7061,7 +7033,7 @@ async function start() {
     await wait();
   }
   
-  await fetchFacilityData(); // ✅ Load API data first
+  await fetchFacilityData(); 
   spc.initSpace(smplr);
   
   const currentUrl = window.location.href;
@@ -7070,29 +7042,11 @@ async function start() {
   const facilityQueryId = params.get("facility"); 
   
   if (!!facilityQueryId) {
-  setTimeout(() => {
+    // REMOVE setTimeout - process immediately
     const decodedQueryId = decodeURIComponent(facilityQueryId);
     console.log('🔍 Looking for facility with query_id:', decodedQueryId);
     
-    // ===== DEBUG SECTION START =====
-    console.log('📦 dict[12] name:', dict[12]?.name);
-    console.log('📦 dict[12] total assets:', dict[12]?.assets?.length);
-    console.log('📦 dict[13] name:', dict[13]?.name);
-    console.log('📦 dict[13] total assets:', dict[13]?.assets?.length);
-    
-    if (dict[12]?.assets) {
-      console.log('📋 First 10 names in dict[12]:', dict[12].assets.slice(0, 10).map(a => a.name));
-    }
-    
-    // Check if 1A_COUNTER exists anywhere in dict[12]
-    if (dict[12]?.assets) {
-      const allNames = dict[12].assets.map(a => a.name);
-      const counterMatches = allNames.filter(name => name && name.includes('COUNTER'));
-      console.log('🔎 All names containing "COUNTER" in dict[12]:', counterMatches);
-    }
-    // ===== DEBUG SECTION END =====
-    
-    // ✅ STEP 1: Search dict[12] (facilities_list) by query_id
+    // Search in dict[12] (facilities_list)
     let facilityAssets = [];
     
     if (dict[12] && dict[12].assets) {
@@ -7100,40 +7054,35 @@ async function start() {
       console.log(`✓ Found ${facilityAssets.length} matches in dict[12]`);
     }
     
-    // ✅ STEP 2: If not found in dict[12], try dict[13] (facilities_demo)
+    // If not found, try dict[13] (facilities_demo)
     if (facilityAssets.length === 0 && dict[13] && dict[13].assets) {
-      console.log('⚠ Not found in dict[12], trying dict[13]...');
       facilityAssets = dict[13].assets.filter(asset => asset.name === decodedQueryId);
       console.log(`✓ Found ${facilityAssets.length} matches in dict[13]`);
     }
     
-    console.log(`🎯 TOTAL facilities found: ${facilityAssets.length}`);
-
-    if (facilityAssets.length === 0) {
-      console.error('❌ NO MATCHES FOUND! Searched for:', decodedQueryId);
-    }
-      
     if (facilityAssets.length > 0) {
+      // Process ALL facilities immediately - no individual setTimeout
       facilityAssets.forEach((facilityAsset, index) => {
         console.log(`Processing facility ${index + 1}/${facilityAssets.length}:`, facilityAsset.id);
-        handleGenericFacility(facilityAsset, decodedQueryId);
+        const facilityInfo = findFacilityInfo(decodedQueryId);
+        updateFacilityDisplay(facilityAsset, decodedQueryId, facilityInfo);
       });
       
+ 
       setTimeout(() => {
         if (spc && spc.space) {
           console.log(`Updating map with ${rooms.length} rooms`);
           spc.updateMapForFacility();
         }
-      }, 2000);
-      
-      setTimeout(() => showGenericTooltip(decodedQueryId, true), 2500);
-    } else {
-      console.log('No visual assets found for query_id:', decodedQueryId);
-      // ✅ Still show tooltip if we have API data
-      setTimeout(() => showGenericTooltip(decodedQueryId, true), 1000);
+        
+        // Show tooltip once after map update
+        setTimeout(() => {
+          showGenericTooltip(decodedQueryId, true);
+        }, 500); 
+        
+      }, 1000); 
     }
-  }, 1000);
-}
+  }
 }
 
 start();
