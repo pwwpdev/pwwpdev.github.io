@@ -6379,9 +6379,9 @@ async function handleQueryParameter() {
     
     if (matchedFacility) {
   // Try to find ALL facility assets with the same name using filter()
-  let facilityAssets = dict[10].assets.filter(asset => asset.name === queryId);
+  let facilityAssets = dict[12].assets.filter(asset => asset.name === queryId);
 if (facilityAssets.length === 0) {
-  facilityAssets = dict[11].assets.filter(asset => asset.name === matchedFacility.name);
+  facilityAssets = dict[13].assets.filter(asset => asset.name === matchedFacility.name);
 }
   if (facilityAssets.length > 0) {
     console.log(`Facility asset(s) found: ${facilityAssets.length}, calling handleGenericFacility`);
@@ -7019,9 +7019,9 @@ if (!!facility) {
   
   if (facilityInfo) {
     // Now search assets by the NAME we got from the query_id
-    let facilityAssets = dict[11].assets.filter(asset => asset.name === facilityInfo.name);
+    let facilityAssets = dict[12].assets.filter(asset => asset.name === facilityInfo.name);
     if (facilityAssets.length === 0) {
-      facilityAssets = dict[12].assets.filter(asset => asset.name === facilityInfo.name);
+      facilityAssets = dict[13].assets.filter(asset => asset.name === facilityInfo.name);
     }
     
     if (facilityAssets.length > 0) {
