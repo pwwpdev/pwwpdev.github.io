@@ -7072,18 +7072,43 @@ async function start() {
   if (!!facilityQueryId) {
     setTimeout(() => {
       const decodedQueryId = decodeURIComponent(facilityQueryId);
-      console.log('Looking for facility with query_id:', decodedQueryId);
+      console.log('🔍 Looking for facility with query_id:', decodedQueryId);
+    
+    // ===== DEBUG SECTION START =====
+    console.log('📦 dict[10] name:', dict[10]?.name);
+    console.log('📦 dict[10] total assets:', dict[10]?.assets?.length);
+    console.log('📦 dict[11] name:', dict[11]?.name);
+    console.log('📦 dict[11] total assets:', dict[11]?.assets?.length);
+    if (dict[10]?.assets) {
+      console.log('📋 First 10 names in dict[10]:', dict[10].assets.slice(0, 10).map(a => a.name));
+    }
+    
+    // Check if 1A_COUNTER exists anywhere in dict[10]
+    if (dict[10]?.assets) {
+      const allNames = dict[10].assets.map(a => a.name);
+      const counterMatches = allNames.filter(name => name && name.includes('COUNTER'));
+      console.log('🔎 All names containing "COUNTER" in dict[10]:', counterMatches);
+    }
       
-      // ✅ STEP 1: Search dict[10] by query_id (stored as asset.name)
-      let facilityAssets = dict[10].assets.filter(asset => asset.name === decodedQueryId);
-      
-      // ✅ STEP 2: If not found in dict[10], try dict[11]
-      if (facilityAssets.length === 0) {
-        console.log('Not found in dict[10], trying dict[11]...');
-        facilityAssets = dict[11].assets.filter(asset => asset.name === decodedQueryId);
-      }
-      
-      console.log(`Found ${facilityAssets.length} facilities matching query_id "${decodedQueryId}"`);
+    let facilityAssets = [];
+    
+    if (dict[10] && dict[10].assets) {
+      facilityAssets = dict[10].assets.filter(asset => asset.name === decodedQueryId);
+      console.log(`✓ Found ${facilityAssets.length} matches in dict[10]`);
+    }
+    
+    // ✅ STEP 2: If not found in dict[10], try dict[11]
+    if (facilityAssets.length === 0 && dict[11] && dict[11].assets) {
+      console.log('⚠ Not found in dict[10], trying dict[11]...');
+      facilityAssets = dict[11].assets.filter(asset => asset.name === decodedQueryId);
+      console.log(`✓ Found ${facilityAssets.length} matches in dict[11]`);
+    }
+    
+    console.log(`🎯 TOTAL facilities found: ${facilityAssets.length}`);
+
+    if (facilityAssets.length === 0) {
+      console.error('❌ NO MATCHES FOUND! Searched for:', decodedQueryId);
+    }
       
       if (facilityAssets.length > 0) {
         facilityAssets.forEach((facilityAsset, index) => {
